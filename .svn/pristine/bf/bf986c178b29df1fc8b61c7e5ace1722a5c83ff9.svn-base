@@ -1,0 +1,4 @@
+  {
+    "urlGeodata": "http://dachinsky:8100/geodata/v1.0",
+    "urlWebSocket": "http://dachinsky.isida.by:8100"
+  }

@@ -1,0 +1,17 @@
+Ext.define('Isidamaps.services.medorgView.MedorgModel', {
+    extend: 'Ext.app.ViewModel',
+    alias: 'viewmodel.medorg',
+    stores: {
+        Property: {
+            model: 'Isidamaps.model.Property',
+            proxy: {
+                type: 'ajax',
+                url: 'resources/property.json',
+                reader: {
+                    type: 'json'
+                }
+            },
+            autoLoad: false
+        }
+    }
+});

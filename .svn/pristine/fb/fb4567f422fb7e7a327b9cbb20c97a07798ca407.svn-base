@@ -1,0 +1,81 @@
+{
+  "call": {
+    "callCardId": 5681,
+    "callCardNum": 1,
+    "createTime": "2018-07-20T07:39:18.772Z",
+    "iconName": "new.png",
+    "lastUpdateTime": "2018-07-20T07:39:18.772Z",
+    "latitude": 59.970908,
+    "longitude": 30.335934,
+    "objectType": "CALL",
+    "station": 1,
+    "status": "NEW",
+    "statusAsov": 700
+  },
+  "endPoint": {
+    "brigadeNum": "10",
+    "callCardId": 1,
+    "callCardNum": 1,
+    "deviceId": 5680,
+    "iconName": "free.png",
+    "lastUpdateTime": "2018-07-20T07:39:18.772Z",
+    "latitude": 59.970908,
+    "longitude": 30.335934,
+    "objectType": "BRIGADE",
+    "profile": "ВБ",
+    "station": 1,
+    "status": "FREE",
+    "statusAsov": 0,
+    "timeLocal": "2018-07-20T07:39:18.772Z"
+  },
+  "points": [
+    [
+      59.970969,
+      30.309939
+    ],
+    [
+      59.971103,
+      30.309955
+    ],
+    [
+      59.972522,
+      30.328695999999997
+    ],
+    [
+      59.967575000000004,
+      30.332625999999994
+    ],
+    [
+      59.96834200000001,
+      30.337309999999995
+    ],
+    [
+      59.968514000000006,
+      30.338420999999997
+    ],
+    [
+      59.96856300000001,
+      30.337697999999996
+    ],
+    [
+      59.970908,
+      30.335934
+    ]
+  ],
+  "startPoint": {
+    "brigadeNum": "10",
+    "callCardId": 1,
+    "callCardNum": 1,
+    "deviceId": 5680,
+    "iconName": "free.png",
+    "lastUpdateTime": "2018-07-20T07:39:18.772Z",
+    "latitude": 59.970969,
+    "longitude": 30.309939,
+    "objectType": "BRIGADE",
+    "profile": "ВБ",
+    "station": 0,
+    "status": "FREE",
+    "statusAsov": 0,
+    "timeLocal": "2018-07-20T07:39:18.772Z"
+  }
+}

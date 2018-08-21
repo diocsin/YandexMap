@@ -1,0 +1,39 @@
+Ext.define('Isidamaps.services.localMonitoringView.LocalMonitoringModel', {
+  extend: 'Ext.app.ViewModel',
+  alias: 'viewmodel.localmonitoring',
+  stores: {
+    Calls: {
+      model: 'Isidamaps.model.Call',
+      proxy: {
+        type: 'memory',
+        reader: {
+          type: 'json'
+        }
+      },
+      autoLoad: false
+    },
+
+    Brigades: {
+      model: 'Isidamaps.model.Brigade',
+      proxy: {
+        type: 'memory',
+        reader: {
+          type: 'json'
+        }
+      },
+      autoLoad: false
+    },
+
+    Property: {
+      model: 'Isidamaps.model.Property',
+      proxy: {
+        type: 'ajax',
+        url: 'resources/property.json',
+        reader: {
+          type: 'json'
+        }
+      },
+      autoLoad: false
+    }
+  }
+});

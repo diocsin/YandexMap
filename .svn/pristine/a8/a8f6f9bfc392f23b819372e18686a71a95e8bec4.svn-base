@@ -1,0 +1,22 @@
+Ext.define('Isidamaps.services.brigadeForAssignView.BrigadeForAssignModel', {
+    extend: 'Ext.app.ViewModel',
+    alias: 'viewmodel.brigadeforassign',
+    stores: {
+        Routes: {
+            proxy: {
+                type: 'memory'
+            }
+        },
+        Property: {
+            model: 'Isidamaps.model.Property',
+            proxy: {
+                type: 'ajax',
+                url: 'resources/property.json',
+                reader: {
+                    type: 'json'
+                }
+            },
+            autoLoad: false
+        }
+    }
+});

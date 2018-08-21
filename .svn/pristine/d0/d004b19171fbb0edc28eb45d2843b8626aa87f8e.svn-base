@@ -1,0 +1,56 @@
+Ext.define('Isidamaps.services.localMonitoringView.LocalMonitoring', {
+  extend: 'Ext.panel.Panel',
+  xtype: 'localmonitoring',
+
+  requires: ['Isidamaps.view.filterLocalMonitoringView.FilterLocalMonitoringView',
+    'Isidamaps.view.filterBrigadeView.FilterBrigadeView',
+    'Isidamaps.services.localMonitoringView.LocalMonitoringController',
+    'Isidamaps.services.localMonitoringView.MapService',
+    'Isidamaps.services.localMonitoringView.LocalMonitoringModel'
+  ],
+
+  controller: 'localmonitoring',
+  viewModel: 'localmonitoring',
+  layout: 'border',
+  items: [{
+    xtype: 'panel',
+    region: 'east',
+    reference: 'BrigadePanel',
+    title: 'Бригады',
+    publishes: 'size',
+    width: 250,
+    floatable: true,
+    collapsible: true,
+    titleAlign: 'center',
+    items: [{
+      xtype: 'filterBrigadeView-filterBrigade',
+      reference: 'filterBrigade'
+    }]
+  }, {
+    xtype: 'panel',
+    region: 'west',
+    title: 'Фильтр',
+    reference: 'navigationPanel',
+    publishes: 'size',
+    width: 300,
+    floatable: true,
+    collapsible: true,
+    titleAlign: 'center',
+    items: [{
+      title: 'Подстанции',
+      xtype: 'filterLocalMonitoringView-filterLocalMonitoring',
+      reference: 'filterLocal'
+    }]
+  }, {
+    xtype: 'container',
+    region: 'center',
+    reference: 'ymapWrapper',
+    id: 'mapId',
+    listeners: {
+      'boxready': 'mainBoxReady'
+    }
+  }],
+  listeners: {
+    'boxready': 'layoutReady'
+  }
+});

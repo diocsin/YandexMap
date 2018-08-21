@@ -1,0 +1,333 @@
+Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
+    extend: 'Isidamaps.services.callHistoryView.CallHistoryController',
+    alias: 'controller.monitoring',
+    Monitoring: null,
+    filterBrigadeArray: [],
+    filterCallArray: [],
+    stompClient: null,
+    urlGeodata: null,
+    urlWebSocket: null,
+    listen: {
+        global: {
+            checkedProfileBrigade: 'checkedProfileBrigade',
+            checkedStatusBrigade: 'checkedStatusBrigade',
+            checkedStationBrigade: 'checkedStationBrigade',
+            checkedCallStatus: 'checkedCallStatus',
+            addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
+            addStationFilter: 'addStationFilter'
+        }
+    },
+
+    checkedCallStatus: function (checkbox) {
+        var me = this,
+            checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            stBf = this.lookupReference('callStatusFilter');
+        if (checkboxChecked === false) {
+            me.filterCallArray.push(checkboxValue);
+            var i = 0;
+            stBf.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
+                }
+            });
+            if (stBf.items.length === i + 1) {
+                me.lookupReference('allCalls').setValue(false)
+            }
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.status) {
+                    me.Monitoring.objectManager.objects.remove(call);
+                }
+            })
+        }
+        if (checkboxChecked === true) {
+            var index = me.filterCallArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterCallArray.splice(index, 1);
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.status) {
+                    if (me.filterCallArray.indexOf(call.customOptions.station) === -1) {
+                        me.Monitoring.objectManager.objects.add(call);
+                    }
+                }
+            });
+            stBf.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (stBf.items.length === j) {
+                me.lookupReference('allCalls').setValue(true)
+            }
+        }
+    },
+
+    checkedStationBrigade: function (checkbox) {
+        var me = this,
+            checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            stationFilter = this.lookupReference('stationFilter');
+        if (checkboxChecked === false) {
+            me.filterCallArray.push(checkboxValue);
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            stationFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
+                }
+            });
+            if (stationFilter.items.length === i + 1) {
+                me.lookupReference('allStation').setValue(false)
+            }
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.station) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                }
+            });
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.station) {
+                    me.Monitoring.objectManager.objects.remove(call);
+                }
+            })
+        }
+        if (checkboxChecked === true) {
+            var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
+                indexCall = me.filterCallArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(indexBrigade, 1);
+            me.filterCallArray.splice(indexCall, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.station) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                    }
+                }
+            });
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.station) {
+                    if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
+                        me.Monitoring.objectManager.objects.add(call);
+                    }
+                }
+            });
+            stationFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (stationFilter.items.length === j) {
+                me.lookupReference('allStation').setValue(true)
+            }
+        }
+    },
+
+    checkedProfileBrigade: function (checkbox) {
+        var me = this,
+            checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            profileBrigadeFilter = this.lookupReference('profileBrigadeFilter');
+        if (checkboxChecked === false) {
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            profileBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
+                }
+            });
+            if (profileBrigadeFilter.items.length === i + 1) {
+                me.lookupReference('allProfile').setValue(false)
+            }
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.profile) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                }
+            })
+        }
+        if (checkboxChecked === true) {
+            var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(index, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.profile) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                    }
+                }
+            });
+            profileBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (profileBrigadeFilter.items.length === j) {
+                me.lookupReference('allProfile').setValue(true)
+            }
+        }
+    },
+
+    checkedStatusBrigade: function (checkbox) {
+        var me = this,
+            checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            statusBrigadeFilter = this.lookupReference('statusBrigadeFilter');
+        if (checkboxChecked === false) {
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            statusBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
+                }
+            });
+            if (statusBrigadeFilter.items.length === i + 1) {
+                me.lookupReference('allStatus').setValue(false)
+            }
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.status) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                }
+            })
+        }
+        if (checkboxChecked === true) {
+            var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(index, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.status) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                    }
+                }
+            });
+            statusBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (statusBrigadeFilter.items.length === j) {
+                me.lookupReference('allStatus').setValue(true)
+            }
+        }
+    },
+
+    mainBoxReady: function () {
+        var me = this,
+            property = me.getViewModel().getStore('Property');
+        property.load(function (records) {
+            records.forEach(function (data) {
+                me.urlGeodata = data.get('urlGeodata');
+                me.urlWebSocket = data.get('urlWebSocket');
+            });
+            ymaps.ready(function () {
+                me.createMap();
+            });
+            me.connect();
+        });
+    },
+
+    connect: function () {
+        var me = this,
+            socket = new SockJS(me.urlWebSocket + '/geo');
+        me.stompClient = Stomp.over(socket);
+        me.stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+            me.stompClient.subscribe('/geo-queue/geodata-updates', function (greeting) {
+                console.dir(greeting);
+                me.showGreeting(JSON.parse(greeting.body));
+            });
+        });
+    },
+
+    showGreeting: function (message) {
+        var me = this;
+        message.station = '' + message.station;
+        if (me.Monitoring.station.indexOf(message.station) !== -1) {
+            if (message.objectType === 'BRIGADE') {
+                var storeBrigades = me.getViewModel().getStore('Brigades');
+                storeBrigades.loadRawData(message);
+                me.Monitoring.createMarkers();
+            }
+            if (message.objectType === 'CALL') {
+                var storeCalls = me.getViewModel().getStore('Calls');
+                storeCalls.loadRawData(message);
+                me.Monitoring.createMarkers();
+            }
+        }
+    },
+
+    sendName: function () {
+        //stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+    },
+    disconnect: function () {
+        stompClient.disconnect();
+        console.log("Disconnected");
+    },
+
+    createMap: function () {
+        var me = this,
+            bounds = [
+                [60.007645, 30.092139],
+                [59.923862, 30.519157]
+            ];
+        me.Monitoring = Ext.create('Isidamaps.services.monitoringView.MapService', {
+            viewModel: me.getViewModel(),
+            markerClick: me.markerClick,
+            clustersClick: me.clustersClick,
+            boundsMap: bounds,
+            filterBrigadeArray: me.filterBrigadeArray,
+            filterCallArray: me.filterCallArray,
+            urlGeodata: me.urlGeodata,
+            getStoreMarkerInfo: me.getStoreMarkerInfo
+        });
+        me.Monitoring.optionsObjectManager();
+        ASOV.setMapManager({
+            setStation: me.Monitoring.setStation.bind(this)
+        }, Ext.History.currentToken);
+        var ymapWrapper = me.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', function () {
+            me.Monitoring.resizeMap();
+        });
+    },
+
+    addStationFilter: function () {
+        var me = this,
+            checkboxStation = me.lookupReference('stationFilter'),
+            records = me.Monitoring.station;
+        records.forEach(function (rec) {
+            checkboxStation.add(Ext.create('Ext.form.field.Checkbox', {
+                boxLabel: rec,
+                inputValue: rec,
+                checked: true,
+                listeners: {
+                    change: {
+                        fn: function (checkbox, checked) {
+                            Ext.fireEvent('checkedStationBrigade', checkbox, checked);
+                        }
+                    }
+                }
+            }));
+        })
+    },
+
+    addButtonsBrigadeOnPanel: function () {
+        var me = this,
+            buttonBrigade = me.lookupReference('BrigadePanel'),
+            brigadeSort = me.Monitoring.brigadesMarkers;
+        buttonBrigade.removeAll();
+        brigadeSort.sort(function (a, b) {
+            return a.customOptions.brigadeNum - b.customOptions.brigadeNum
+        });
+        brigadeSort.forEach(function (e) {
+            buttonBrigade.add(Ext.create('Ext.Button', {
+                text: e.customOptions.brigadeNum,
+                minWidth: 70,
+                margin: 5,
+                listeners: {
+                    click: function (r) {
+                        var infoMarker = me.getStoreMarkerInfo(e);
+                        me.markerClick(e, [r.getXY()[0] + 100, r.getXY()[1] + 30], infoMarker);
+                    }
+                }
+            }))
+        })
+    }
+});
