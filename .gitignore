@@ -3,3 +3,11 @@
 build/
 .gradle
 .idea
+.svn/
+bootstrap.js
+bootstrap.css
+classic.json
+classic.jsonp
+sass/example/bootstrap.js
+sass/example/bootstrap.json
+sass/example/bootstrap.jsonp
