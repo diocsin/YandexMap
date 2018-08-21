@@ -1,8 +1,5 @@
-/temp/
 .idea/
 build/
-.gradle
-.idea
 .svn/
 bootstrap.js
 bootstrap.css
