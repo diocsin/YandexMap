@@ -41,8 +41,13 @@ function startApp(urlYandex) {
         extend: 'Isidamaps.Application',
 
         requires: [
-            'Ext.*',
-            'Isidamaps.Viewport'
+            'Ext.layout.container.Border',
+            'Ext.layout.container.Table',
+            'Ext.form.CheckboxGroup',
+            'Ext.container.Viewport',
+            'Isidamaps.Viewport',
+            'Ext.container.Container'
+
         ],
         // The name of the initial view to create. With the classic toolkit this class
         // will gain a "viewport" plugin if it does not extend Ext.Viewport. With the

@@ -1,5 +1,10 @@
 {
-	"indexHtmlPath": "index.html",/**
+    /**
+     * The relative path to the appliaction's markup file (html, jsp, asp, etc.)
+     */
+    "indexHtmlPath": "index.html",
+
+    /**
      * List of all JavaScript assets in the right execution order.
      *
      * Each item is an object with the following format:
@@ -50,12 +55,14 @@
      * of the bootstrap manifest.  See the "bootstrap" property for details.
      *
      */
-	"js": [
-		{
-			"path": "app.js",
-			"bundle": true
-		}
-	],/**
+    "js": [
+        {
+            "path": "app.js",
+            "bundle": true
+        }
+    ],
+
+    /**
      * List of all CSS assets in the right inclusion order.
      *
      * Each item is an object with the following format:
@@ -80,12 +87,17 @@
      *          "update": ""      // OPTIONAL
      *      }
      */
-	"css": [
-		{
-			"path": "${build.out.css.path}",
-			"bundle": true
-		}
-	],/**
+    "css": [
+        {
+            // this entry uses an ant variable that is the calculated
+            // value of the generated output css file for the app,
+            // defined in .sencha/app/defaults.properties
+            "path": "${build.out.css.path}",
+            "bundle": true
+        }
+    ],
+
+    /**
      * This option is used to configure the dynamic loader. At present these options
      * are supported.
      *
@@ -105,31 +117,39 @@
      *          "cacheParam": "_dc"
      *      },
      *
-     *//**
+     */
+
+
+    /**
      *  "compressor": {
      *      "type": "closure",
      *      "languageIn": "ECMASCRIPT5"
      *  }
      *
      */
-	"compressor": null,/**
+    "compressor": null,
+
+    /**
      * override objects for setting build environment specific
      * settings.
      */
-	"production": {
-		"compressor": {
-			"type": "yui"
-		},
-		"cache": {
-			"enable": true
-		}
-	},
-	"testing": {
-		
-	},
-	"development": {
-		
-	},/**
+    "production": {
+        "compressor": {
+            "type": "cmd"
+        },
+        "cache": {
+            "enable": true
+        }
+    },
+
+    "testing": {
+    },
+
+    "development": {
+    },
+
+
+    /**
      *  Controls the output structure of bootstrap artifacts.  May be specified by a string:
      *
      *      "bootstrap": "${app.dir}"
@@ -137,7 +157,7 @@
      *  to adjust the base path for all bootstrap objects, or expanded into object form:
      *
      *      "bootstrap": {
-     *          "base": "${app.dir},
+     *          "base": "${app.dir}",
      *          "manifest": "bootstrap.json",
      *          "microloader": "bootstrap.js",
      *          "css": "bootstrap.css"
@@ -154,9 +174,11 @@
      *      }
      *
      */
-	"bootstrap": {
-		"base": "${app.dir}"
-	},/**
+    "bootstrap":{
+        "base": "${app.dir}"
+    },
+
+    /**
      *  Controls the output directory for build resources.  May be set with
      *  either a string:
      *
@@ -179,7 +201,10 @@
      *                  "defines": true,
      *                  "callParent": true,
      *                  "requires": true,
-     *               }
+     *               },
+     *              // This setting constrols the output language level.  Set to 'ES6' to 
+     *              // disable the transpiler
+     *              "version": "ES5"
      *          },
      *          "microloader": {
      *              "path": "microloader.js",
@@ -204,15 +229,17 @@
      *          }
      *      }
      */
-	"output": {
-		"base": "${workspace.build.dir}/${build.environment}/${app.name}",
-		"appCache": {
-			"enable": false
-		},
-		"microloader": {
-			"enable": true
-		}
-	},/**
+    "output": {
+        "base": "${workspace.build.dir}/${build.environment}/${app.name}",
+        "appCache": {
+            "enable": false
+        },
+        "microloader": {
+            "enable": true
+        }
+    },
+
+    /**
     * Controls for localStorage caching
     *   "cache": {
     *       // This property controls whether localStorage caching of this manifest file is on or off.
@@ -227,10 +254,12 @@
     *       "deltas": "deltas"
     *   }
     */
-	"cache": {
-		"enable": false,
-		"deltas": "deltas"
-	},/**
+    "cache": {
+        "enable": false,
+        "deltas": "deltas"
+    },
+
+    /**
      * This sets the default output folder for cordova packagers builds
      *
      *      // Cordova Packager Config options
@@ -266,34 +295,36 @@
      *          // "iPad (Retina)"
      *
      */
-	"cordova": {
-		"config": {
-			"name": "${app.name}",
-			"id": "com.domain.${app.name}",
-			"verbose": false,
-			"target": "",
-			"path": "${app.dir}/cordova"
-		},
-		"js": [
-			{
-				"path": "cordova.js",
-				"remote": true,
-				"priority": 1000
-			}
-		],
-		"microloader": "${app.config.dir}/Microloader.js",
-		"output": {
-			"base": "${app.cordova.config.path}/www",
-			"page": "index.html",
-			"manifest": "${build.id}.json",
-			"appCache": {
-				"enable": false
-			}
-		},
-		"cache": {
-			"enable": false
-		}
-	},/**
+    "cordova": {
+        "config": {
+            "name": "${app.name}",
+            "id": "com.domain.${app.name}",
+            "verbose": false,
+            "target": "",
+            "path": "${app.dir}/cordova"
+        },
+        "js": [
+            {
+                "path": "cordova.js",
+                "remote": true,
+                "priority": 1000
+            }
+        ],
+        "microloader": "${app.config.dir}/Microloader.js",
+        "output": {
+            "base": "${app.cordova.config.path}/www",
+            "page": "index.html",
+            "manifest": "${build.id}.json",
+            "appCache": {
+                "enable": false
+            }
+        },
+        "cache": {
+            "enable": false
+        }
+    },
+
+    /**
      * This sets the default output folder for phonegap packagers builds
      *
      *      // Phonegap Packager Config options
@@ -327,57 +358,58 @@
      *          // This defaults to your {app.dir}/phonegap
      *
      */
-	"phonegap": {
-		"config": {
-			"name": "${app.name}",
-			"id": "com.domain.${app.name}",
-			"remote": false,
-			"verbose": false,
-			"path": "${app.dir}/phonegap"
-		},
-		"js": [
-			{
-				"path": "cordova.js",
-				"remote": true,
-				"priority": 1000
-			}
-		],
-		"microloader": "${app.config.dir}/Microloader.js",
-		"output": {
-			"base": "${app.phonegap.config.path}/www",
-			"page": "index.html",
-			"manifest": "${build.id}.json",
-			"appCache": {
-				"enable": false
-			}
-		},
-		"cache": {
-			"enable": false
-		}
-	},/**
+    "phonegap": {
+        "config": {
+            "name": "${app.name}",
+            "id": "com.domain.${app.name}",
+            "remote": false,
+            "verbose": false,
+            "path": "${app.dir}/phonegap"
+        },
+        "js": [
+            {
+                "path": "cordova.js",
+                "remote": true,
+                "priority": 1000
+            }
+        ],
+        "microloader": "${app.config.dir}/Microloader.js",
+        "output": {
+            "base": "${app.phonegap.config.path}/www",
+            "page": "index.html",
+            "manifest": "${build.id}.json",
+            "appCache": {
+                "enable": false
+            }
+        },
+        "cache": {
+            "enable": false
+        }
+    },
+
+    /**
      * Additional resources used during theme slicing operations
      */
-	"slicer": {
-		"js": [
-			{
-				"path": "${app.dir}/sass/example/custom.js",
-				"isWidgetManifest": true
-			}
-		],
-		"output": {
-			"appCache": {
-				"enable": false
-			}
-		},
-		"cache": {
-			"enable": false
-		}
-	},/**
-     *
-     */
-	"fashion": {
-		"inliner": {
-			"enable": false
-		}
-	}
+    "slicer": {
+        "js": [
+            {
+                "path": "${app.dir}/sass/example/custom.js",
+                "isWidgetManifest": true
+            }
+        ],
+        "output": {
+            "appCache": {
+                "enable": false
+            }
+        },
+        "cache": {
+            "enable": false
+        }
+    },
+
+    "fashion": {
+        "inliner": {
+            "enable": false
+        }
+    }
 }
