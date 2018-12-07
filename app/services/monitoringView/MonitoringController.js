@@ -469,7 +469,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
             if (marker.customOptions.objectType === 'CALL') {
                 markerInClusters.add(Ext.create('Ext.Button', {
-                    text: 'Выз№ ' + marker.customOptions.callCardNum + " " + f(),
+                    text: 'Выз.№ ' + marker.customOptions.callCardNum + " " + f(),
                     maxWidth: 170,
                     minWidth: 170,
                     margin: 5,
@@ -518,7 +518,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
             if (marker.customOptions.objectType === 'BRIGADE') {
                 markerInClusters.add(Ext.create('Ext.Button', {
-                    text: 'Бр№ ' + marker.customOptions.brigadeNum + " " + "(" + marker.customOptions.profile + ")" + " " + marker.customOptions.station,
+                    text: 'Бр.№ ' + marker.customOptions.brigadeNum + " " + "(" + marker.customOptions.profile + ")" + " " + marker.customOptions.station,
                     maxWidth: 170,
                     minWidth: 170,
                     margin: 5,
