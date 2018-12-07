@@ -9,6 +9,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
     filterCallArray: [],
     station: [],
     urlGeodata: null,
+    MyIconContentLayout: null,
     // ====
     markerClick: Ext.emptyFn,
     clustersClick: Ext.emptyFn,
@@ -150,6 +151,9 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             zIndex: 3000,
             groupByCoordinates: true
         });
+        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
+        );
     },
 
     optionsObjectManager: function () {
@@ -161,7 +165,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         });
         me.objectManager.clusters.events.add(['click'], function (e) {
             var object = me.objectManager.clusters.getById(e.get('objectId'));
-            me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1]+20 ], object);
+            me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
         });
     },
 
@@ -191,7 +195,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 function func() {
                     me.objectManager.objects.add(marker);
                 }
-                 setTimeout(func,20);
+
+                setTimeout(func, 20);
             }
         }
         if (marker.customOptions.objectType === 'CALL') {
@@ -258,6 +263,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     storeBrigade: function (urlBrigade, urlCall) {
         var me = this;
+
         Ext.create('Ext.data.Store', {
             model: 'Isidamaps.model.Brigade',
             proxy: {
@@ -286,10 +292,15 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                             coordinates: [brigade.get('latitude'), brigade.get('longitude')]
                         },
                         options: {
-                            iconImageHref: 'resources/icon/' + brigade.get('iconName')
+                            iconLayout: 'default#imageWithContent',
+                            iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                            iconContentLayout: me.MyIconContentLayout,
+                            iconImageOffset: [-24, -24],
+                            iconContentOffset: [30, -10],
                         },
                         properties: {
-                            hintContent: 'Бригада ' + brigade.get('brigadeNum')
+                            hintContent: 'Бригада ' + brigade.get('brigadeNum'),
+                            iconContent: brigade.get('brigadeNum')+"("+brigade.get('profile')+")"
                         }
                     })
                 }
@@ -370,10 +381,15 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                         coordinates: [brigade.get('latitude'), brigade.get('longitude')]
                     },
                     options: {
-                        iconImageHref: 'resources/icon/' + brigade.get('iconName')
+                        iconLayout: 'default#imageWithContent',
+                        iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                        iconContentLayout: me.MyIconContentLayout,
+                        iconImageOffset: [-24, -24],
+                        iconContentOffset: [30, -10],
                     },
                     properties: {
-                        hintContent: 'Бригада ' + brigade.get('brigadeNum')
+                        hintContent: 'Бригада ' + brigade.get('brigadeNum'),
+                        iconContent: brigade.get('brigadeNum')+"("+brigade.get('profile')+")"
                     }
                 };
                 me.brigadesMarkers.push(marker);

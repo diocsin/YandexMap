@@ -318,8 +318,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         });
         brigadeSort.forEach(function (e) {
             buttonBrigade.add(Ext.create('Ext.Button', {
-                text: e.customOptions.brigadeNum,
-                minWidth: 70,
+                text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
+                maxWidth: 110,
+                minWidth: 110,
                 margin: 5,
                 listeners: {
                     click: function (r) {
@@ -437,26 +438,40 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 autoScroll: true,
                 layout: 'vbox',
                 height: '100%',
-                width: '21%'
+                width: '25%'
             },
                 {
                     xtype: 'panel',
                     id: 'infoMarkerId',
                     autoScroll: true,
                     height: '100%',
-                    width: '79%'
+                    width: '75%'
                 }
             ]
         }).showAt(coords);
         var markerInClusters = Ext.getCmp('markerInClustersId');
         markerInClusters.removeAll();
         var infoMarker = Ext.getCmp('infoMarkerId');
+
         cluster.features.forEach(function (marker) {
+            function f() {
+                if (marker.customOptions.status === 'NEW') {
+                    return 'Новый'
+                }
+                if (marker.customOptions.status === 'COMPLETED') {
+                    return 'Завершен'
+                }
+                if (marker.customOptions.status === 'ASSIGNED') {
+                    return 'Исполнение'
+                }
+                return""
+            }
+
             if (marker.customOptions.objectType === 'CALL') {
                 markerInClusters.add(Ext.create('Ext.Button', {
-                    text: 'Вызов№ ' + marker.customOptions.callCardNum,
-                    maxWidth: 140,
-                    minWidth: 140,
+                    text: 'Выз№ ' + marker.customOptions.callCardNum + " " + f(),
+                    maxWidth: 170,
+                    minWidth: 170,
                     margin: 5,
                     listeners: {
                         click: function () {
@@ -503,9 +518,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
             if (marker.customOptions.objectType === 'BRIGADE') {
                 markerInClusters.add(Ext.create('Ext.Button', {
-                    text: 'Бригада № ' + marker.customOptions.brigadeNum,
-                    maxWidth: 140,
-                    minWidth: 140,
+                    text: 'Бр№ ' + marker.customOptions.brigadeNum + " " + "(" + marker.customOptions.profile + ")" + " " + marker.customOptions.station,
+                    maxWidth: 170,
+                    minWidth: 170,
                     margin: 5,
                     listeners: {
                         click: function () {
@@ -652,6 +667,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
     markerClick: function (object, coords, infoMarker) {
         var me = this;
+
         function errorMessage(marker) {
             var markerMessage = null;
             if (marker === 'CALL') {
