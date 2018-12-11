@@ -200,140 +200,145 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
         {
             xtype: 'panel',
             title: 'Профиль',
-            items: [{
-                xtype: 'checkbox',
-                boxLabel: 'Все',
-                reference: 'allProfile',
-                checked: true,
-                inputValue: 'ALL',
-                margin: '5px 10px 0px 10px',
-                listeners: {
-                    change: function (checkbox, checked) {
-                        if (checked === true) {
-                            Ext.getCmp('profileGroupId').items.each(function (item) {
-                                item.setValue(true);
-                            })
-                        }
-                        if (checked === false) {
-                            var i = true;
-                            Ext.getCmp('profileGroupId').items.each(function (item) {
-                                if (item.checked === false) {
-                                    i = false;
-                                }
-                            });
-                            if (i === true) {
+            height:150,
+
+                items: [{
+                    xtype: 'checkbox',
+                    boxLabel: 'Все',
+                    reference: 'allProfile',
+                    checked: true,
+                    inputValue: 'ALL',
+                    margin: '5px 10px 0px 10px',
+                    listeners: {
+                        change: function (checkbox, checked) {
+                            if (checked === true) {
                                 Ext.getCmp('profileGroupId').items.each(function (item) {
-                                    item.setValue(false);
+                                    item.setValue(true);
                                 })
                             }
-                        }
-                    }
-                }
-            }, {
-                xtype: 'checkboxgroup',
-                id: 'profileGroupId',
-                reference: 'profileBrigadeFilter',
-                columns: 1,
-                vertical: true,
-                margin: '0px 5px 5px 5px',
-                items: [{
-                    boxLabel: 'ВБ',
-                    checked: true,
-                    inputValue: 'ВБ',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                    {
-                        boxLabel: 'ФБ',
-                        checked: true,
-                        inputValue: 'ФБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'РХБ',
-                        checked: true,
-                        inputValue: 'РХБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'ПсихБ',
-                        checked: true,
-                        inputValue: 'ПсихБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'СКБ',
-                        checked: true,
-                        inputValue: 'СКБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'ПРБ',
-                        checked: true,
-                        inputValue: 'ПРБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'ПБ',
-                        checked: true,
-                        inputValue: 'ПБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'Б/перс',
-                        checked: true,
-                        inputValue: 'Б/перс',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                            if (checked === false) {
+                                var i = true;
+                                Ext.getCmp('profileGroupId').items.each(function (item) {
+                                    if (item.checked === false) {
+                                        i = false;
+                                    }
+                                });
+                                if (i === true) {
+                                    Ext.getCmp('profileGroupId').items.each(function (item) {
+                                        item.setValue(false);
+                                    })
                                 }
                             }
                         }
                     }
-                ]
-            }]
+                }, {
+                    xtype: 'checkboxgroup',
+                    id: 'profileGroupId',
+                    reference: 'profileBrigadeFilter',
+                    columns: 2,
+                    vertical: true,
+                    margin: '0px 5px 5px 5px',
+                    items: [{
+                        boxLabel: 'ВБ',
+                        checked: true,
+                        inputValue: 'ВБ',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                        {
+                            boxLabel: 'ФБ',
+                            checked: true,
+                            inputValue: 'ФБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'РХБ',
+                            checked: true,
+                            inputValue: 'РХБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'ПсихБ',
+                            checked: true,
+                            inputValue: 'ПсихБ',
+                            width:100,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'СКБ',
+                            checked: true,
+                            inputValue: 'СКБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'ПРБ',
+                            checked: true,
+                            inputValue: 'ПРБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'ПБ',
+                            checked: true,
+                            inputValue: 'ПБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'Б/перс',
+                            checked: true,
+                            inputValue: 'Б/перс',
+                            width: 70,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }]
+
         },
         {
             xtype: 'panel',
