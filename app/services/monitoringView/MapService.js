@@ -172,14 +172,17 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
     addMarkers: function () {
         var me = this;
         me.brigadesMarkers.forEach(function (brigade) {
-            me.objectManager.add(brigade);
+            if (brigade.customOptions.status !== 'WITHOUT_SHIFT') {
+                me.objectManager.add(brigade);
+            }
         });
         me.callMarkers.forEach(function (call) {
-            if (call.customOptions.status !== "COMPLETED") {
+            if (call.customOptions.status !== 'COMPLETED') {
                 me.objectManager.add(call);
             }
         });
         me.map.geoObjects.add(me.objectManager);
+        me.addButtonsBrigadeOnPanel();
     },
 
     addMarkersSocket: function (marker) {
@@ -188,12 +191,17 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             if (me.objectManager.objects.getById(marker.id) != null) {
                 var t = me.objectManager.objects.getById(marker.id);
                 me.objectManager.objects.remove(t);
+                if (marker.customOptions.status === 'WITHOUT_SHIFT') {
+                    me.addButtonsBrigadeOnPanel();
+                }
             }
             if (me.filterBrigadeArray.indexOf(marker.customOptions.station) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.status) === -1 &&
-                me.filterBrigadeArray.indexOf(marker.customOptions.profile) === -1) {
+                me.filterBrigadeArray.indexOf(marker.customOptions.profile) === -1 &&
+                marker.customOptions.status !== 'WITHOUT_SHIFT') {
                 function func() {
                     me.objectManager.objects.add(marker);
+                    Ext.fireEvent('getButtonBrigadeForChangeButton', marker);
                 }
 
                 setTimeout(func, 20);
@@ -216,6 +224,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     addButtonsBrigadeOnPanel: function () {
         Ext.fireEvent('addButtonsBrigadeOnPanel');
+    },
+    addStationFilter: function () {
         Ext.fireEvent('addStationFilter');
     },
 
@@ -300,21 +310,24 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                         },
                         properties: {
                             hintContent: 'Бригада ' + brigade.get('brigadeNum'),
-                            iconContent: brigade.get('brigadeNum')+"("+brigade.get('profile')+")"
+                            iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                         }
                     })
                 }
             });
-            me.addButtonsBrigadeOnPanel();
+            me.addStationFilter();
             me.storeCall(urlCall);
         })
     },
 
     readStation: function (station) {
         var me = this;
-        station.forEach(function (st) {
-            me.station.push(Ext.String.trim(st));
-        });
+
+        if (station !== undefined) {
+            station.forEach(function (st) {
+                me.station.push(Ext.String.trim(st));
+            });
+        }
         var t = Ext.Object.toQueryString({
                 stations: me.station
             }),
@@ -353,7 +366,9 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                         iconImageHref: 'resources/icon/' + call.get('iconName')
                     }
                 };
-                me.callMarkers.push(marker);
+                if (call.get('status') !== 'COMPLETED') {
+                    me.callMarkers.push(marker);
+                }
             }
             me.addMarkersSocket(marker);
         });
@@ -389,17 +404,20 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                     },
                     properties: {
                         hintContent: 'Бригада ' + brigade.get('brigadeNum'),
-                        iconContent: brigade.get('brigadeNum')+"("+brigade.get('profile')+")"
+                        iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                     }
                 };
-                me.brigadesMarkers.push(marker);
+                if (brigade.get('status') !== 'WITHOUT_SHIFT') {
+                    me.brigadesMarkers.push(marker);
+                }
             }
+
             me.addMarkersSocket(marker);
         });
-
     },
 
     resizeMap: function () {
         this.map.container.fitToViewport();
     }
-});
+})
+;

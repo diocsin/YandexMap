@@ -14,7 +14,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             checkedStationBrigade: 'checkedStationBrigade',
             checkedCallStatus: 'checkedCallStatus',
             addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
-            addStationFilter: 'addStationFilter'
+            addStationFilter: 'addStationFilter',
+            getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton'
         }
     },
 
@@ -82,6 +83,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.station) {
                     me.Monitoring.objectManager.objects.remove(brigade);
+
                 }
             });
             me.Monitoring.callMarkers.forEach(function (call) {
@@ -119,6 +121,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allStation').setValue(true)
             }
         }
+        me.addButtonsBrigadeOnPanel();
     },
 
     checkedProfileBrigade: function (checkbox) {
@@ -163,6 +166,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allProfile').setValue(true)
             }
         }
+        me.addButtonsBrigadeOnPanel();
     },
 
     checkedStatusBrigade: function (checkbox) {
@@ -207,6 +211,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allStatus').setValue(true)
             }
         }
+        me.addButtonsBrigadeOnPanel();
     },
 
     mainBoxReady: function () {
@@ -276,7 +281,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             filterBrigadeArray: me.filterBrigadeArray,
             filterCallArray: me.filterCallArray,
             urlGeodata: me.urlGeodata,
-            getStoreMarkerInfo: me.getStoreMarkerInfo
+            getStoreMarkerInfo: me.getStoreMarkerInfo,
+            getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
         });
         me.Monitoring.optionsObjectManager();
         ASOV.setMapManager({
@@ -286,6 +292,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();
         });
+        setInterval(function () {
+            window.location.reload();
+        }, 1800000);
     },
 
     addStationFilter: function () {
@@ -308,28 +317,48 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         })
     },
 
+    getButtonBrigadeForChangeButton: function (brigade) {
+        var me = this;
+        var buttonBrigade = me.lookupReference('BrigadePanel');
+        var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
+        if (brigadeHave === undefined) {
+            me.addButtonsBrigadeOnPanel();
+        }
+        else {
+
+        }
+    },
+
+
     addButtonsBrigadeOnPanel: function () {
         var me = this,
             buttonBrigade = me.lookupReference('BrigadePanel'),
-            brigadeSort = me.Monitoring.brigadesMarkers;
+            brigadeSort = [];
+        me.Monitoring.objectManager.objects.getAll().forEach(function (object) {
+            if (object.customOptions.objectType === 'BRIGADE') {
+                brigadeSort.push(object);
+            }
+        });
         buttonBrigade.removeAll();
         brigadeSort.sort(function (a, b) {
             return a.customOptions.brigadeNum - b.customOptions.brigadeNum
         });
         brigadeSort.forEach(function (e) {
-            buttonBrigade.add(Ext.create('Ext.Button', {
-                text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
-                maxWidth: 110,
-                minWidth: 110,
-                margin: 5,
-                listeners: {
-                    click: function (r) {
-                        var infoMarker = me.getStoreMarkerInfo(e);
-                        me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker);
+                buttonBrigade.add(Ext.create('Ext.Button', {
+                    itemId: 'id' + e.id,
+                    text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
+                    maxWidth: 110,
+                    minWidth: 110,
+                    margin: 5,
+                    listeners: {
+                        click: function (r) {
+                            me.Monitoring.map.setCenter([e.geometry.coordinates[0], e.geometry.coordinates[1]], 14);
+                            var infoMarker = me.getStoreMarkerInfo(e);
+                            me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker);
+                        }
                     }
-                }
-            }))
-        })
+                }))
+        });
     },
     getStoreMarkerInfo: function (object) {
         var me = this,
@@ -464,7 +493,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 if (marker.customOptions.status === 'ASSIGNED') {
                     return 'Исполнение'
                 }
-                return""
+                return ""
             }
 
             if (marker.customOptions.objectType === 'CALL') {
