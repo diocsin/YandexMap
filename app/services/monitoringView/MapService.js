@@ -217,7 +217,6 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 me.filterCallArray.indexOf(marker.customOptions.station) === -1 &&
                 marker.customOptions.status !== "COMPLETED") {
                 me.objectManager.objects.add(marker);
-                me.map.geoObjects.add(me.objectManager);
             }
         }
     },
