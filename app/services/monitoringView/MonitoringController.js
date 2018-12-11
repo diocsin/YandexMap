@@ -25,7 +25,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         var searchTrue = null;
         var searchText = Ext.getCmp('searchTextField').getValue();
         me.Monitoring.objectManager.objects.getAll().forEach(function (object) {
-            if (object.customOptions.brigadeNum=== searchText) {
+            if (object.customOptions.brigadeNum === searchText) {
                 me.Monitoring.map.setCenter([object.geometry.coordinates[0], object.geometry.coordinates[1]], 14);
                 searchTrue = object;
                 return;
@@ -82,154 +82,163 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     },
 
     checkedStationBrigade: function (checkbox) {
-        var me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            stationFilter = this.lookupReference('stationFilter');
-        if (checkboxChecked === false) {
-            me.filterCallArray.push(checkboxValue);
-            me.filterBrigadeArray.push(checkboxValue);
-            var i = 0;
-            stationFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    i++
+        function func(checkbox, me) {
+            var checkboxValue = checkbox.inputValue,
+                checkboxChecked = checkbox.checked,
+                stationFilter = me.lookupReference('stationFilter');
+            if (checkboxChecked === false) {
+                me.filterCallArray.push(checkboxValue);
+                me.filterBrigadeArray.push(checkboxValue);
+                var i = 0;
+                stationFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        i++
+                    }
+                });
+                if (stationFilter.items.length === i + 1) {
+                    me.lookupReference('allStation').setValue(false)
                 }
-            });
-            if (stationFilter.items.length === i + 1) {
-                me.lookupReference('allStation').setValue(false)
-            }
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.station) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.station) {
+                        me.Monitoring.objectManager.objects.remove(brigade);
 
-                }
-            });
-            me.Monitoring.callMarkers.forEach(function (call) {
-                if (checkboxValue === call.customOptions.station) {
-                    me.Monitoring.objectManager.objects.remove(call);
-                }
-            })
-        }
-        if (checkboxChecked === true) {
-            var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
-                indexCall = me.filterCallArray.indexOf(checkboxValue),
-                j = 0;
-            me.filterBrigadeArray.splice(indexBrigade, 1);
-            me.filterCallArray.splice(indexCall, 1);
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.station) {
-                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
                     }
-                }
-            });
-            me.Monitoring.callMarkers.forEach(function (call) {
-                if (checkboxValue === call.customOptions.station) {
-                    if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
-                        me.Monitoring.objectManager.objects.add(call);
+                });
+                me.Monitoring.callMarkers.forEach(function (call) {
+                    if (checkboxValue === call.customOptions.station) {
+                        me.Monitoring.objectManager.objects.remove(call);
                     }
-                }
-            });
-            stationFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    j++
-                }
-            });
-            if (stationFilter.items.length === j) {
-                me.lookupReference('allStation').setValue(true)
+                })
             }
+            if (checkboxChecked === true) {
+                var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
+                    indexCall = me.filterCallArray.indexOf(checkboxValue),
+                    j = 0;
+                me.filterBrigadeArray.splice(indexBrigade, 1);
+                me.filterCallArray.splice(indexCall, 1);
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.station) {
+                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
+                            me.Monitoring.objectManager.objects.add(brigade);
+                        }
+                    }
+                });
+                me.Monitoring.callMarkers.forEach(function (call) {
+                    if (checkboxValue === call.customOptions.station) {
+                        if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
+                            me.Monitoring.objectManager.objects.add(call);
+                        }
+                    }
+                });
+                stationFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        j++
+                    }
+                });
+                if (stationFilter.items.length === j) {
+                    me.lookupReference('allStation').setValue(true)
+                }
+            }
+            me.addButtonsBrigadeOnPanel();
         }
-        me.addButtonsBrigadeOnPanel();
+
+        setTimeout(func(checkbox, this), 30);
     },
 
     checkedProfileBrigade: function (checkbox) {
-        var me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            profileBrigadeFilter = this.lookupReference('profileBrigadeFilter');
-        if (checkboxChecked === false) {
-            me.filterBrigadeArray.push(checkboxValue);
-            var i = 0;
-            profileBrigadeFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    i++
-                }
-            });
-            if (profileBrigadeFilter.items.length === i + 1) {
-                me.lookupReference('allProfile').setValue(false)
-            }
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.profile) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
-                }
-            })
-        }
-        if (checkboxChecked === true) {
-            var index = me.filterBrigadeArray.indexOf(checkboxValue),
-                j = 0;
-            me.filterBrigadeArray.splice(index, 1);
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.profile) {
-                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
+        function func(checkbox, me) {
+            var checkboxValue = checkbox.inputValue,
+                checkboxChecked = checkbox.checked,
+                profileBrigadeFilter = me.lookupReference('profileBrigadeFilter');
+            if (checkboxChecked === false) {
+                me.filterBrigadeArray.push(checkboxValue);
+                var i = 0;
+                profileBrigadeFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        i++
                     }
+                });
+                if (profileBrigadeFilter.items.length === i + 1) {
+                    me.lookupReference('allProfile').setValue(false)
                 }
-            });
-            profileBrigadeFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    j++
-                }
-            });
-            if (profileBrigadeFilter.items.length === j) {
-                me.lookupReference('allProfile').setValue(true)
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.profile) {
+                        me.Monitoring.objectManager.objects.remove(brigade);
+                    }
+                })
             }
+            if (checkboxChecked === true) {
+                var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                    j = 0;
+                me.filterBrigadeArray.splice(index, 1);
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.profile) {
+                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                            me.Monitoring.objectManager.objects.add(brigade);
+                        }
+                    }
+                });
+                profileBrigadeFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        j++
+                    }
+                });
+                if (profileBrigadeFilter.items.length === j) {
+                    me.lookupReference('allProfile').setValue(true)
+                }
+            }
+            me.addButtonsBrigadeOnPanel();
         }
-        me.addButtonsBrigadeOnPanel();
+
+        setTimeout(func(checkbox, this), 30);
     },
 
     checkedStatusBrigade: function (checkbox) {
-        var me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            statusBrigadeFilter = this.lookupReference('statusBrigadeFilter');
-        if (checkboxChecked === false) {
-            me.filterBrigadeArray.push(checkboxValue);
-            var i = 0;
-            statusBrigadeFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    i++
-                }
-            });
-            if (statusBrigadeFilter.items.length === i + 1) {
-                me.lookupReference('allStatus').setValue(false)
-            }
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.status) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
-                }
-            })
-        }
-        if (checkboxChecked === true) {
-            var index = me.filterBrigadeArray.indexOf(checkboxValue),
-                j = 0;
-            me.filterBrigadeArray.splice(index, 1);
-            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.status) {
-                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
+        function func(checkbox, me) {
+            var checkboxValue = checkbox.inputValue,
+                checkboxChecked = checkbox.checked,
+                statusBrigadeFilter = me.lookupReference('statusBrigadeFilter');
+            if (checkboxChecked === false) {
+                me.filterBrigadeArray.push(checkboxValue);
+                var i = 0;
+                statusBrigadeFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        i++
                     }
+                });
+                if (statusBrigadeFilter.items.length === i + 1) {
+                    me.lookupReference('allStatus').setValue(false)
                 }
-            });
-            statusBrigadeFilter.items.each(function (checkbox) {
-                if (checkbox.checked === true) {
-                    j++
-                }
-            });
-            if (statusBrigadeFilter.items.length === j) {
-                me.lookupReference('allStatus').setValue(true)
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.status) {
+                        me.Monitoring.objectManager.objects.remove(brigade);
+                    }
+                })
             }
+            if (checkboxChecked === true) {
+                var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                    j = 0;
+                me.filterBrigadeArray.splice(index, 1);
+                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                    if (checkboxValue === brigade.customOptions.status) {
+                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                            me.Monitoring.objectManager.objects.add(brigade);
+                        }
+                    }
+                });
+                statusBrigadeFilter.items.each(function (checkbox) {
+                    if (checkbox.checked === true) {
+                        j++
+                    }
+                });
+                if (statusBrigadeFilter.items.length === j) {
+                    me.lookupReference('allStatus').setValue(true)
+                }
+            }
+            me.addButtonsBrigadeOnPanel();
         }
-        me.addButtonsBrigadeOnPanel();
+
+        setTimeout(func(checkbox, this), 30);
     },
 
     mainBoxReady: function () {
