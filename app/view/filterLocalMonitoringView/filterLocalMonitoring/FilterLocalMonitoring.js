@@ -400,7 +400,41 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     }
 
                 ]
-            }]
+            },
+                {
+                    xtype: 'panel',
+                    title: 'Поиск по номеру бригады',
+                    layout: 'hbox',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            id: 'searchTextField',
+                            name: 'searchBrigade',
+                            margin: '5px 10px 5px 10px',
+                            enableKeyEvents: true,
+                            listeners: {
+                                keypress: function (textfield, eventObject) {
+                                    if (eventObject.getCharCode() === Ext.EventObject.ENTER) {
+                                        Ext.fireEvent('buttonSearch');
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Поиск',
+                            margin: '5px 10px 5px 10px',
+                            listeners: {
+                                click: {
+                                    fn: function () {
+                                        Ext.fireEvent('buttonSearch');
+
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }]
         }
     ]
 });

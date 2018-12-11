@@ -15,7 +15,25 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             checkedCallStatus: 'checkedCallStatus',
             addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
             addStationFilter: 'addStationFilter',
-            getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton'
+            getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton',
+            buttonSearch: 'buttonSearch'
+        }
+    },
+
+    buttonSearch: function () {
+        var me = this;
+        var searchTrue = null;
+        var searchText = Ext.getCmp('searchTextField').getValue();
+        me.Monitoring.objectManager.objects.getAll().forEach(function (object) {
+            if (object.customOptions.brigadeNum=== searchText) {
+                me.Monitoring.map.setCenter([object.geometry.coordinates[0], object.geometry.coordinates[1]], 14);
+                searchTrue = object;
+                return;
+            }
+        });
+
+        if (searchTrue === null) {
+            Ext.getCmp('searchTextField').setActiveError('Не найдена бригада с данным номером');
         }
     },
 
@@ -344,20 +362,20 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             return a.customOptions.brigadeNum - b.customOptions.brigadeNum
         });
         brigadeSort.forEach(function (e) {
-                buttonBrigade.add(Ext.create('Ext.Button', {
-                    itemId: 'id' + e.id,
-                    text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
-                    maxWidth: 110,
-                    minWidth: 110,
-                    margin: 5,
-                    listeners: {
-                        click: function (r) {
-                            me.Monitoring.map.setCenter([e.geometry.coordinates[0], e.geometry.coordinates[1]], 14);
-                            var infoMarker = me.getStoreMarkerInfo(e);
-                            me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker);
-                        }
+            buttonBrigade.add(Ext.create('Ext.Button', {
+                itemId: 'id' + e.id,
+                text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
+                maxWidth: 110,
+                minWidth: 110,
+                margin: 5,
+                listeners: {
+                    click: function (r) {
+                        me.Monitoring.map.setCenter([e.geometry.coordinates[0], e.geometry.coordinates[1]], 14);
+                        var infoMarker = me.getStoreMarkerInfo(e);
+                        me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker);
                     }
-                }))
+                }
+            }))
         });
     },
     getStoreMarkerInfo: function (object) {
