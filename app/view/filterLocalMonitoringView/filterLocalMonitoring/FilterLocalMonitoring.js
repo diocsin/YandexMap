@@ -200,8 +200,6 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
         {
             xtype: 'panel',
             title: 'Профиль',
-            height:150,
-
                 items: [{
                     xtype: 'checkbox',
                     boxLabel: 'Все',

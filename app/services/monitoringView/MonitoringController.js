@@ -380,8 +380,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 listeners: {
                     click: function (r) {
                         me.Monitoring.map.setCenter([e.geometry.coordinates[0], e.geometry.coordinates[1]], 14);
-                        var infoMarker = me.getStoreMarkerInfo(e);
-                        me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker);
+                        //var infoMarker = me.getStoreMarkerInfo(e);   //Для отображения информации о бригаде
+                       // me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker); //Для отображения информации о бригаде
                     }
                 }
             }))
