@@ -346,16 +346,15 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
     getButtonBrigadeForChangeButton: function (brigade) {
         var me = this;
-        me.addButtonsBrigadeOnPanel();
         var buttonBrigade = me.lookupReference('BrigadePanel');
-        /*var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
+        var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
         if (brigadeHave === undefined) {
-
+            me.addButtonsBrigadeOnPanel();
         }
         else {
 
         }
-        */
+
     },
 
 
@@ -381,13 +380,22 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 margin: 5,
                 listeners: {
                     click: function (r) {
-                        me.Monitoring.map.setCenter([e.geometry.coordinates[0], e.geometry.coordinates[1]], 14);
+                        me.clickButton(e);
                         //var infoMarker = me.getStoreMarkerInfo(e);   //Для отображения информации о бригаде
-                       // me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker); //Для отображения информации о бригаде
+                        // me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker); //Для отображения информации о бригаде
                     }
                 }
             }))
         });
+    },
+
+    clickButton: function (object) {
+        var me = this;
+        var t = me.Monitoring.objectManager.objects.getById(object.id);
+        if (t !== null) {
+            me.Monitoring.map.setCenter([t.geometry.coordinates[0], t.geometry.coordinates[1]], 14);
+        }
+
     },
     getStoreMarkerInfo: function (object) {
         var me = this,
