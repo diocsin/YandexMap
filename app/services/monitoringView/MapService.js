@@ -202,7 +202,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 marker.customOptions.status !== 'WITHOUT_SHIFT') {
                 function func() {
                     me.objectManager.objects.add(marker);
-                    Ext.fireEvent('getButtonBrigadeForChangeButton', marker);
+                    //Ext.fireEvent('getButtonBrigadeForChangeButton', marker);
                 }
 
                 setTimeout(func, 20);

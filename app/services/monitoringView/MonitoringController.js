@@ -255,7 +255,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         });
     },
 
-    connect: function () {
+    /*connect: function () {
         var me = this,
             socket = new SockJS(me.urlWebSocket + '/geo');
         me.stompClient = Stomp.over(socket);
@@ -266,8 +266,27 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.showGreeting(JSON.parse(greeting.body));
             });
         });
+    },*/
+    connect: function() {
+        var me = this,
+            socket = new SockJS(me.urlWebSocket + '/geo');
+        me.stompClient = Stomp.over(socket);
+        me.stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                me.stompClient.subscribe('/geo-queue/geodata-updates', function (greeting) {
+                    console.dir(greeting);
+                    me.showGreeting(JSON.parse(greeting.body));
+                });
+            }.bind(this),
+            function(e) {
+                console.error(e, "Reconnecting WS");
+                window.setTimeout(function() {
+                    this.connect();
+                }.bind(this), 2500);
+            }.bind(this)
+        );
     },
-
+    
     showGreeting: function (message) {
         var me = this;
         message.station = '' + message.station;
@@ -346,6 +365,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
     getButtonBrigadeForChangeButton: function (brigade) {
         var me = this;
+
         var buttonBrigade = me.lookupReference('BrigadePanel');
         var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
         if (brigadeHave === undefined) {
