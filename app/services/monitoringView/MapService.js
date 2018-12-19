@@ -189,8 +189,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
     addMarkersSocket: function (marker) {
         var me = this;
         if (marker.customOptions.objectType === 'BRIGADE') {
-            if (me.objectManager.objects.getById(marker.id) != null) {
-                var t = me.objectManager.objects.getById(marker.id);
+            var t = me.objectManager.objects.getById(marker.id);
+            if (t!== null) {
                 me.objectManager.objects.remove(t);
                 if (marker.customOptions.status === 'WITHOUT_SHIFT') {
                     me.addButtonsBrigadeOnPanel();
@@ -209,10 +209,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             }
         }
         if (marker.customOptions.objectType === 'CALL') {
-
-            if (marker.customOptions.status === "COMPLETED" || me.objectManager.objects.getById(marker.id) != null) {
-                me.objectManager.remove(me.objectManager.objects.getById(marker.id));
+        var o = me.objectManager.objects.getById(marker.id);
+            if (o!== null) {
+                me.objectManager.remove(o);
             }
+
 
             if (me.filterCallArray.indexOf(marker.customOptions.status) === -1 &&
                 me.filterCallArray.indexOf(marker.customOptions.station) === -1 &&

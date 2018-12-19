@@ -346,14 +346,16 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
     getButtonBrigadeForChangeButton: function (brigade) {
         var me = this;
+        me.addButtonsBrigadeOnPanel();
         var buttonBrigade = me.lookupReference('BrigadePanel');
-        var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
+        /*var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
         if (brigadeHave === undefined) {
-            me.addButtonsBrigadeOnPanel();
+
         }
         else {
 
         }
+        */
     },
 
 
