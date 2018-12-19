@@ -141,15 +141,16 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
+        me.objectManager.clusters.options.set({
+            zIndex: 3000,
+            maxZoom: 9,
+            groupByCoordinates: true
+        });
         me.objectManager.objects.options.set({
             iconLayout: 'default#image',
             zIndex: 2000,
             iconImageSize: [40, 40]
 
-        });
-        me.objectManager.clusters.options.set({
-            zIndex: 3000,
-            groupByCoordinates: true
         });
         me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
@@ -368,8 +369,9 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 if (call.get('status') !== 'COMPLETED') {
                     me.callMarkers.push(marker);
                 }
+                me.addMarkersSocket(marker);
             }
-            me.addMarkersSocket(marker);
+
         });
         var brigadeRecords = me.viewModel.getStore('Brigades').getData().items;
         brigadeRecords.forEach(function (brigade) {
@@ -409,9 +411,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 if (brigade.get('status') !== 'WITHOUT_SHIFT') {
                     me.brigadesMarkers.push(marker);
                 }
+                me.addMarkersSocket(marker);
             }
-
-            me.addMarkersSocket(marker);
         });
     },
 
