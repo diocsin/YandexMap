@@ -31,6 +31,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             }
                         });
                         if (i === true) {
+                            Ext.fireEvent('deletingAllMarkers');
                             Ext.getCmp('stationGroupId').items.each(function (item) {
                                 item.setValue(false);
                             })

@@ -16,8 +16,14 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
             addStationFilter: 'addStationFilter',
             getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton',
-            buttonSearch: 'buttonSearch'
+            buttonSearch: 'buttonSearch',
+            deletingAllMarkers: 'deletingAllMarkers'
         }
+    },
+
+    deletingAllMarkers: function () {
+        var me = this;
+        me.Monitoring.objectManager.objects.removeAll();
     },
 
     buttonSearch: function () {
@@ -267,9 +273,11 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             });
         });
     },*/
+
     connect: function() {
         var me = this,
             socket = new SockJS(me.urlWebSocket + '/geo');
+        console.dir(me);
         me.stompClient = Stomp.over(socket);
         me.stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
@@ -286,7 +294,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }.bind(this)
         );
     },
-    
+
     showGreeting: function (message) {
         var me = this;
         message.station = '' + message.station;
@@ -331,6 +339,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
         });
         me.Monitoring.optionsObjectManager();
+        me.Monitoring.readStation(['1','2','3','4','9']);
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
@@ -513,6 +522,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             title: 'Кластер',
             layout: 'hbox',
             resizable: false,
+            constrain: true,
             border: 'fit',
             width: 750,
             height: 480,
@@ -844,6 +854,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                                 autoScroll: true,
                                 resizable: false,
                                 width: 500,
+                                constrain: true,
                                 //height: 250,
                                 items: [{
                                     xtype: 'form',
@@ -949,6 +960,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                             Ext.create('Ext.window.Window', {
                                 title: 'Вызов',
                                 layout: 'form',
+                                constrain: true,
                                 id: 'winId',
                                 border: 'fit',
                                 autoScroll: true,
