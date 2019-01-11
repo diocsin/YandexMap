@@ -13,6 +13,7 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
     urlGeodata: null,
     arrRouteForTable: [],
     callMarkersFactRoute: [],
+    MyIconContentLayout: null,
     // ====
     markerClick: Ext.emptyFn,
     // ====
@@ -44,6 +45,9 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
             zIndex: 3000,
             groupByCoordinates: true
         });
+        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
+        );
 
     },
 
@@ -166,10 +170,14 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                             coordinates: [brigade.get('latitude'), brigade.get('longitude')]
                         },
                         options: {
-                            iconImageHref: 'resources/icon/' + brigade.get('iconName')
+                            iconLayout: 'default#imageWithContent',
+                            iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                            iconContentLayout: me.MyIconContentLayout,
+                            iconImageOffset: [-24, -24],
+                            iconContentOffset: [30, -10],
                         },
                         properties: {
-                            hintContent: 'Бригада ' + brigade.get('brigadeNum')
+                            iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                         }
                     })
                 }
@@ -190,10 +198,14 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                                 coordinates: [brigade.get('latitude'), brigade.get('longitude')]
                             },
                             options: {
-                                iconImageHref: 'resources/icon/' + brigade.get('iconName')
+                                iconLayout: 'default#imageWithContent',
+                                iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                                iconContentLayout: me.MyIconContentLayout,
+                                iconImageOffset: [-24, -24],
+                                iconContentOffset: [30, -10],
                             },
                             properties: {
-                                hintContent: 'Бригада ' + brigade.get('brigadeNum')
+                                iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                             }
                         })
                     }
@@ -216,10 +228,14 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                                         coordinates: [brigade.latitude, brigade.longitude]
                                     },
                                     options: {
-                                        iconImageHref: 'resources/icon/free.png'
+                                        iconLayout: 'default#imageWithContent',
+                                        iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                                        iconContentLayout: me.MyIconContentLayout,
+                                        iconImageOffset: [-24, -24],
+                                        iconContentOffset: [30, -10],
                                     },
                                     properties: {
-                                        hintContent: 'Бригада ' + brigade.brigadeNum
+                                        iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                                     }
                                 })
                             }

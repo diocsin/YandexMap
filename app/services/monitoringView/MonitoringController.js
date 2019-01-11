@@ -274,7 +274,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         });
     },*/
 
-    connect: function() {
+    connect: function () {
         var me = this,
             socket = new SockJS(me.urlWebSocket + '/geo');
         console.dir(me);
@@ -282,13 +282,12 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         me.stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
                 me.stompClient.subscribe('/geo-queue/geodata-updates', function (greeting) {
-                    console.dir(greeting);
                     me.showGreeting(JSON.parse(greeting.body));
                 });
             }.bind(this),
-            function(e) {
+            function (e) {
                 console.error(e, "Reconnecting WS");
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     this.connect();
                 }.bind(this), 2500);
             }.bind(this)
@@ -301,13 +300,13 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         if (me.Monitoring.station.indexOf(message.station) !== -1) {
             if (message.objectType === 'BRIGADE') {
                 var storeBrigades = me.getViewModel().getStore('Brigades');
-                storeBrigades.loadRawData(message);
-                me.Monitoring.createMarkers();
+                storeBrigades.add(message);
+                console.dir(message);
+                console.dir(storeBrigades);
             }
             if (message.objectType === 'CALL') {
                 var storeCalls = me.getViewModel().getStore('Calls');
-                storeCalls.loadRawData(message);
-                me.Monitoring.createMarkers();
+                storeCalls.add(message);
             }
         }
     },
@@ -343,6 +342,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
+        me.Monitoring.readStation(['9']);
         var ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();
@@ -531,17 +531,17 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             items: [{
                 xtype: 'panel',
                 id: 'markerInClustersId',
+                scrollable: 'vertical',
                 autoScroll: true,
                 layout: 'vbox',
                 height: '100%',
-                width: '25%'
+                width: '27%'
             },
                 {
                     xtype: 'panel',
                     id: 'infoMarkerId',
-                    autoScroll: true,
                     height: '100%',
-                    width: '75%'
+                    width: '73%'
                 }
             ]
         }).showAt(coords);
@@ -592,7 +592,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                                             infoMarker.add(Ext.create('Ext.Panel', {
                                                 layout: 'form',
                                                 border: 'fit',
-                                                autoScroll: true,
                                                 resizable: false,
                                                 width: '100%',
                                                 items: me.callInfoForm,
@@ -676,12 +675,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                                             infoMarker.add(Ext.create('Ext.Panel', {
                                                 layout: 'form',
                                                 border: 'fit',
-                                                autoScroll: true,
-                                                resizable: false,
                                                 width: '100%',
                                                 items: [{
                                                     xtype: 'form',
-                                                    autoScroll: true,
                                                     height: '100%',
                                                     width: '100%',
                                                     items: [{
@@ -785,6 +781,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             win = Ext.WindowManager.getActive();
         if (win) {
             win.close();
+
         }
 
         sizeCmp.width = sizeCmp.width * 1.55;

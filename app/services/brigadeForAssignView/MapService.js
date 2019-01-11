@@ -11,6 +11,7 @@ Ext.define('Isidamaps.services.brigadeForAssignView.MapService', {
     urlGeodata: null,
     arrRouteForTable: [],
     errorBrigades: [],
+    MyIconContentLayout: null,
 
     // ====.
     markerClick: Ext.emptyFn,
@@ -45,6 +46,9 @@ Ext.define('Isidamaps.services.brigadeForAssignView.MapService', {
             zIndex: 3000,
             groupByCoordinates: true
         });
+        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
+        );
     },
     callback: function () {
         var me = this;
@@ -258,10 +262,14 @@ Ext.define('Isidamaps.services.brigadeForAssignView.MapService', {
                                 coordinates: [brigade.get('latitude'), brigade.get('longitude')]
                             },
                             options: {
-                                iconImageHref: 'resources/icon/' + brigade.get('iconName')
+                                iconLayout: 'default#imageWithContent',
+                                iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                                iconContentLayout: me.MyIconContentLayout,
+                                iconImageOffset: [-24, -24],
+                                iconContentOffset: [30, -10],
                             },
                             properties: {
-                                hintContent: 'Бригада ' + brigade.get('brigadeNum')
+                                iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
                             }
                         })
                     } else {

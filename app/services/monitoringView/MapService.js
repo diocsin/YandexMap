@@ -190,7 +190,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         var me = this;
         if (marker.customOptions.objectType === 'BRIGADE') {
             var t = me.objectManager.objects.getById(marker.id);
-            if (t!== null) {
+            if (t !== null) {
                 me.objectManager.objects.remove(t);
                 if (marker.customOptions.status === 'WITHOUT_SHIFT') {
                     me.addButtonsBrigadeOnPanel();
@@ -209,8 +209,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             }
         }
         if (marker.customOptions.objectType === 'CALL') {
-        var o = me.objectManager.objects.getById(marker.id);
-            if (o!== null) {
+            var o = me.objectManager.objects.getById(marker.id);
+            if (o !== null) {
                 me.objectManager.remove(o);
             }
 
@@ -341,84 +341,97 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         me.brigadesMarkers = [];
         me.callMarkers = [];
         me.storeBrigade(urlBrigade, urlCall);
+        me.listenerStore();
     },
 
-    createMarkers: function () {
-        var me = this,
-            callRecords = me.viewModel.getStore('Calls').getData().items;
-        callRecords.forEach(function (call) {
-            me.callMarkers.forEach(function (callInArray) {
-                if (callInArray.id === call.get('callCardId')) {
-                    var index = me.callMarkers.indexOf(callInArray);
-                    me.callMarkers.splice(index, 1);
-                }
-            });
-            if (call.get('latitude') !== undefined && call.get('longitude') !== undefined) {
-                var marker = {
-                    type: 'Feature',
-                    id: call.get('callCardId'),
-                    customOptions: {
-                        objectType: call.get('objectType'),
-                        status: call.get('status'),
-                        callCardNum: call.get('callCardNum'),
-                        station: '' + call.get('station')
-                    },
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [call.get('latitude'), call.get('longitude')]
-                    },
-                    options: {
-                        iconImageHref: 'resources/icon/' + call.get('iconName')
-                    }
-                };
-                if (call.get('status') !== 'COMPLETED') {
-                    me.callMarkers.push(marker);
-                }
-                me.addMarkersSocket(marker);
-            }
+    listenerStore: function () {
+        var me = this;
+        me.viewModel.getStore('Brigades').on('add', function (store, records, index) {
+            this.createBrigadeOfSocked(records)
+        }, this);
+        me.viewModel.getStore('Calls').on('add', function (store, records, index) {
+            this.createCallOfSocked(records)
+        }, this);
+    },
 
-        });
-        var brigadeRecords = me.viewModel.getStore('Brigades').getData().items;
-        brigadeRecords.forEach(function (brigade) {
-            me.brigadesMarkers.forEach(function (brigadeInArray) {
-                if (brigadeInArray.id === brigade.get('deviceId')) {
-                    var index = me.brigadesMarkers.indexOf(brigadeInArray);
-                    me.brigadesMarkers.splice(index, 1);
+    createCallOfSocked: function (calls) {
+        var me = this,
+            call = calls[0];
+        if (call.get('latitude') !== undefined && call.get('longitude') !== undefined) {
+            var marker = {
+                type: 'Feature',
+                id: call.get('callCardId'),
+                customOptions: {
+                    objectType: call.get('objectType'),
+                    status: call.get('status'),
+                    callCardNum: call.get('callCardNum'),
+                    station: '' + call.get('station')
+                },
+                geometry: {
+                    type: 'Point',
+                    coordinates: [call.get('latitude'), call.get('longitude')]
+                },
+                options: {
+                    iconImageHref: 'resources/icon/' + call.get('iconName')
+                }
+            };
+            var callHas = Ext.Array.findBy(me.callMarkers, function (callInArray, index) {
+                if (callInArray.id === call.get('callCardId')) {
+                    return callInArray;
                 }
             });
-            if (brigade.get('latitude') !== undefined && brigade.get('longitude') !== undefined) {
-                var marker = {
-                    type: 'Feature',
-                    id: brigade.get('deviceId'),
-                    customOptions: {
-                        objectType: brigade.get('objectType'),
-                        profile: brigade.get('profile'),
-                        status: brigade.get('status'),
-                        station: '' + brigade.get('station'),
-                        brigadeNum: brigade.get('brigadeNum')
-                    },
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [brigade.get('latitude'), brigade.get('longitude')]
-                    },
-                    options: {
-                        iconLayout: 'default#imageWithContent',
-                        iconImageHref: 'resources/icon/' + brigade.get('iconName'),
-                        iconContentLayout: me.MyIconContentLayout,
-                        iconImageOffset: [-24, -24],
-                        iconContentOffset: [30, -10],
-                    },
-                    properties: {
-                        hintContent: 'Бригада ' + brigade.get('brigadeNum'),
-                        iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
-                    }
-                };
-                if (brigade.get('status') !== 'WITHOUT_SHIFT') {
-                    me.brigadesMarkers.push(marker);
-                }
-                me.addMarkersSocket(marker);
+            Ext.Array.remove(me.callMarkers, callHas);
+            if (call.get('status') !== 'COMPLETED') {
+                Ext.Array.push(me.callMarkers, marker);
             }
-        });
+            me.addMarkersSocket(marker);
+            me.viewModel.getStore('Calls').clearData();
+        }
+    },
+
+    createBrigadeOfSocked: function (brigades) {
+        var me = this,
+            brigade = brigades[0];
+
+        if (brigade.get('latitude') !== undefined && brigade.get('longitude') !== undefined) {
+            var marker = {
+                type: 'Feature',
+                id: brigade.get('deviceId'),
+                customOptions: {
+                    objectType: brigade.get('objectType'),
+                    profile: brigade.get('profile'),
+                    status: brigade.get('status'),
+                    station: '' + brigade.get('station'),
+                    brigadeNum: brigade.get('brigadeNum')
+                },
+                geometry: {
+                    type: 'Point',
+                    coordinates: [brigade.get('latitude'), brigade.get('longitude')]
+                },
+                options: {
+                    iconLayout: 'default#imageWithContent',
+                    iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                    iconContentLayout: me.MyIconContentLayout,
+                    iconImageOffset: [-24, -24],
+                    iconContentOffset: [30, -10],
+                },
+                properties: {
+                    iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
+                }
+            };
+            var brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
+                if (brigadeInArray.id === brigade.get('deviceId')) {
+                    return brigadeInArray;
+                }
+            });
+            Ext.Array.remove(me.brigadesMarkers, brigadeHas);
+
+            if (brigade.get('status') !== 'WITHOUT_SHIFT') {
+                Ext.Array.push(me.brigadesMarkers, marker);
+            }
+            me.addMarkersSocket(marker);
+            me.viewModel.getStore('Brigades').clearData();
+        }
     },
 
     resizeMap: function () {
