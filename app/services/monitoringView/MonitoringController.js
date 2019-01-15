@@ -338,11 +338,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
         });
         me.Monitoring.optionsObjectManager();
-        me.Monitoring.readStation(['1','2','3','4','9']);
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        me.Monitoring.readStation(['9']);
         var ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();

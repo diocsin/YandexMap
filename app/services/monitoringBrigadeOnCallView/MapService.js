@@ -104,6 +104,15 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCallView.MapService', {
         me.listenerStore();
     },
 
+    createCallAlert: function () {
+        Ext.create('Ext.window.MessageBox').show({
+            title: 'Ошибка',
+            message: 'Нет координат вызова',
+            icon: Ext.Msg.ERROR,
+            buttons: Ext.Msg.OK
+        })
+    },
+
     listenerStore: function () {
         var me = this;
         me.viewModel.getStore('Brigades').on('add', function (store, records, index) {
