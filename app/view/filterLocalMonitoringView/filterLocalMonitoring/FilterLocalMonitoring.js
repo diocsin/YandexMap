@@ -43,7 +43,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             xtype: 'checkboxgroup',
             id: 'stationGroupId',
             reference: 'stationFilter',
-            columns: 3,
+            columns: 4,
             vertical: true,
             margin: '0px 5px 5px 5px'
         }]
@@ -234,7 +234,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     xtype: 'checkboxgroup',
                     id: 'profileGroupId',
                     reference: 'profileBrigadeFilter',
-                    columns: 2,
+                    columns: 3,
                     vertical: true,
                     margin: '0px 5px 5px 5px',
                     items: [{
@@ -253,6 +253,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             boxLabel: 'ФБ',
                             checked: true,
                             inputValue: 'ФБ',
+                            width:100,
                             listeners: {
                                 change: {
                                     fn: function (checkbox, checked) {
@@ -290,18 +291,6 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             boxLabel: 'СКБ',
                             checked: true,
                             inputValue: 'СКБ',
-                            listeners: {
-                                change: {
-                                    fn: function (checkbox, checked) {
-                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            boxLabel: 'ПРБ',
-                            checked: true,
-                            inputValue: 'ПРБ',
                             listeners: {
                                 change: {
                                     fn: function (checkbox, checked) {
@@ -375,13 +364,14 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 xtype: 'checkboxgroup',
                 id: 'callGroupId',
                 reference: 'callStatusFilter',
-                columns: 1,
+                columns: 2,
                 vertical: true,
                 margin: '0px 5px 5px 5px',
                 items: [{
                     boxLabel: 'Новые',
                     checked: true,
                     inputValue: 'NEW',
+                    width:100,
                     listeners: {
                         change: {
                             fn: function (checkbox, checked) {

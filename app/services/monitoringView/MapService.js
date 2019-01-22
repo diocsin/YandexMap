@@ -323,10 +323,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     readStation: function (station) {
         var me = this;
-
         if (station !== undefined) {
             station.forEach(function (st) {
-                me.station.push(Ext.String.trim(st));
+                if (Ext.String.trim(st) !== '20') {
+                    me.station.push(Ext.String.trim(st));
+                }
             });
         }
         var statuses = ['NEW', 'ASSIGNED'];
