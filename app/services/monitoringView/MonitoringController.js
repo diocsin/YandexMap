@@ -345,9 +345,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();
         });
-        setInterval(function () {
-            window.location.reload();
-        }, 1800000);
     },
 
     addStationFilter: function () {
