@@ -7,18 +7,46 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     stompClient: null,
     urlGeodata: null,
     urlWebSocket: null,
+    stateStatusBrigades: null,
+    stateStation: null,
+    stateProfileBrigades: null,
+    stateStatusCalls: null,
     listen: {
         global: {
             checkedProfileBrigade: 'checkedProfileBrigade',
             checkedStatusBrigade: 'checkedStatusBrigade',
-            checkedStationBrigade: 'checkedStationBrigade',
             checkedCallStatus: 'checkedCallStatus',
+            checkedStationBrigade: 'checkedStationBrigade',
+            setStateStatusBrigades: 'setStateStatusBrigades',
+            setStateStation: 'setStateStation',
+            setStateProfileBrigades: 'setStateProfileBrigades',
+            setStateStatusCalls: 'setStateStatusCalls',
             addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
             addStationFilter: 'addStationFilter',
             getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton',
             buttonSearch: 'buttonSearch',
             deletingAllMarkers: 'deletingAllMarkers'
         }
+    },
+
+    setStateStatusBrigades: function (state) {
+        const me = this;
+        me.stateStatusBrigades = state;
+    },
+
+    setStateStation: function (state) {
+        const me = this;
+        me.stateStation = state;
+    },
+
+    setStateProfileBrigades: function (state) {
+        const me = this;
+        me.stateProfileBrigades = state;
+    },
+
+    setStateStatusCalls: function (state) {
+        const me = this;
+        me.stateStatusCalls = state;
     },
 
     deletingAllMarkers: function () {
@@ -250,6 +278,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     mainBoxReady: function () {
         var me = this,
             property = me.getViewModel().getStore('Property');
+
         property.load(function (records) {
             records.forEach(function (data) {
                 me.urlGeodata = data.get('urlGeodata');
@@ -277,7 +306,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     connect: function () {
         var me = this,
             socket = new SockJS(me.urlWebSocket + '/geo');
-        console.dir(me);
         me.stompClient = Stomp.over(socket);
         me.stompClient.connect({}, function (frame) {
                 console.log('Connected: ' + frame);
@@ -301,8 +329,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             if (message.objectType === 'BRIGADE') {
                 var storeBrigades = me.getViewModel().getStore('Brigades');
                 storeBrigades.add(message);
-                console.dir(message);
-                console.dir(storeBrigades);
             }
             if (message.objectType === 'CALL') {
                 var storeCalls = me.getViewModel().getStore('Calls');
@@ -325,7 +351,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 [60.007645, 30.092139],
                 [59.923862, 30.519157]
             ];
-        me.connect();
+
         me.Monitoring = Ext.create('Isidamaps.services.monitoringView.MapService', {
             viewModel: me.getViewModel(),
             markerClick: me.markerClick,
@@ -336,15 +362,50 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             urlGeodata: me.urlGeodata,
             getStoreMarkerInfo: me.getStoreMarkerInfo,
             getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
+            setCheckbox: me.setCheckbox.bind(me),
         });
         me.Monitoring.optionsObjectManager();
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
+        me.setFilterBrigadeAndCall();
+        me.connect();
         var ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();
         });
+
+
+    },
+
+    setFilterBrigadeAndCall: function () {
+        const me = this;
+        me.lookupReference('profileBrigadeFilter').eachBox(function (item) {
+            me.filterBrigadeArray.push(item.inputValue);
+        });
+        me.lookupReference('statusBrigadeFilter').eachBox(function (item) {
+            me.filterBrigadeArray.push(item.inputValue);
+        });
+        me.Monitoring.station.forEach(function (item) {
+            me.filterBrigadeArray.push(item);
+            me.filterCallArray.push(item);
+        });
+        me.lookupReference('callStatusFilter').eachBox(function (item) {
+            me.filterCallArray.push(item.inputValue);
+        });
+    },
+
+    setCheckbox: function () {
+        const me = this;
+        try {
+            me.lookupReference('stationFilter').setValue(me.stateStation.checked);
+            me.lookupReference('profileBrigadeFilter').setValue(me.stateProfileBrigades.checked);
+            me.lookupReference('statusBrigadeFilter').setValue(me.stateStatusBrigades.checked);
+            me.lookupReference('callStatusFilter').setValue(me.stateStatusCalls.checked);
+        }
+       catch (e) {
+
+       }
     },
 
     addStationFilter: function () {
@@ -355,7 +416,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             checkboxStation.add(Ext.create('Ext.form.field.Checkbox', {
                 boxLabel: rec,
                 inputValue: rec,
-                checked: true,
+                checked: false,
                 listeners: {
                     change: {
                         fn: function (checkbox, checked) {
@@ -364,7 +425,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                     }
                 }
             }));
-        })
+        });
     },
 
     getButtonBrigadeForChangeButton: function (brigade) {

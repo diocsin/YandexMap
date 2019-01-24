@@ -14,6 +14,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
     markerClick: Ext.emptyFn,
     clustersClick: Ext.emptyFn,
     getStoreMarkerInfo: Ext.emptyFn,
+    setCheckbox: Ext.emptyFn,
     // ====
     callInfoForm: [{
         xtype: 'form',
@@ -131,10 +132,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         me.filterCallArray = options.filterCallArray;
         me.urlGeodata = options.urlGeodata;
         me.getStoreMarkerInfo = options.getStoreMarkerInfo;
-        me.map = new ymaps.Map('mapId-innerCt', {
-            bounds: me.boundsMap,
-            controls: ['trafficControl']
-        });
+        me.setCheckbox = options.setCheckbox,
+            me.map = new ymaps.Map('mapId-innerCt', {
+                bounds: me.boundsMap,
+                controls: ['trafficControl']
+            });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
             clusterize: true,
@@ -172,18 +174,21 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     addMarkers: function () {
         var me = this;
-        me.brigadesMarkers.forEach(function (brigade) {
+        /*me.brigadesMarkers.forEach(function (brigade) {
             if (brigade.customOptions.status !== 'WITHOUT_SHIFT') {
-                me.objectManager.add(brigade);
+                 me.objectManager.add(brigade);
             }
         });
         me.callMarkers.forEach(function (call) {
             if (call.customOptions.status !== 'COMPLETED') {
-                me.objectManager.add(call);
+                 me.objectManager.add(call);
             }
-        });
+        });*/
         me.map.geoObjects.add(me.objectManager);
         me.addButtonsBrigadeOnPanel();
+        me.setCheckbox();
+        me.listenerStore();
+
     },
 
     addMarkersSocket: function (marker) {
@@ -192,9 +197,9 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             var t = me.objectManager.objects.getById(marker.id);
             if (t !== null) {
                 me.objectManager.objects.remove(t);
-                if (marker.customOptions.status === 'WITHOUT_SHIFT') {
-                    me.addButtonsBrigadeOnPanel();
-                }
+            }
+            if (t === null || marker.customOptions.status === 'WITHOUT_SHIFT') {
+                me.addButtonsBrigadeOnPanel();
             }
             if (me.filterBrigadeArray.indexOf(marker.customOptions.station) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.status) === -1 &&
@@ -342,7 +347,6 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         me.brigadesMarkers = [];
         me.callMarkers = [];
         me.storeBrigade(urlBrigade, urlCall);
-        me.listenerStore();
     },
 
     listenerStore: function () {
