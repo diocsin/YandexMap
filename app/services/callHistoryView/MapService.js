@@ -104,7 +104,8 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                                 coordinates: [call.get('latitude'), call.get('longitude')]
                             },
                             options: {
-                                iconImageHref: 'resources/icon/' + call.get('iconName')
+                                iconImageHref: 'resources/icon/' + call.get('iconName'),
+                                iconImageSize: [25, 33]
                             }
                         })
                     }
@@ -345,7 +346,8 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                             coordinates: [call.get('latitude'), call.get('longitude')]
                         },
                         options: {
-                            iconImageHref: 'resources/icon/' + call.get('iconName')
+                            iconImageHref: 'resources/icon/' + call.get('iconName'),
+                            iconImageSize: [25, 33]
                         }
                     })
                 }

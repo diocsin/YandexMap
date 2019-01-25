@@ -139,15 +139,15 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
-            clusterize: true,
+            clusterize: false, //true
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
-        me.objectManager.clusters.options.set({
+       /* me.objectManager.clusters.options.set({
             zIndex: 3000,
             maxZoom: 9,
             groupByCoordinates: true
-        });
+        });*/
         me.objectManager.objects.options.set({
             iconLayout: 'default#image',
             zIndex: 2000,
@@ -166,10 +166,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 storeMarker = me.getStoreMarkerInfo(object);
             me.markerClick(object, [e._sourceEvent.originalEvent.clientPixels[0], e._sourceEvent.originalEvent.clientPixels[1]], storeMarker);
         });
-        me.objectManager.clusters.events.add(['click'], function (e) {
+       /*me.objectManager.clusters.events.add(['click'], function (e) {
             var object = me.objectManager.clusters.getById(e.get('objectId'));
             me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
         });
+        */
     },
 
     addMarkers: function () {
@@ -268,7 +269,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                             coordinates: [call.get('latitude'), call.get('longitude')]
                         },
                         options: {
-                            iconImageHref: 'resources/icon/' + call.get('iconName')
+                            iconImageHref: 'resources/icon/' + call.get('iconName'),
+                            iconImageSize: [25, 33]
                         }
                     })
                 }
@@ -377,7 +379,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                     coordinates: [call.get('latitude'), call.get('longitude')]
                 },
                 options: {
-                    iconImageHref: 'resources/icon/' + call.get('iconName')
+                    iconImageHref: 'resources/icon/' + call.get('iconName'),
+                    iconImageSize: [25, 33]
                 }
             };
             var callHas = Ext.Array.findBy(me.callMarkers, function (callInArray, index) {
