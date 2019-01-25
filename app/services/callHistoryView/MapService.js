@@ -105,7 +105,7 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                             },
                             options: {
                                 iconImageHref: 'resources/icon/' + call.get('iconName'),
-                                iconImageSize: [25, 33]
+                                iconImageSize: [25, 31]
                             }
                         })
                     }
@@ -347,7 +347,7 @@ Ext.define('Isidamaps.services.callHistoryView.MapService', {
                         },
                         options: {
                             iconImageHref: 'resources/icon/' + call.get('iconName'),
-                            iconImageSize: [25, 33]
+                            iconImageSize: [25, 31]
                         }
                     })
                 }

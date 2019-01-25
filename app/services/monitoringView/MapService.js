@@ -270,7 +270,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                         },
                         options: {
                             iconImageHref: 'resources/icon/' + call.get('iconName'),
-                            iconImageSize: [25, 33]
+                            iconImageSize: [25, 31]
                         }
                     })
                 }
@@ -380,7 +380,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 },
                 options: {
                     iconImageHref: 'resources/icon/' + call.get('iconName'),
-                    iconImageSize: [25, 33]
+                    iconImageSize: [25, 31]
                 }
             };
             var callHas = Ext.Array.findBy(me.callMarkers, function (callInArray, index) {

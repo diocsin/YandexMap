@@ -240,7 +240,7 @@ Ext.define('Isidamaps.services.brigadeForAssignView.MapService', {
                         },
                         options: {
                             iconImageHref: 'resources/icon/' + call.get('iconName'),
-                            iconImageSize: [25, 33]
+                            iconImageSize: [25, 31]
                         }
                     })
                 }
