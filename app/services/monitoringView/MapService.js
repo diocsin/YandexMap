@@ -15,6 +15,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
     clustersClick: Ext.emptyFn,
     getStoreMarkerInfo: Ext.emptyFn,
     setCheckbox: Ext.emptyFn,
+    addNewButtonOnPanel: Ext.emptyFn,
+    destroyButtonOnPanel: Ext.emptyFn,
     // ====
     callInfoForm: [{
         xtype: 'form',
@@ -133,6 +135,8 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
         me.urlGeodata = options.urlGeodata;
         me.getStoreMarkerInfo = options.getStoreMarkerInfo;
         me.setCheckbox = options.setCheckbox,
+            me.addNewButtonOnPanel = options.addNewButtonOnPanel,
+            me.destroyButtonOnPanel = options.destroyButtonOnPanel,
             me.map = new ymaps.Map('mapId-innerCt', {
                 bounds: me.boundsMap,
                 controls: ['trafficControl']
@@ -143,11 +147,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
-       /* me.objectManager.clusters.options.set({
-            zIndex: 3000,
-            maxZoom: 9,
-            groupByCoordinates: true
-        });*/
+        /* me.objectManager.clusters.options.set({
+             zIndex: 3000,
+             maxZoom: 9,
+             groupByCoordinates: true
+         });*/
         me.objectManager.objects.options.set({
             iconLayout: 'default#image',
             zIndex: 2000,
@@ -166,11 +170,11 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 storeMarker = me.getStoreMarkerInfo(object);
             me.markerClick(object, [e._sourceEvent.originalEvent.clientPixels[0], e._sourceEvent.originalEvent.clientPixels[1]], storeMarker);
         });
-       /*me.objectManager.clusters.events.add(['click'], function (e) {
-            var object = me.objectManager.clusters.getById(e.get('objectId'));
-            me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
-        });
-        */
+        /*me.objectManager.clusters.events.add(['click'], function (e) {
+             var object = me.objectManager.clusters.getById(e.get('objectId'));
+             me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
+         });
+         */
     },
 
     addMarkers: function () {
@@ -192,15 +196,15 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     },
 
-    addMarkersSocket: function (marker) {
+    addMarkersSocket: function (marker, brigadeHas) {
         var me = this;
         if (marker.customOptions.objectType === 'BRIGADE') {
             var t = me.objectManager.objects.getById(marker.id);
             if (t !== null) {
                 me.objectManager.objects.remove(t);
             }
-            if (t === null || marker.customOptions.status === 'WITHOUT_SHIFT') {
-                me.addButtonsBrigadeOnPanel();
+            if (marker.customOptions.status === 'WITHOUT_SHIFT') {
+                me.destroyButtonOnPanel(marker);
             }
             if (me.filterBrigadeArray.indexOf(marker.customOptions.station) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.status) === -1 &&
@@ -208,7 +212,15 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 marker.customOptions.status !== 'WITHOUT_SHIFT') {
                 function func() {
                     me.objectManager.objects.add(marker);
-                    //Ext.fireEvent('getButtonBrigadeForChangeButton', marker);
+                    if (t !== null) {
+                        if (t.customOptions.status !== marker.customOptions.status) {
+                            Ext.fireEvent('getButtonBrigadeForChangeButton', marker, t.customOptions.status);
+                        }
+                    }
+                    else if (brigadeHas === null && t === null) {
+                        me.addNewButtonOnPanel(marker);
+                    }
+
                 }
 
                 setTimeout(func, 20);
@@ -433,11 +445,10 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 }
             });
             Ext.Array.remove(me.brigadesMarkers, brigadeHas);
-
             if (brigade.get('status') !== 'WITHOUT_SHIFT') {
                 Ext.Array.push(me.brigadesMarkers, marker);
             }
-            me.addMarkersSocket(marker);
+            me.addMarkersSocket(marker, brigadeHas);
             me.viewModel.getStore('Brigades').clearData();
         }
     },

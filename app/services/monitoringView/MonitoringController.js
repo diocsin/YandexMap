@@ -11,6 +11,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     stateStation: null,
     stateProfileBrigades: null,
     stateStatusCalls: null,
+    buttonBrigade: null,
+    myMask: null,
     listen: {
         global: {
             checkedProfileBrigade: 'checkedProfileBrigade',
@@ -116,168 +118,170 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     },
 
     checkedStationBrigade: function (checkbox) {
-        function func(checkbox, me) {
-            var checkboxValue = checkbox.inputValue,
-                checkboxChecked = checkbox.checked,
-                stationFilter = me.lookupReference('stationFilter');
-            if (checkboxChecked === false) {
-                me.filterCallArray.push(checkboxValue);
-                me.filterBrigadeArray.push(checkboxValue);
-                var i = 0;
-                stationFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        i++
-                    }
-                });
-                if (stationFilter.items.length === i + 1) {
-                    me.lookupReference('allStation').setValue(false)
+        const me = this;
+        var checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            stationFilter = me.lookupReference('stationFilter');
+        if (checkboxChecked === false) {
+            me.filterCallArray.push(checkboxValue);
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            stationFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
                 }
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.station) {
-                        me.Monitoring.objectManager.objects.remove(brigade);
+            });
+            if (stationFilter.items.length === i + 1) {
+                me.lookupReference('allStation').setValue(false)
+            }
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.station) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                    me.hideButtonInPanel(brigade);
 
-                    }
-                });
-                me.Monitoring.callMarkers.forEach(function (call) {
-                    if (checkboxValue === call.customOptions.station) {
-                        me.Monitoring.objectManager.objects.remove(call);
-                    }
-                })
-            }
-            if (checkboxChecked === true) {
-                var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
-                    indexCall = me.filterCallArray.indexOf(checkboxValue),
-                    j = 0;
-                me.filterBrigadeArray.splice(indexBrigade, 1);
-                me.filterCallArray.splice(indexCall, 1);
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.station) {
-                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
-                            me.Monitoring.objectManager.objects.add(brigade);
-                        }
-                    }
-                });
-                me.Monitoring.callMarkers.forEach(function (call) {
-                    if (checkboxValue === call.customOptions.station) {
-                        if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
-                            me.Monitoring.objectManager.objects.add(call);
-                        }
-                    }
-                });
-                stationFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        j++
-                    }
-                });
-                if (stationFilter.items.length === j) {
-                    me.lookupReference('allStation').setValue(true)
                 }
+            });
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.station) {
+                    me.Monitoring.objectManager.objects.remove(call);
+                }
+            });
+        }
+        if (checkboxChecked === true) {
+            var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
+                indexCall = me.filterCallArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(indexBrigade, 1);
+            me.filterCallArray.splice(indexCall, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.station) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                        me.showButtonInPanel(brigade);
+                    }
+                }
+            });
+            me.Monitoring.callMarkers.forEach(function (call) {
+                if (checkboxValue === call.customOptions.station) {
+                    if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
+                        me.Monitoring.objectManager.objects.add(call);
+                    }
+                }
+            });
+            stationFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (stationFilter.items.length === j) {
+                me.lookupReference('allStation').setValue(true)
             }
-            me.addButtonsBrigadeOnPanel();
         }
 
-        setTimeout(func(checkbox, this), 30);
     },
 
     checkedProfileBrigade: function (checkbox) {
-        function func(checkbox, me) {
-            var checkboxValue = checkbox.inputValue,
-                checkboxChecked = checkbox.checked,
-                profileBrigadeFilter = me.lookupReference('profileBrigadeFilter');
-            if (checkboxChecked === false) {
-                me.filterBrigadeArray.push(checkboxValue);
-                var i = 0;
-                profileBrigadeFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        i++
-                    }
-                });
-                if (profileBrigadeFilter.items.length === i + 1) {
-                    me.lookupReference('allProfile').setValue(false)
+        const me = this;
+        var checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            profileBrigadeFilter = me.lookupReference('profileBrigadeFilter');
+        if (checkboxChecked === false) {
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            profileBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
                 }
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.profile) {
-                        me.Monitoring.objectManager.objects.remove(brigade);
-                    }
-                })
+            });
+            if (profileBrigadeFilter.items.length === i + 1) {
+                me.lookupReference('allProfile').setValue(false)
             }
-            if (checkboxChecked === true) {
-                var index = me.filterBrigadeArray.indexOf(checkboxValue),
-                    j = 0;
-                me.filterBrigadeArray.splice(index, 1);
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.profile) {
-                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                            me.Monitoring.objectManager.objects.add(brigade);
-                        }
-                    }
-                });
-                profileBrigadeFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        j++
-                    }
-                });
-                if (profileBrigadeFilter.items.length === j) {
-                    me.lookupReference('allProfile').setValue(true)
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.profile) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                    me.hideButtonInPanel(brigade);
                 }
+            })
+        }
+        if (checkboxChecked === true) {
+            var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(index, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.profile) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                        me.showButtonInPanel(brigade);
+                    }
+                }
+            });
+            profileBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (profileBrigadeFilter.items.length === j) {
+                me.lookupReference('allProfile').setValue(true)
             }
-            me.addButtonsBrigadeOnPanel();
         }
 
-        setTimeout(func(checkbox, this), 30);
     },
 
     checkedStatusBrigade: function (checkbox) {
-        function func(checkbox, me) {
-            var checkboxValue = checkbox.inputValue,
-                checkboxChecked = checkbox.checked,
-                statusBrigadeFilter = me.lookupReference('statusBrigadeFilter');
-            if (checkboxChecked === false) {
-                me.filterBrigadeArray.push(checkboxValue);
-                var i = 0;
-                statusBrigadeFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        i++
-                    }
-                });
-                if (statusBrigadeFilter.items.length === i + 1) {
-                    me.lookupReference('allStatus').setValue(false)
+        const me = this;
+        var checkboxValue = checkbox.inputValue,
+            checkboxChecked = checkbox.checked,
+            statusBrigadeFilter = me.lookupReference('statusBrigadeFilter');
+        if (checkboxChecked === false) {
+            me.filterBrigadeArray.push(checkboxValue);
+            var i = 0;
+            statusBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    i++
                 }
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.status) {
-                        me.Monitoring.objectManager.objects.remove(brigade);
-                    }
-                })
+            });
+            if (statusBrigadeFilter.items.length === i + 1) {
+                me.lookupReference('allStatus').setValue(false)
             }
-            if (checkboxChecked === true) {
-                var index = me.filterBrigadeArray.indexOf(checkboxValue),
-                    j = 0;
-                me.filterBrigadeArray.splice(index, 1);
-                me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                    if (checkboxValue === brigade.customOptions.status) {
-                        if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                            me.Monitoring.objectManager.objects.add(brigade);
-                        }
-                    }
-                });
-                statusBrigadeFilter.items.each(function (checkbox) {
-                    if (checkbox.checked === true) {
-                        j++
-                    }
-                });
-                if (statusBrigadeFilter.items.length === j) {
-                    me.lookupReference('allStatus').setValue(true)
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.status) {
+                    me.Monitoring.objectManager.objects.remove(brigade);
+                    me.hideButtonInPanel(brigade);
                 }
+            })
+        }
+        if (checkboxChecked === true) {
+            var index = me.filterBrigadeArray.indexOf(checkboxValue),
+                j = 0;
+            me.filterBrigadeArray.splice(index, 1);
+            me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+                if (checkboxValue === brigade.customOptions.status) {
+                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
+                        me.Monitoring.objectManager.objects.add(brigade);
+                        me.showButtonInPanel(brigade);
+                    }
+                }
+            });
+            statusBrigadeFilter.items.each(function (checkbox) {
+                if (checkbox.checked === true) {
+                    j++
+                }
+            });
+            if (statusBrigadeFilter.items.length === j) {
+                me.lookupReference('allStatus').setValue(true)
             }
-            me.addButtonsBrigadeOnPanel();
         }
 
-        setTimeout(func(checkbox, this), 30);
     },
 
     mainBoxReady: function () {
         var me = this,
             property = me.getViewModel().getStore('Property');
+        me.myMask = new Ext.LoadMask({
+            msg: 'Подождите пожалуйста. Загрузка...',
+            target: Ext.getCmp('monitoringPanel')
+        });
+        me.myMask.show();
 
         property.load(function (records) {
             records.forEach(function (data) {
@@ -289,19 +293,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             });
         });
     },
-
-    /*connect: function () {
-        var me = this,
-            socket = new SockJS(me.urlWebSocket + '/geo');
-        me.stompClient = Stomp.over(socket);
-        me.stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
-            me.stompClient.subscribe('/geo-queue/geodata-updates', function (greeting) {
-                console.dir(greeting);
-                me.showGreeting(JSON.parse(greeting.body));
-            });
-        });
-    },*/
 
     connect: function () {
         var me = this,
@@ -337,9 +328,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         }
     },
 
-    sendName: function () {
-        //stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
-    },
     disconnect: function () {
         stompClient.disconnect();
         console.log("Disconnected");
@@ -363,6 +351,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             getStoreMarkerInfo: me.getStoreMarkerInfo,
             getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
             setCheckbox: me.setCheckbox.bind(me),
+            addNewButtonOnPanel: me.addNewButtonOnPanel.bind(me),
+            destroyButtonOnPanel: me.destroyButtonOnPanel.bind(me),
         });
         me.Monitoring.optionsObjectManager();
         ASOV.setMapManager({
@@ -403,14 +393,15 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.lookupReference('statusBrigadeFilter').setValue(me.stateStatusBrigades.checked);
             me.lookupReference('callStatusFilter').setValue(me.stateStatusCalls.checked);
         }
-       catch (e) {
-
-       }
+        catch (e) {
+        }
+        me.myMask.hide();
     },
 
     addStationFilter: function () {
         var me = this,
             checkboxStation = me.lookupReference('stationFilter'),
+            buttonBrigade = me.lookupReference('BrigadePanel'),
             records = me.Monitoring.station;
         records.forEach(function (rec) {
             checkboxStation.add(Ext.create('Ext.form.field.Checkbox', {
@@ -425,52 +416,104 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                     }
                 }
             }));
+            buttonBrigade.add(Ext.create('Ext.panel.Panel', {
+                itemId: 'panel_' + rec,
+                title: rec,
+                width: 260,
+                renderTo: Ext.getBody(),
+                floatable: true,
+                collapsible: true,
+                scrollable: 'vertical',
+                collapseToolText: 'Скрыть панель',
+                expandToolText: 'Открыть панель',
+                header: {
+                    titlePosition: 1
+                }
+            }));
         });
+
     },
 
-    getButtonBrigadeForChangeButton: function (brigade) {
+    getButtonBrigadeForChangeButton: function (brigade, oldStatus) {
         var me = this;
+        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+        var brigadeHave = brigadePanel.getComponent('id' + brigade.id);
+        brigadeHave.removeCls('button_' + oldStatus);
+        brigadeHave.addCls('button_' + brigade.customOptions.status);
+        brigadePanel.updateLayout();
+    },
 
-        var buttonBrigade = me.lookupReference('BrigadePanel');
-        var brigadeHave = buttonBrigade.items.getByKey('id' + brigade.id);
-        if (brigadeHave === undefined) {
-            me.addButtonsBrigadeOnPanel();
+    hideButtonInPanel: function (brigade) {
+        var me = this;
+        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+        brigadePanel.getComponent('id' + brigade.id).hide();
+
+    },
+
+    destroyButtonOnPanel: function (brigade) {
+        const me = this;
+        try {
+            var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+            brigadePanel.getComponent('id' + brigade.id).destroy();
         }
-        else {
+        catch (e) {
 
         }
 
     },
 
+    addNewButtonOnPanel: function (brigade) {
+        const me = this;
+        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+        var button = me.createButton(brigade);
+        brigadePanel.add(button);
+        button.show();
+    },
+
+    showButtonInPanel: function (brigade) {
+        var me = this;
+        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+        brigadePanel.getComponent('id' + brigade.id).show();
+    },
 
     addButtonsBrigadeOnPanel: function () {
         var me = this,
-            buttonBrigade = me.lookupReference('BrigadePanel'),
             brigadeSort = [];
-        me.Monitoring.objectManager.objects.getAll().forEach(function (object) {
-            if (object.customOptions.objectType === 'BRIGADE') {
-                brigadeSort.push(object);
+        me.buttonBrigade = me.lookupReference('BrigadePanel');
+        me.Monitoring.brigadesMarkers.forEach(function (brigade) {
+            if (brigade.customOptions.status !== 'WITHOUT_SHIFT') {
+                brigadeSort.push(brigade);
             }
         });
-        buttonBrigade.removeAll();
         brigadeSort.sort(function (a, b) {
-            return a.customOptions.brigadeNum - b.customOptions.brigadeNum
+            return a.customOptions.station - b.customOptions.station
+        });
+        brigadeSort.sort(function (a, b) {
+            return a.customOptions.status === b.customOptions.status ? -1 : 1
         });
         brigadeSort.forEach(function (e) {
-            buttonBrigade.add(Ext.create('Ext.Button', {
-                itemId: 'id' + e.id,
-                text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")" + " " + e.customOptions.station,
-                maxWidth: 110,
-                minWidth: 110,
-                margin: 5,
-                listeners: {
-                    click: function (r) {
-                        me.clickButton(e);
-                        //var infoMarker = me.getStoreMarkerInfo(e);   //Для отображения информации о бригаде
-                        // me.markerClick(e, [r.getXY()[0] + 80, r.getXY()[1] + 30], infoMarker); //Для отображения информации о бригаде
-                    }
+            var button = me.createButton(e);
+            var t = me.buttonBrigade.getComponent('panel_' + e.customOptions.station);
+            t.add(button);
+        });
+    },
+
+    createButton: function (e) {
+        const me = this;
+        return Ext.create('Ext.Button', {
+            itemId: 'id' + e.id,
+            text: e.customOptions.brigadeNum + " " + "(" + e.customOptions.profile + ")",
+            maxWidth: 110,
+            minWidth: 110,
+            margin: 5,
+            hidden: true,
+            hideMode: 'offsets',
+            cls: 'button_' + e.customOptions.status,
+            listeners: {
+                click: function (r) {
+                    me.clickButton(e);
                 }
-            }))
+            }
         });
     },
 
@@ -480,8 +523,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         if (t !== null) {
             me.Monitoring.map.setCenter([t.geometry.coordinates[0], t.geometry.coordinates[1]], 14);
         }
+    }
+    ,
 
-    },
     getStoreMarkerInfo: function (object) {
         var me = this,
             urlInfoMarker = Ext.String.format(me.urlGeodata + '/info?objectid={0}&objecttype={1}', object.id, object.customOptions.objectType);
@@ -527,20 +571,24 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 autoLoad: false
             });
         }
-    },
+    }
+    ,
 
     layoutReady: function () {
         this.fireTabEvent(this.lookupReference('navigationPanel'));
-    },
+    }
+    ,
 
     tabChange: function (panel, newTab, oldTab) {
         oldTab.fireEvent('tabExit');
         this.fireTabEvent(newTab);
-    },
+    }
+    ,
 
     fireTabEvent: function (tab) {
         tab.fireEvent('tabEnter');
-    },
+    }
+    ,
 
     clustersClick: function (coords, cluster) {
         function errorMessage(marker) {
@@ -811,7 +859,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 }))
             }
         })
-    },
+    }
+    ,
 
     markerClick: function (object, coords, infoMarker) {
         var me = this;
@@ -1033,4 +1082,5 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             })
         }
     }
-});
+})
+;

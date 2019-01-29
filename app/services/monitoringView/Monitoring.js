@@ -1,6 +1,7 @@
 Ext.define('Isidamaps.services.monitoringView.Monitoring', {
     extend: 'Ext.panel.Panel',
     xtype: 'monitoring',
+    id: 'monitoringPanel',
 
     requires: ['Isidamaps.view.filterLocalMonitoringView.FilterLocalMonitoringView',
         'Isidamaps.view.filterBrigadeView.FilterBrigadeView',
@@ -14,6 +15,7 @@ Ext.define('Isidamaps.services.monitoringView.Monitoring', {
     layout: 'border',
     items: [{
         xtype: 'panel',
+        layout: 'vbox',
         region: 'east',
         reference: 'BrigadePanel',
         title: 'Бригады',
