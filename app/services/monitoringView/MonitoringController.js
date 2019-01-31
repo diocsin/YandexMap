@@ -438,6 +438,10 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         var brigadeHave = brigadePanel.getComponent('id' + brigade.id);
         brigadeHave.removeCls('button_' + oldStatus);
         brigadeHave.addCls('button_' + brigade.customOptions.status);
+        if (!brigadeHave.hidden && (me.filterBrigadeArray.indexOf(brigade.customOptions.status) !== -1 ||
+            me.filterBrigadeArray.indexOf(brigade.customOptions.profile) !== -1)) {
+            brigadeHave.hide();
+        }
         brigadePanel.updateLayout();
     },
 

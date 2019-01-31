@@ -207,7 +207,10 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 me.filterBrigadeArray.indexOf(marker.customOptions.status) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.profile) === -1 &&
                 marker.customOptions.status !== 'WITHOUT_SHIFT') {
-                me.objectManager.objects.add(marker);
+                function func() {
+                    me.objectManager.objects.add(marker);
+                }
+                setTimeout(func, 20);
             }
         }
         if (marker.customOptions.objectType === 'CALL') {
@@ -215,8 +218,6 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             if (o !== null) {
                 me.objectManager.remove(o);
             }
-
-
             if (me.filterCallArray.indexOf(marker.customOptions.status) === -1 &&
                 me.filterCallArray.indexOf(marker.customOptions.station) === -1 &&
                 marker.customOptions.status !== "COMPLETED") {
