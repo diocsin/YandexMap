@@ -277,12 +277,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
     mainBoxReady: function () {
         var me = this,
             property = me.getViewModel().getStore('Property');
-        me.myMask = new Ext.LoadMask({
-            msg: 'Подождите пожалуйста. Загрузка...',
-            target: Ext.getCmp('monitoringPanel')
-        });
-        me.myMask.show();
-
         property.load(function (records) {
             records.forEach(function (data) {
                 me.urlGeodata = data.get('urlGeodata');
@@ -339,7 +333,11 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 [60.007645, 30.092139],
                 [59.923862, 30.519157]
             ];
-
+        me.myMask = new Ext.LoadMask({
+            msg: 'Подождите пожалуйста. Загрузка...',
+            target: Ext.getCmp('monitoringPanel')
+        });
+        me.myMask.show();
         me.Monitoring = Ext.create('Isidamaps.services.monitoringView.MapService', {
             viewModel: me.getViewModel(),
             markerClick: me.markerClick,
