@@ -196,34 +196,18 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
 
     },
 
-    addMarkersSocket: function (marker, brigadeHas) {
+    addMarkersSocket: function (marker) {
         var me = this;
         if (marker.customOptions.objectType === 'BRIGADE') {
             var t = me.objectManager.objects.getById(marker.id);
             if (t !== null) {
                 me.objectManager.objects.remove(t);
             }
-            if (marker.customOptions.status === 'WITHOUT_SHIFT') {
-                me.destroyButtonOnPanel(marker);
-            }
             if (me.filterBrigadeArray.indexOf(marker.customOptions.station) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.status) === -1 &&
                 me.filterBrigadeArray.indexOf(marker.customOptions.profile) === -1 &&
                 marker.customOptions.status !== 'WITHOUT_SHIFT') {
-                function func() {
-                    me.objectManager.objects.add(marker);
-                    if (t !== null) {
-                        if (t.customOptions.status !== marker.customOptions.status) {
-                            Ext.fireEvent('getButtonBrigadeForChangeButton', marker, t.customOptions.status);
-                        }
-                    }
-                    else if (brigadeHas === null && t === null) {
-                        me.addNewButtonOnPanel(marker);
-                    }
-
-                }
-
-                setTimeout(func, 20);
+                me.objectManager.objects.add(marker);
             }
         }
         if (marker.customOptions.objectType === 'CALL') {
@@ -447,8 +431,18 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             Ext.Array.remove(me.brigadesMarkers, brigadeHas);
             if (brigade.get('status') !== 'WITHOUT_SHIFT') {
                 Ext.Array.push(me.brigadesMarkers, marker);
+                if (brigadeHas && brigadeHas.customOptions.status !== marker.customOptions.status) {
+                    Ext.fireEvent('getButtonBrigadeForChangeButton', marker, brigadeHas.customOptions.status);
+                }
+                else if (brigadeHas === null) {
+                    me.addNewButtonOnPanel(marker);
+                }
+
             }
-            me.addMarkersSocket(marker, brigadeHas);
+            else {
+                me.destroyButtonOnPanel(marker);
+            }
+            me.addMarkersSocket(marker);
             me.viewModel.getStore('Brigades').clearData();
         }
     },
