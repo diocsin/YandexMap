@@ -210,6 +210,7 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
                 function func() {
                     me.objectManager.objects.add(marker);
                 }
+
                 setTimeout(func, 20);
             }
         }
@@ -221,7 +222,12 @@ Ext.define('Isidamaps.services.monitoringView.MapService', {
             if (me.filterCallArray.indexOf(marker.customOptions.status) === -1 &&
                 me.filterCallArray.indexOf(marker.customOptions.station) === -1 &&
                 marker.customOptions.status !== "COMPLETED") {
-                me.objectManager.objects.add(marker);
+                function func() {
+                    me.objectManager.objects.add(marker);
+                }
+
+                setTimeout(func, 20);
+
             }
         }
     },
