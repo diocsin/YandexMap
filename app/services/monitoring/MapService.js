@@ -225,11 +225,11 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             call = calls[0];
         if (call.get('latitude') && call.get('longitude')) {
             let marker = me.createCallFeature(call),
-            callHas = Ext.Array.findBy(me.callMarkers, function (callInArray, index) {
-                if (callInArray.id === call.get('callCardId')) {
-                    return callInArray;
-                }
-            });
+                callHas = Ext.Array.findBy(me.callMarkers, function (callInArray, index) {
+                    if (callInArray.id === call.get('callCardId')) {
+                        return callInArray;
+                    }
+                });
             Ext.Array.remove(me.callMarkers, callHas);
             if (call.get('status') !== 'COMPLETED') {
                 Ext.Array.push(me.callMarkers, marker);
@@ -240,15 +240,15 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     createBrigadeOfSocked: function (brigades) {
-       const me = this,
+        const me = this,
             brigade = brigades[0];
-        if (brigade.get('latitude') && brigade.get('longitude')) {
+        if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = me.createBrigadeFeature(brigade),
-            brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
-                if (brigadeInArray.id === brigade.get('deviceId')) {
-                    return brigadeInArray;
-                }
-            });
+                brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
+                    if (brigadeInArray.id === brigade.get('deviceId')) {
+                        return brigadeInArray;
+                    }
+                });
             Ext.Array.remove(me.brigadesMarkers, brigadeHas);
             if (brigade.get('status') !== 'WITHOUT_SHIFT') {
                 Ext.Array.push(me.brigadesMarkers, marker);

@@ -244,6 +244,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         }
         let j = 0;
         Ext.Array.remove(me.filterBrigadeArray, checkboxValue);
+        console.dir(me.filterBrigadeArray);
         Ext.Array.each(me.Monitoring.brigadesMarkers, function (brigade) {
             if (checkboxValue === brigade.customOptions.status &&
                 !Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.profile) &&
@@ -287,10 +288,11 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         });
         me.Monitoring.listenerStore();
         me.Monitoring.optionsObjectManager();
+
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        Isidamaps.app.getController('AppController').readStation(['9']);
+        Isidamaps.app.getController('AppController').readStation(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
         me.setFilterBrigadeAndCall();
         const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
@@ -307,10 +309,11 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         me.lookupReference('statusBrigadeFilter').eachBox(function (item) {
             me.filterBrigadeArray.push(item.inputValue);
         });
-        Ext.Array.each(me.Monitoring.station, function (item) {
+        Ext.Array.each(Isidamaps.app.getController('AppController').stationArray, function (item) {
             me.filterBrigadeArray.push(item);
             me.filterCallArray.push(item);
         });
+
         me.lookupReference('callStatusFilter').eachBox(function (item) {
             me.filterCallArray.push(item.inputValue);
         });
