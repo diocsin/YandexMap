@@ -30,9 +30,9 @@ readPropertyFile();
 
 function startApp(urlYandex) {
     Ext.Loader.loadScript({
-        url: [urlYandex, 'resources/lib/stomp.js', 'resources/lib/sockjs.js'],
+        url: [urlYandex],
         onError: function () {
-            console.log('Нет доступа к загружаемым скриптам');
+            console.log('Нет доступа к yandexApi');
         }
     });
     Ext.application({

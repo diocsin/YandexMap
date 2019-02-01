@@ -4,7 +4,5 @@ Ext.define('Isidamaps.model.Brigade', {
         {name: 'deviceId', type: 'int'}, 'brigadeNum', 'station', 'longitude', 'latitude',
         'statusAsov', 'status', 'profile', 'timeLocal', 'lastUpdateTime',
         'iconName', 'objectType', 'callCardNum', 'callCardId'
-    ],
-    idProperty: 'deviceId'
-
+    ]
 });
