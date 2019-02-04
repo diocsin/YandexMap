@@ -27,7 +27,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             addStationFilter: 'addStationFilter',
             getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton',
             buttonSearch: 'buttonSearch',
-            deletingAllMarkers: 'deletingAllMarkers'
         }
     },
 
@@ -51,11 +50,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         me.stateStatusCalls = state;
     },
 
-    deletingAllMarkers: function () {
-        var me = this;
-        me.Monitoring.objectManager.objects.removeAll();
-    },
-
     buttonSearch: function () {
         var me = this;
         var searchTrue = null;
@@ -67,7 +61,6 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 return;
             }
         });
-
         if (searchTrue === null) {
             Ext.getCmp('searchTextField').setActiveError('Не найдена бригада с данным номером');
         }
@@ -78,6 +71,7 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             checkboxValue = checkbox.inputValue,
             checkboxChecked = checkbox.checked,
             stBf = this.lookupReference('callStatusFilter');
+        let  deletingCallArray = [], addCallArray = [];
         if (checkboxChecked === false) {
             me.filterCallArray.push(checkboxValue);
             var i = 0;
@@ -91,9 +85,10 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }
             me.Monitoring.callMarkers.forEach(function (call) {
                 if (checkboxValue === call.customOptions.status) {
-                    me.Monitoring.objectManager.objects.remove(call);
+                    deletingCallArray.push(call);
                 }
-            })
+            });
+            me.Monitoring.objectManager.objects.remove(deletingCallArray);
         }
         if (checkboxChecked === true) {
             var index = me.filterCallArray.indexOf(checkboxValue),
@@ -102,10 +97,11 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.Monitoring.callMarkers.forEach(function (call) {
                 if (checkboxValue === call.customOptions.status) {
                     if (me.filterCallArray.indexOf(call.customOptions.station) === -1) {
-                        me.Monitoring.objectManager.objects.add(call);
+                        addCallArray.push(call);
                     }
                 }
             });
+            me.Monitoring.objectManager.objects.add(addCallArray);
             stBf.items.each(function (checkbox) {
                 if (checkbox.checked === true) {
                     j++
@@ -119,6 +115,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
     checkedStationBrigade: function (checkbox) {
         const me = this;
+        Ext.suspendLayouts();
+        let deletingBrigadeArray = [], deletingCallArray = [],
+            addBrigadeArray = [], addCallArray = [];
         var checkboxValue = checkbox.inputValue,
             checkboxChecked = checkbox.checked,
             stationFilter = me.lookupReference('stationFilter');
@@ -136,17 +135,20 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.station) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
-                    me.hideButtonInPanel(brigade);
+                    deletingBrigadeArray.push(brigade);
 
                 }
             });
+            me.hideButtonInPanel(deletingBrigadeArray);
+            me.Monitoring.objectManager.objects.remove(deletingBrigadeArray);
             me.Monitoring.callMarkers.forEach(function (call) {
                 if (checkboxValue === call.customOptions.station) {
-                    me.Monitoring.objectManager.objects.remove(call);
+                    deletingCallArray.push(call);
                 }
             });
+            me.Monitoring.objectManager.objects.remove(deletingCallArray);
         }
+
         if (checkboxChecked === true) {
             var indexBrigade = me.filterBrigadeArray.indexOf(checkboxValue),
                 indexCall = me.filterCallArray.indexOf(checkboxValue),
@@ -154,20 +156,22 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.filterBrigadeArray.splice(indexBrigade, 1);
             me.filterCallArray.splice(indexCall, 1);
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
-                if (checkboxValue === brigade.customOptions.station) {
-                    if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
-                        me.showButtonInPanel(brigade);
+                    if (checkboxValue === brigade.customOptions.station &&
+                        me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1) {
+                        addBrigadeArray.push(brigade);
                     }
                 }
-            });
+            );
+            me.showButtonInPanel(addBrigadeArray);
+            me.Monitoring.objectManager.objects.add(addBrigadeArray);
             me.Monitoring.callMarkers.forEach(function (call) {
                 if (checkboxValue === call.customOptions.station) {
                     if (me.filterCallArray.indexOf(call.customOptions.status) === -1 && call.customOptions.status !== "COMPLETED") {
-                        me.Monitoring.objectManager.objects.add(call);
+                        addCallArray.push(call);
                     }
                 }
             });
+            me.Monitoring.objectManager.objects.add(addCallArray);
             stationFilter.items.each(function (checkbox) {
                 if (checkbox.checked === true) {
                     j++
@@ -177,11 +181,14 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allStation').setValue(true)
             }
         }
-
+        Ext.resumeLayouts(true);
     },
 
     checkedProfileBrigade: function (checkbox) {
         const me = this;
+        Ext.suspendLayouts();
+        let deletingBrigadeArray = [],
+            addBrigadeArray = [];
         var checkboxValue = checkbox.inputValue,
             checkboxChecked = checkbox.checked,
             profileBrigadeFilter = me.lookupReference('profileBrigadeFilter');
@@ -198,10 +205,11 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.profile) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
-                    me.hideButtonInPanel(brigade);
+                    deletingBrigadeArray.push(brigade);
                 }
-            })
+            });
+            me.Monitoring.objectManager.objects.remove(deletingBrigadeArray);
+            me.hideButtonInPanel(deletingBrigadeArray);
         }
         if (checkboxChecked === true) {
             var index = me.filterBrigadeArray.indexOf(checkboxValue),
@@ -210,11 +218,12 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.profile) {
                     if (me.filterBrigadeArray.indexOf(brigade.customOptions.status) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
-                        me.showButtonInPanel(brigade);
+                        addBrigadeArray.push(brigade);
                     }
                 }
             });
+            me.Monitoring.objectManager.objects.add(addBrigadeArray);
+            me.showButtonInPanel(addBrigadeArray);
             profileBrigadeFilter.items.each(function (checkbox) {
                 if (checkbox.checked === true) {
                     j++
@@ -224,11 +233,15 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allProfile').setValue(true)
             }
         }
-
-    },
+        Ext.resumeLayouts(true);
+    }
+    ,
 
     checkedStatusBrigade: function (checkbox) {
         const me = this;
+        Ext.suspendLayouts();
+        let deletingBrigadeArray = [],
+            addBrigadeArray = [];
         var checkboxValue = checkbox.inputValue,
             checkboxChecked = checkbox.checked,
             statusBrigadeFilter = me.lookupReference('statusBrigadeFilter');
@@ -245,10 +258,11 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.status) {
-                    me.Monitoring.objectManager.objects.remove(brigade);
-                    me.hideButtonInPanel(brigade);
+                   deletingBrigadeArray.push(brigade);
                 }
-            })
+            });
+            me.Monitoring.objectManager.objects.remove(deletingBrigadeArray);
+            me.hideButtonInPanel(deletingBrigadeArray);
         }
         if (checkboxChecked === true) {
             var index = me.filterBrigadeArray.indexOf(checkboxValue),
@@ -257,11 +271,12 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             me.Monitoring.brigadesMarkers.forEach(function (brigade) {
                 if (checkboxValue === brigade.customOptions.status) {
                     if (me.filterBrigadeArray.indexOf(brigade.customOptions.profile) === -1 && me.filterBrigadeArray.indexOf(brigade.customOptions.station) === -1) {
-                        me.Monitoring.objectManager.objects.add(brigade);
-                        me.showButtonInPanel(brigade);
+                        addBrigadeArray.push(brigade);
                     }
                 }
             });
+            me.Monitoring.objectManager.objects.add(addBrigadeArray);
+            me.showButtonInPanel(addBrigadeArray);
             statusBrigadeFilter.items.each(function (checkbox) {
                 if (checkbox.checked === true) {
                     j++
@@ -271,8 +286,9 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.lookupReference('allStatus').setValue(true)
             }
         }
-
-    },
+        Ext.resumeLayouts(true);
+    }
+    ,
 
     mainBoxReady: function () {
         var me = this,
@@ -286,7 +302,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 me.createMap();
             });
         });
-    },
+    }
+    ,
 
     connect: function () {
         var me = this,
@@ -305,7 +322,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 }.bind(this), 2500);
             }.bind(this)
         );
-    },
+    }
+    ,
 
     showGreeting: function (message) {
         var me = this;
@@ -320,12 +338,14 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 storeCalls.add(message);
             }
         }
-    },
+    }
+    ,
 
     disconnect: function () {
         stompClient.disconnect();
         console.log("Disconnected");
-    },
+    }
+    ,
 
     createMap: function () {
         var me = this,
@@ -364,7 +384,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         });
 
 
-    },
+    }
+    ,
 
     setFilterBrigadeAndCall: function () {
         const me = this;
@@ -381,7 +402,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         me.lookupReference('callStatusFilter').eachBox(function (item) {
             me.filterCallArray.push(item.inputValue);
         });
-    },
+    }
+    ,
 
     setCheckbox: function () {
         const me = this;
@@ -394,7 +416,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         catch (e) {
         }
         me.myMask.hide();
-    },
+    }
+    ,
 
     addStationFilter: function () {
         var me = this,
@@ -430,7 +453,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             }));
         });
 
-    },
+    }
+    ,
 
     getButtonBrigadeForChangeButton: function (brigade, oldStatus) {
         var me = this;
@@ -443,14 +467,17 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             brigadeHave.hide();
         }
         brigadePanel.updateLayout();
-    },
+    }
+    ,
 
-    hideButtonInPanel: function (brigade) {
+    hideButtonInPanel: function (brigades) {
         var me = this;
-        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-        brigadePanel.getComponent('id' + brigade.id).hide();
-
-    },
+        brigades.forEach(function (brigade) {
+            var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+            brigadePanel.getComponent('id' + brigade.id).hide();
+        });
+    }
+    ,
 
     destroyButtonOnPanel: function (brigade) {
         const me = this;
@@ -462,7 +489,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
 
         }
 
-    },
+    }
+    ,
 
     addNewButtonOnPanel: function (brigade) {
         const me = this;
@@ -470,13 +498,17 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
         var button = me.createButton(brigade);
         brigadePanel.add(button);
         button.show();
-    },
+    }
+    ,
 
-    showButtonInPanel: function (brigade) {
+    showButtonInPanel: function (brigades) {
         var me = this;
-        var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-        brigadePanel.getComponent('id' + brigade.id).show();
-    },
+        brigades.forEach(function (brigade) {
+            var brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
+            brigadePanel.getComponent('id' + brigade.id).show();
+        });
+    }
+    ,
 
     addButtonsBrigadeOnPanel: function () {
         var me = this,
@@ -498,7 +530,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
             var t = me.buttonBrigade.getComponent('panel_' + e.customOptions.station);
             t.add(button);
         });
-    },
+    }
+    ,
 
     createButton: function (e) {
         const me = this;
@@ -517,7 +550,8 @@ Ext.define('Isidamaps.services.monitoringView.MonitoringController', {
                 }
             }
         });
-    },
+    }
+    ,
 
     clickButton: function (object) {
         var me = this;
