@@ -14,7 +14,7 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
     },
 
     createMap: function () {
-        var me = this,
+        const me = this,
             bounds = [
                 [60.007645, 30.092139],
                 [59.923862, 30.519157]
@@ -32,7 +32,7 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
             setMarkers: me.CallHistory.setMarkers.bind(this)
         }, Ext.History.currentToken);
 
-        var ymapWrapper = me.lookupReference('ymapWrapper');
+        const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             me.CallHistory.resizeMap();
         });

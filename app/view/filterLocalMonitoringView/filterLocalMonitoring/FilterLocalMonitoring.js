@@ -20,23 +20,16 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 change: function (checkbox, checked) {
                     if (checked === true) {
                         Ext.getCmp('stationGroupId').items.each(function (item) {
-                            item.setValue(true);
-                        })
-                    }
-                    if (checked === false) {
-                        var i = true;
-                        Ext.getCmp('stationGroupId').items.each(function (item) {
-                            if (item.checked === false) {
-                                i = false;
-                            }
+                            item.setRawValue(true);
                         });
-                        if (i === true) {
-                            Ext.fireEvent('deletingAllMarkers');
-                            Ext.getCmp('stationGroupId').items.each(function (item) {
-                                item.setValue(false);
-                            })
-                        }
+                        Ext.fireEvent('selectAll', checkbox);
+                        return;
                     }
+                    Ext.getCmp('stationGroupId').items.each(function (item) {
+                        item.setRawValue(false);
+                    });
+                    Ext.fireEvent('deselectAll', checkbox);
+
                 }
             }
         }, {
@@ -62,7 +55,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
         xtype: 'panel',
         title: 'Состояние',
         items: [{
-                xtype: 'checkbox',
+            xtype: 'checkbox',
             boxLabel: 'Все',
             reference: 'allStatus',
             checked: false,
@@ -72,22 +65,15 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 change: function (checkbox, checked) {
                     if (checked === true) {
                         Ext.getCmp('statusGroupId').items.each(function (item) {
-                            item.setValue(true);
-                        })
-                    }
-                    if (checked === false) {
-                        var i = true;
-                        Ext.getCmp('statusGroupId').items.each(function (item) {
-                            if (item.checked === false) {
-                                i = false;
-                            }
+                            item.setRawValue(true);
                         });
-                        if (i === true) {
-                            Ext.getCmp('statusGroupId').items.each(function (item) {
-                                item.setValue(false);
-                            })
-                        }
+                        Ext.fireEvent('selectAll', checkbox);
+                        return;
                     }
+                    Ext.getCmp('statusGroupId').items.each(function (item) {
+                        item.setRawValue(false);
+                    });
+                    Ext.fireEvent('deselectAll', checkbox);
                 }
             }
         }, {
@@ -234,22 +220,17 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     change: function (checkbox, checked) {
                         if (checked === true) {
                             Ext.getCmp('profileGroupId').items.each(function (item) {
-                                item.setValue(true);
-                            })
-                        }
-                        if (checked === false) {
-                            var i = true;
-                            Ext.getCmp('profileGroupId').items.each(function (item) {
-                                if (item.checked === false) {
-                                    i = false;
-                                }
+                                item.setRawValue(true);
                             });
-                            if (i === true) {
-                                Ext.getCmp('profileGroupId').items.each(function (item) {
-                                    item.setValue(false);
-                                })
-                            }
+                            Ext.fireEvent('selectAll', checkbox);
+                            return;
                         }
+
+
+                        Ext.getCmp('profileGroupId').items.each(function (item) {
+                            item.setRawValue(false);
+                        });
+                        Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
             }, {
@@ -375,22 +356,15 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     change: function (checkbox, checked) {
                         if (checked === true) {
                             Ext.getCmp('callGroupId').items.each(function (item) {
-                                item.setValue(true);
-                            })
-                        }
-                        if (checked === false) {
-                            var i = true;
-                            Ext.getCmp('callGroupId').items.each(function (item) {
-                                if (item.checked === false) {
-                                    i = false;
-                                }
+                                item.setRawValue(true);
                             });
-                            if (i === true) {
-                                Ext.getCmp('callGroupId').items.each(function (item) {
-                                    item.setValue(false);
-                                })
-                            }
+                            Ext.fireEvent('selectAll', checkbox);
+                            return;
                         }
+                        Ext.getCmp('callGroupId').items.each(function (item) {
+                            item.setRawValue(false);
+                        });
+                        Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
             }, {

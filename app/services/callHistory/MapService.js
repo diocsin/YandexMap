@@ -51,30 +51,6 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     },
 
-    createBouns: function () {
-        var me = this,
-            arrayLatitude = [],
-            arrayLongitude = [],
-            call = me.callMarkers[0];
-        arrayLatitude.push(call.geometry.coordinates[0]);
-        arrayLongitude.push(call.geometry.coordinates[1]);
-
-        me.brigadesMarkers.forEach(function (brigade) {
-            arrayLatitude.push(brigade.geometry.coordinates[0]);
-            arrayLongitude.push(brigade.geometry.coordinates[1]);
-        });
-        arrayLatitude.sort(function (a, b) {
-            return a - b
-        });
-        arrayLongitude.sort(function (a, b) {
-            return a - b
-        });
-        var bounds = [
-            [arrayLatitude[arrayLatitude.length - 1] + 0.015, arrayLongitude[0] - 0.015],
-            [arrayLatitude[0] - 0.015, arrayLongitude[arrayLatitude.length - 1] + 0.015]
-        ];
-        me.map.setBounds(bounds);
-    },
 
     createMarkers: function () {
         var me = this;

@@ -3,7 +3,7 @@ Ext.define('Isidamaps.view.routeHistoryView.routeHistory.RouteHistory', {
     alias: 'widget.routeHistoryView-routeHistory',
     border: false,
     title: 'Table Layout',
-    bind: '{Route}',
+    store: 'Isidamaps.store.RouteForTableStore',
 
     viewConfig: {
         markDirty: false
@@ -53,7 +53,7 @@ Ext.define('Isidamaps.view.routeHistoryView.routeHistory.RouteHistory', {
                 text: 'Закрыть карту',
                 listeners: {
                     click: function () {
-                        Ext.fireEvent('windowClose');
+                        Isidamaps.app.getController('AppController').windowClose();
                     }
                 }
             }
