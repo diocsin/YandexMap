@@ -6,10 +6,9 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     arrRouteForTable: [],
     MyIconContentLayout: null,
 
-
     createRoute: function (call, brigade) {
-        var me = this,
-            routeList = null;
+        const me = this;
+        let routeList = null;
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true
         }).then(function (route) {
@@ -34,13 +33,12 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         })
     },
 
-
     constructor: function (options) {
-        var me = this;
-        bounds = [
-            [60.007645, 30.092139],
-            [59.923862, 30.519157]
-        ];
+        const me = this,
+            bounds = [
+                [60.007645, 30.092139],
+                [59.923862, 30.519157]
+            ];
         me.map = new ymaps.Map('mapId', {
             bounds: bounds,
             controls: ['trafficControl']
@@ -63,13 +61,13 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     addMarkers: function () {
-        var me = this;
+        const me = this;
         if (me.callMarkers.length === 0) {
             me.createCallAlert();
         }
         me.createBouns();
         me.objectManager.add(me.brigadesMarkers);
-        me.objectManager.add( me.callMarkers);
+        me.objectManager.add(me.callMarkers);
         me.map.geoObjects.add(me.objectManager);
         if (me.callMarkers.length > 0 && me.brigadesMarkers.length > 0) {
             me.brigadesMarkers.forEach(function (brigadeMarker) {
@@ -89,18 +87,18 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     addMarkersSocket: function (marker) {
-        var me = this;
+        const me = this;
         if (marker.customOptions.objectType === 'BRIGADE') {
-            var t = me.objectManager.objects.getById(marker.id);
-            if (t !== null) {
-                me.objectManager.objects.remove(t);
+            let object = me.objectManager.objects.getById(marker.id);
+            if (object) {
+                me.objectManager.objects.remove(object);
             }
 
             function func() {
                 me.objectManager.objects.add(marker);
-                me.map.geoObjects.each(function (marker) {
-                    if (marker.requestPoints !== undefined) {
-                        me.map.geoObjects.remove(marker);
+                me.map.geoObjects.each(function (route) {
+                    if (route.requestPoints !== undefined) {
+                        me.map.geoObjects.remove(route);
                         return
                     }
                 });
@@ -108,28 +106,25 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             }
 
             setTimeout(func, 30);
-
+            return;
         }
-        if (marker.customOptions.objectType === 'CALL') {
-            var o = me.objectManager.objects.getById(marker.id);
-            if (o !== null) {
-                me.objectManager.remove(o);
-            }
-
-            function func() {
-                me.objectManager.objects.add(marker);
-                me.map.geoObjects.each(function (marker) {
-                    if (marker.requestPoints !== undefined) {
-                        me.map.geoObjects.remove(marker);
-                        return
-                    }
-                });
-                me.createRoute(marker, me.brigadesMarkers[0]);
-            }
-
-            setTimeout(func, 30);
-
+        var object = me.objectManager.objects.getById(marker.id);
+        if (object) {
+            me.objectManager.remove(object);
         }
+
+        function func() {
+            me.objectManager.objects.add(marker);
+            me.map.geoObjects.each(function (route) {
+                if (route.requestPoints !== undefined) {
+                    me.map.geoObjects.remove(route);
+                    return
+                }
+            });
+            me.createRoute(marker, me.brigadesMarkers[0]);
+        }
+
+        setTimeout(func, 30);
     },
 
     setMarkers: function (call, brigades) {
@@ -178,6 +173,5 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     resizeMap: function () {
         this.map.container.fitToViewport();
-
     }
 });

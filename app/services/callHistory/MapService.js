@@ -19,15 +19,13 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     // ====
 
     constructor: function (options) {
-        var me = this;
-        me.markerClick = options.markerClick;
-        me.clustersClick = options.clustersClick;
-        me.viewModel = options.viewModel;
-        me.boundsMap = options.boundsMap;
-        me.getStoreMarkerInfo = options.getStoreMarkerInfo;
-        me.urlGeodata = options.urlGeodata;
+        var me = this,
+        bounds = [
+            [60.007645, 30.092139],
+            [59.923862, 30.519157]
+        ];
         me.map = new ymaps.Map('mapId-innerCt', {
-            bounds: me.boundsMap,
+            bounds: bounds,
             controls: ['trafficControl']
         });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
