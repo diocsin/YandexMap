@@ -5,33 +5,25 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     urlGeodata: null,
     listen: {
         global: {
-            jsonAnswerReady: 'buttonCheked',
+            jsonAnswerReady: 'buttonChecked',
             checkedBrigadeForAssign: 'checkedBrigadeForAssign'
         }
     },
 
     checkedBrigadeForAssign: function () {
-        var me = this,
-            store = me.getViewModel().getStore('Routes');
+        const store =Ext.getStore('Isidamaps.store.RouteForTableStore');
         store.each(function (rec) {
             rec.set('checkBox', false);
         })
     },
 
     createMap: function () {
-        var me = this,
-            bounds = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]
-            ];
-        me.BrigadeForAssign = Ext.create('Isidamaps.services.brigadeForAssignView.MapService', {
-            viewModel: me.getViewModel(),
-            markerClick: me.markerClick,
-            clustersClick: me.clustersClick,
-            boundsMap: bounds,
-            urlGeodata: me.urlGeodata,
-            getStoreMarkerInfo: me.getStoreMarkerInfo
-        });
+        var me = this;
+
+        me.BrigadeForAssign = Ext.create('Isidamaps.services.brigadeForAssign.MapService', {});
+        me.BrigadeForAssign.listenerStore();
+        me.BrigadeForAssign.optionsObjectManager();
+        Isidamaps.app.getController('AppController').readMarkersBrigadeForAssign('106198579', ['910','951','920']);
         ASOV.setMapManager({
             setMarkers: me.BrigadeForAssign.setMarkers.bind(this)
         }, Ext.History.currentToken);
@@ -41,7 +33,10 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
         })
     },
 
-    buttonCheked: function () {
+    buttonChecked: function () {
         this.BrigadeForAssign.createAnswer();
+    },
+    layoutReady: function () {
+        this.fireTabEvent(this.lookupReference('navigationPanel'));
     }
 });

@@ -111,6 +111,7 @@ Ext.define('Isidamaps.controller.AppController', {
         });
         me.connectWebSocked('monitoring');
     },
+
     readMarkers: function (call, brigades) {
         const me = this,
             brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
@@ -137,6 +138,38 @@ Ext.define('Isidamaps.controller.AppController', {
             }
         });
         me.connectWebSocked();
+    },
+
+    readMedOrg: function () {
+        const me = this,
+            medOrgStore = me.getStore('Isidamaps.store.MedOrgStore'),
+            paramsHOSPITAL = {
+                organizationtype: 'HOSPITAL'
+            },
+            paramsPOLYCLINIC = {
+                organizationtype: 'POLYCLINIC'
+            },
+            paramsEMERGENCY_ROOM = {
+                organizationtype: 'EMERGENCY_ROOM'
+            },
+            paramsArray = [paramsHOSPITAL, paramsPOLYCLINIC, paramsEMERGENCY_ROOM];
+
+        paramsArray.forEach(function (params) {
+            Ext.Ajax.request({
+                url: me.urlGeodata + '/organization',
+                params: params,
+                method: 'GET',
+
+                success: function (response, opts) {
+                    let obj = Ext.decode(response.responseText);
+                    medOrgStore.add(obj);
+                },
+
+                failure: function (response, opts) {
+                    console.log('server-side failure with status code ' + response.status);
+                }
+            });
+        });
     },
 
     readMarkersForCallHistory: function (call) {

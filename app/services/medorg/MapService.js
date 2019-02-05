@@ -2,30 +2,22 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     extend: 'Isidamaps.services.monitoring.MapService',
     map: null,
     objectManager: null,
-    viewModel: null,
-    medorgMarkers: [],
-    medorgStore: null,
-    urlGeodata: null,
-    // ====
     markerClick: Ext.emptyFn,
-    clustersClick: Ext.emptyFn,
-    getStoreMarkerInfo: Ext.emptyFn,
-    // ====
+
     constructor: function (options) {
-        var me = this;
+        const me = this,
+            bounds = [
+                [60.2, 29.8],
+                [59.7, 30.5]
+            ];
         me.markerClick = options.markerClick;
-        me.clustersClick = options.clustersClick;
-        me.viewModel = options.viewModel;
-        me.boundsMap = options.boundsMap;
-        me.urlGeodata = options.urlGeodata;
-        me.getStoreMarkerInfo = options.getStoreMarkerInfo;
-        me.map = new ymaps.Map('mapId-innerCt', {
-            bounds: me.boundsMap,
+        me.map = new ymaps.Map('mapId', {
+            bounds: bounds,
             controls: ['trafficControl']
         });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
-            clusterize: true,
+            clusterize: false,
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
@@ -39,63 +31,49 @@ Ext.define('Isidamaps.services.medorg.MapService', {
             zIndex: 3000,
             groupByCoordinates: true
         });
-    },
-
-    addMarkers: function () {
-        var me = this;
         me.map.geoObjects.add(me.objectManager);
+    },
+
+    optionsObjectManager: function () {
+        const me = this;
+        me.objectManager.objects.events.add(['click'], function (e) {
+            let object = me.objectManager.objects.getById(e.get('objectId'));
+            me.markerClick(object);
+        });
 
     },
 
-    readMarkers: function () {
-        var me = this,
-            urlArray = [],
-            urlHospital = Ext.String.format(me.urlGeodata + '/organization?organizationtype=HOSPITAL'),
-            urlPolyclinic = Ext.String.format(me.urlGeodata + '/organization?organizationtype=POLYCLINIC'),
-            urlEmergencyRoom = Ext.String.format(me.urlGeodata + '/organization?organizationtype=EMERGENCY_ROOM');
-        urlArray.push(urlHospital, urlPolyclinic, urlEmergencyRoom);
-        urlArray.forEach(function (url) {
-            me.medorgStore = Ext.create('Ext.data.Store', {
-                model: 'Isidamaps.model.Medorg',
-                proxy: {
-                    type: 'ajax',
-                    url: url,
-                    reader: {
-                        type: 'json',
-                        messageProperty: 'msjError'
+    listenerStore: function () {
+        Ext.getStore('Isidamaps.store.MedOrgStore').on('add', function (store, records, options) {
+            this.storeMedOrg(records)
+        }, this);
+    },
+
+    storeMedOrg: function (records) {
+        const me = this,
+            medorgMarkers = [];
+        records.forEach(function (medorg) {
+            if (medorg.get('latitude') !== undefined && medorg.get('longitude') !== undefined) {
+                medorgMarkers.push({
+                    type: 'Feature',
+                    id: medorg.get('organizationId'),
+                    customOptions: {
+                        objectType: medorg.get('objectType'),
+                        organizationName: medorg.get('organizationName')
+                    },
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [medorg.get('latitude'), medorg.get('longitude')]
+                    },
+                    options: {
+                        iconImageHref: 'resources/icon/' + medorg.get('iconName')
+                    },
+                    properties: {
+                        hintContent: medorg.get('organizationName')
                     }
-                },
-                autoLoad: false
-            });
-
-
-            me.medorgStore.load(function (records) {
-                records.forEach(function (medorg) {
-                    if (medorg.get('latitude') !== undefined && medorg.get('longitude') !== undefined) {
-                        me.medorgMarkers.push({
-                            type: 'Feature',
-                            id: medorg.get('organizationId'),
-                            customOptions: {
-                                objectType: medorg.get('objectType'),
-                                organizationName: medorg.get('organizationName')
-                            },
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [medorg.get('latitude'), medorg.get('longitude')]
-                            },
-                            options: {
-                                iconImageHref: 'resources/icon/' + medorg.get('iconName')
-                            },
-                            properties: {
-                                hintContent: medorg.get('organizationName')
-                            }
-                        })
-                    }
-
-                });
-                me.objectManager.add(me.medorgMarkers);
-            });
+                })
+            }
         });
-        me.addMarkers();
+        me.objectManager.add(medorgMarkers);
     }
 });

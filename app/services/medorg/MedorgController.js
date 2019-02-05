@@ -4,20 +4,12 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
 
     createMap: function () {
         var me = this,
-            bounds = [
-                [60.2, 29.8],
-                [59.7, 30.5]
-            ],
-        Medorg = Ext.create('Isidamaps.services.medorgView.MapService', {
-            viewModel: me.getViewModel(),
-            markerClick: me.markerClick,
-            clustersClick: me.clustersClick,
-            boundsMap: bounds,
-            urlGeodata: me.urlGeodata,
-            getStoreMarkerInfo: me.getStoreMarkerInfo
+        Medorg = Ext.create('Isidamaps.services.medorg.MapService', {
+            markerClick: me.markerClick
         });
         Medorg.optionsObjectManager();
-        Medorg.readMarkers();
+        Medorg.listenerStore();
+        Isidamaps.app.getController('AppController').readMedOrg();
         var ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             Medorg.resizeMap();
@@ -218,7 +210,7 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                 }
             }
         })
-    }*/
+    }
    clustersClick: function (coords, cluster) {
        function errorMessage() {
            Ext.create('Ext.window.MessageBox').show({
@@ -302,9 +294,9 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                }
            }))
        })
-   },
+   },*/
 
-    markerClick: function (object, coords, infoMarker) {
+    markerClick: function (object) {
         function errorMessage() {
             Ext.create('Ext.window.MessageBox').show({
                 title: 'Ошибка',
@@ -313,20 +305,9 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                 buttons: Ext.Msg.OK
             })
         }
-
-        var ymapWrapper = Ext.getCmp('mapId'),
-            sizeCmp = ymapWrapper.getSize(),
-            win = Ext.WindowManager.getActive();
+           const win = Ext.WindowManager.getActive();
         if (win) {
             win.close();
-        }
-        sizeCmp.width = sizeCmp.width * 1.55;
-        if ((sizeCmp.width / 2) < coords[0]) {
-            coords[0] -= 450;
-            coords[1] += 20;
-        }
-        if ((sizeCmp.height / 2) < coords[1]) {
-            coords[1] -= 150;
         }
 
                         Ext.create('Ext.window.Window', {
@@ -353,6 +334,6 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                                 }]
                             }]
 
-                        }).showAt(coords);
+                        }).show();
                     }
 });

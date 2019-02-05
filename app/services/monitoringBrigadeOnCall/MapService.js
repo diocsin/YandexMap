@@ -87,9 +87,9 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     addMarkersSocket: function (marker) {
-        const me = this;
+        const me = this,
+        object = me.objectManager.objects.getById(marker.id);
         if (marker.customOptions.objectType === 'BRIGADE') {
-            let object = me.objectManager.objects.getById(marker.id);
             if (object) {
                 me.objectManager.objects.remove(object);
             }
@@ -104,11 +104,9 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 });
                 me.createRoute(me.callMarkers[0], marker);
             }
-
-            setTimeout(func, 30);
+            setTimeout(func, 1);
             return;
         }
-        var object = me.objectManager.objects.getById(marker.id);
         if (object) {
             me.objectManager.remove(object);
         }
@@ -124,7 +122,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             me.createRoute(marker, me.brigadesMarkers[0]);
         }
 
-        setTimeout(func, 30);
+        setTimeout(func, 1);
     },
 
     setMarkers: function (call, brigades) {
@@ -153,6 +151,16 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         if (me.callMarkers.length !== 0) {
             me.addMarkers();
             me.listenerWebSockedStore();
+        }
+    },
+
+    createBrigadeOfSocked: function (brigades) {
+        const me = this,
+            brigade = brigades[0];
+        if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
+            let marker = me.createBrigadeFeature(brigade);
+            me.addMarkersSocket(marker);
+            Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
         }
     },
 

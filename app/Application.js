@@ -25,7 +25,8 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.BrigadeInfoStore',
         'Isidamaps.store.RouteForTableStore',
         'Isidamaps.store.RouteHistoryStore',
-        'Isidamaps.store.FactRouteHistoryStore'
+        'Isidamaps.store.FactRouteHistoryStore',
+        'Isidamaps.store.MedOrgStore'
     ],
 
     routes: {

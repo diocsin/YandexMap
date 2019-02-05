@@ -4,8 +4,10 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
     CallHistory: null,
     createMap: function () {
         const me = this;
-        me.CallHistory = Ext.create('Isidamaps.services.callHistoryView.MapService', {});
+        me.CallHistory = Ext.create('Isidamaps.services.callHistory.MapService', {});
+        me.CallHistory.listenerStore();
         me.CallHistory.optionsObjectManager();
+        Isidamaps.app.getController('AppController').readMarkersForCallHistory('104055877');
         ASOV.setMapManager({
             setMarkers: me.CallHistory.setMarkers.bind(this)
         }, Ext.History.currentToken);
@@ -14,5 +16,8 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
         ymapWrapper.on('resize', function () {
             me.CallHistory.resizeMap();
         });
+    },
+    layoutReady: function () {
+        this.fireTabEvent(this.lookupReference('navigationPanel'));
     }
 });

@@ -91,40 +91,30 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     addMarkersSocket: function (marker) {
-        const me = this;
+        const me = this,
+            object = me.objectManager.objects.getById(marker.id);
         if (marker.customOptions.objectType === 'BRIGADE') {
-            let object = me.objectManager.objects.getById(marker.id);
             if (object) {
                 me.objectManager.objects.remove(object);
             }
             if (marker.customOptions.status !== 'WITHOUT_SHIFT') {
                 function func() {
-                    let y = me.objectManager.objects.add(marker);
-                    console.dir(y);
+                    me.objectManager.objects.add(marker);
                 }
 
-                setTimeout(func, 20);
-            }
-            if (object !== null && object.customOptions.status !== marker.customOptions.status) {
-                Ext.fireEvent('getButtonBrigadeForChangeButton', marker, object.customOptions.status);
-                console.dir(marker);
-            }
-            if (object === null && marker.customOptions.status !== 'WITHOUT_SHIFT') {
-                me.addNewButtonOnPanel(marker);
-                console.dir(marker);
-            }
-            if (marker.customOptions.status === 'WITHOUT_SHIFT') {
-                me.destroyButtonOnPanel(marker);
-                console.dir(marker);
+                setTimeout(func, 1);
             }
             return;
         }
-        const object = me.objectManager.objects.getById(marker.id);
         if (object) {
             me.objectManager.remove(object);
         }
         if (marker.customOptions.status !== "COMPLETED") {
-            me.objectManager.objects.add(marker);
+            function func() {
+                me.objectManager.objects.add(marker);
+            }
+
+            setTimeout(func, 1);
         }
     },
 
@@ -230,6 +220,26 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             brigade = brigades[0];
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = me.createBrigadeFeature(brigade);
+
+            var brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
+                if (brigadeInArray.id === brigade.get('deviceId')) {
+                    return brigadeInArray;
+                }
+            });
+            Ext.Array.remove(me.brigadesMarkers, brigadeHas);
+            if (brigade.get('status') !== 'WITHOUT_SHIFT') {
+                Ext.Array.push(me.brigadesMarkers, marker);
+                if (brigadeHas && brigadeHas.customOptions.status !== marker.customOptions.status) {
+                    Ext.fireEvent('getButtonBrigadeForChangeButton', marker, brigadeHas.customOptions.status);
+                }
+                else if (!brigadeHas) {
+                    me.addNewButtonOnPanel(marker);
+                    alert('Новая');
+                }
+            }
+            else {
+                me.destroyButtonOnPanel(marker);
+            }
             me.addMarkersSocket(marker);
             Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
         }
@@ -240,11 +250,11 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     createTableRoute: function () {
-        var me = this;
+        const me = this;
         if (me.arrRouteForTable.length === me.brigadesMarkers.length) {
             const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
             me.arrRouteForTable.forEach(function (object) {
-                var x = Ext.create('Isidamaps.model.Route');
+                let x = Ext.create('Isidamaps.model.Route');
                 x.set('brigadeId', object.brigade.id);
                 x.set('brigadeNum', object.brigade.customOptions.brigadeNum);
                 x.set('profile', object.brigade.customOptions.profile);
@@ -254,8 +264,9 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             });
         }
     },
+
     createBouns: function () {
-        var me = this,
+        const me = this,
             arrayLatitude = [],
             arrayLongitude = [],
             call = me.callMarkers[0];
@@ -272,7 +283,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         arrayLongitude.sort(function (a, b) {
             return a - b
         });
-        var bounds = [
+        let bounds = [
             [arrayLatitude[arrayLatitude.length - 1] + 0.015, arrayLongitude[0] - 0.015],
             [arrayLatitude[0] - 0.015, arrayLongitude[arrayLatitude.length - 1] + 0.015]
         ];

@@ -14,6 +14,7 @@ Ext.define('Isidamaps.services.medorg.Medorg', {
         region: 'center',
         reference: 'ymapWrapper',
         id: 'mapId',
+        layout: 'container',
         listeners: {
             'boxready': 'mainBoxReady'
         }

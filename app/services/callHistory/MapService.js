@@ -6,31 +6,27 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     callMarkers: [],
     brigadeRoute: null,
     brigadesMarkers: [],
-    viewModel: null,
     factRoute: null,
     brigadesStartPoint: null,
     brigadesEndPoint: null,
-    urlGeodata: null,
     arrRouteForTable: [],
     callMarkersFactRoute: [],
     MyIconContentLayout: null,
-    // ====
-    markerClick: Ext.emptyFn,
-    // ====
+
 
     constructor: function (options) {
         var me = this,
-        bounds = [
-            [60.007645, 30.092139],
-            [59.923862, 30.519157]
-        ];
-        me.map = new ymaps.Map('mapId-innerCt', {
+            bounds = [
+                [60.007645, 30.092139],
+                [59.923862, 30.519157]
+            ];
+        me.map = new ymaps.Map('mapId', {
             bounds: bounds,
             controls: ['trafficControl']
         });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
-            clusterize: true,
+            clusterize: false,
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
@@ -46,297 +42,127 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
         );
-
-    },
-
-
-    createMarkers: function () {
-        var me = this;
-        if (me.brigadesMarkers.length > 1 && me.callMarkers.length > 1) {
-            me.createBouns();
-        }
-        if (me.callMarkers.length === 0) {
-            Ext.create('Ext.window.MessageBox').show({
-                title: 'Ошибка',
-                message: 'Нет сохраненных маршрутов',
-                icon: Ext.Msg.ERROR,
-                buttons: Ext.Msg.OK
-            });
-            me.callMarkerFactRoute.load(function (records) {
-                records.forEach(function (call) {
-                    if (call.get('latitude') !== undefined && call.get('longitude') !== undefined) {
-                        me.callMarkersFactRoute.push({
-                            type: 'Feature',
-                            id: call.get('callCardId'),
-                            customOptions: {
-                                objectType: call.get('objectType'),
-                                status: call.get('status'),
-                                callCardNum: call.get('callCardNum')
-                            },
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [call.get('latitude'), call.get('longitude')]
-                            },
-                            options: {
-                                iconImageHref: 'resources/icon/' + call.get('iconName'),
-                                iconImageSize: [25, 31]
-                            }
-                        })
-                    }
-                });
-                me.objectManager.add(me.callMarkersFactRoute);
-            });
-        }
-        me.objectManager.add(me.brigadesMarkers).add(me.callMarkers);
         me.map.geoObjects.add(me.objectManager);
+
     },
 
-    createPolylineRoute: function () {
-        var me = this;
-        me.brigadeRoute.load(function (records) {
-            records.forEach(function (b) {
-                var routeList = Ext.decode(b.get('routeList'));
-                me.arrRouteForTable = routeList;
-                routeList.forEach(function (routes) {
-                    var polyline = new ymaps.Polyline(routes.route, {}, {
-                        draggable: false,
-                        strokeColor: '#000000',
-                        strokeWidth: 3
-                    });
-                    me.map.geoObjects.add(polyline);
-                })
-            });
-            me.createTableRoute();
-        })
+    listenerStore: function () {
+        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', function (store, records, options) {
+            this.storeFactHistoryCall(records)
+        }, this);
+        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', function (store, records, options) {
+            this.storeFactHistoryBrigade(records)
+        }, this);
+        Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', function (store, records, options) {
+            this.storeRouteHistory(records)
+        }, this);
+        Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', function (store, records, options) {
+            this.storeFactRouteHistory(records)
+        }, this);
     },
 
-    createPolylineFactRoute: function () {
-        var me = this,
-            arrayLine = [];
-        me.factRoute.load(function (records) {
-            records.forEach(function (b) {
-                arrayLine.push([b.get('latitude'), b.get('longitude')]);
-            });
-            var polyline = new ymaps.Polyline(arrayLine, {}, {
-                draggable: false,
-                strokeColor: '#FF0000',
-                strokeWidth: 4,
-                strokeStyle: '3 2'
-            });
-            me.map.geoObjects.add(polyline);
+    storeFactHistoryCall: function (rec) {
+        const me = this;
+        rec.forEach(function (call) {
+            if (call.get('latitude') && call.get('longitude')) {
+                const feature = me.createCallFeature(call);
+                me.callMarkers.push(feature);
+                me.callMarkers.length === 1 ? me.objectManager.add(feature) : me.createBouns();
+            }
         });
     },
 
-    createRouteForCalls: function () {
-        var me = this;
-        me.brigadesEndPoint.load(function (records) {
-            records.forEach(function (brigade) {
-                if (brigade.get('latitude') !== undefined && brigade.get('longitude') !== undefined) {
-                    me.brigadesMarkers.push({
+    storeFactHistoryBrigade: function (rec) {
+        const me = this;
+        let i = 1;
+        rec.forEach(function (brigade) {
+            if (brigade.get('latitude') && brigade.get('longitude')) {
+                brigade.data.deviceId = i++;
+                const feature = me.createBrigadeFeature(brigade);
+                me.brigadesMarkers.push(feature);
+                me.objectManager.add(feature);
+            }
+        });
+    },
+
+    storeRouteHistory: function (records) {
+        const me = this;
+        let routeList = null;
+        records.forEach(function (b) {
+            routeList = Ext.decode(b.get('routeList'));
+            me.createPolylineRoute(routeList);
+            routeList.forEach(function (brigade) {
+                if (brigade.latitude && brigade.longitude) {
+                    const feature = {
                         type: 'Feature',
-                        id: brigade.get('deviceId') + 2,
+                        id: brigade.brigadeId,
                         customOptions: {
-                            objectType: brigade.get('objectType'),
-                            brigadeNum: brigade.get('brigadeNum'),
-                            profile: brigade.get('profile')
+                            objectType: brigade.objectType,
+                            brigadeNum: brigade.brigadeNum,
+                            profile: brigade.profile
                         },
                         geometry: {
                             type: 'Point',
-                            coordinates: [brigade.get('latitude'), brigade.get('longitude')]
+                            coordinates: [brigade.latitude, brigade.longitude]
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: 'resources/icon/' + brigade.get('iconName'),
+                            iconImageHref: 'resources/icon/' + brigade.iconName,
                             iconContentLayout: me.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
                         properties: {
-                            iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
+                            iconContent: brigade.brigadeNum + "(" + brigade.profile + ")"
                         }
-                    })
+                    };
+                    me.brigadesMarkers.push(feature);
+                    me.objectManager.add(feature);
                 }
-            });
-            me.brigadesStartPoint.load(function (records) {
-                records.forEach(function (brigade) {
-                    if (brigade.get('latitude') !== undefined && brigade.get('longitude') !== undefined) {
-                        me.brigadesMarkers.push({
-                            type: 'Feature',
-                            id: brigade.get('deviceId') + 1,
-                            customOptions: {
-                                objectType: brigade.get('objectType'),
-                                brigadeNum: brigade.get('brigadeNum'),
-                                profile: brigade.get('profile')
-                            },
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [brigade.get('latitude'), brigade.get('longitude')]
-                            },
-                            options: {
-                                iconLayout: 'default#imageWithContent',
-                                iconImageHref: 'resources/icon/' + brigade.get('iconName'),
-                                iconContentLayout: me.MyIconContentLayout,
-                                iconImageOffset: [-24, -24],
-                                iconContentOffset: [30, -10],
-                            },
-                            properties: {
-                                iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
-                            }
-                        })
-                    }
-                });
-                me.brigadeRoute.load(function (records) {
-                    records.forEach(function (b) {
-                        var routeList = Ext.decode(b.get('routeList'));
-                        routeList.forEach(function (brigade) {
-                            if (brigade.latitude!== undefined && brigade.longitude!== undefined) {
-                                me.brigadesMarkers.push({
-                                    type: 'Feature',
-                                    id: brigade.brigadeId,
-                                    customOptions: {
-                                        objectType: brigade.objectType,
-                                        brigadeNum: brigade.brigadeNum,
-                                        profile: brigade.profile
-                                    },
-                                    geometry: {
-                                        type: 'Point',
-                                        coordinates: [brigade.latitude, brigade.longitude]
-                                    },
-                                    options: {
-                                        iconLayout: 'default#imageWithContent',
-                                        iconImageHref: 'resources/icon/' + brigade.get('iconName'),
-                                        iconContentLayout: me.MyIconContentLayout,
-                                        iconImageOffset: [-24, -24],
-                                        iconContentOffset: [30, -10],
-                                    },
-                                    properties: {
-                                        iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
-                                    }
-                                })
-                            }
-                        })
-                    });
-                    me.createMarkers();
-                });
-            });
+            })
         });
+    },
+
+    createPolylineRoute: function (routeList) {
+        var me = this;
+
+        me.arrRouteForTable = routeList;
+        routeList.forEach(function (routes) {
+            console.dir(routes);
+            var polyline = new ymaps.Polyline(routes.route, {}, {
+                draggable: false,
+                strokeColor: '#000000',
+                strokeWidth: 3
+            });
+            me.map.geoObjects.add(polyline);
+        });
+        me.createTableRoute();
+    },
+
+    storeFactRouteHistory: function (records) {
+        var me = this,
+            arrayLine = [];
+        records.forEach(function (b) {
+            arrayLine.push([b.get('latitude'), b.get('longitude')]);
+        });
+        var polyline = new ymaps.Polyline(arrayLine, {}, {
+            draggable: false,
+            strokeColor: '#FF0000',
+            strokeWidth: 4,
+            strokeStyle: '3 2'
+        });
+        me.map.geoObjects.add(polyline);
     },
 
     setMarkers: function (call) {
-        this.CallHistory.readMarkers(call);
-    },
-
-    readMarkers: function (call) {
-        var me = this,
-            urlRouteList = Ext.String.format(me.urlGeodata + '/route?callcardid={0}', call),
-            urlFactRouteList = Ext.String.format(me.urlGeodata + '/route/fact?callcardid={0}', call);
-        me.brigadeRoute = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.RouteHistory',
-            proxy: {
-                type: 'ajax',
-                url: urlRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'brigadeRoute'
-                }
-            },
-            autoLoad: false
-        });
-        me.callMarker = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.Call',
-            proxy: {
-                type: 'ajax',
-                url: urlRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'call'
-                }
-            },
-            autoLoad: false
-        });
-        me.factRoute = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.FactRoute',
-            proxy: {
-                type: 'ajax',
-                url: urlFactRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'points'
-                }
-            },
-            autoLoad: false
-        });
-        me.brigadesStartPoint = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.Brigade',
-            proxy: {
-                type: 'ajax',
-                url: urlFactRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'startPoint'
-                }
-            },
-            autoLoad: false
-        });
-
-        me.brigadesEndPoint = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.Brigade',
-            proxy: {
-                type: 'ajax',
-                url: urlFactRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'endPoint'
-                }
-            },
-            autoLoad: false
-        });
-        me.callMarkerFactRoute = Ext.create('Ext.data.Store', {
-            model: 'Isidamaps.model.Call',
-            proxy: {
-                type: 'ajax',
-                url: urlFactRouteList,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'call'
-                }
-            },
-            autoLoad: false
-        });
-
-        me.callMarker.load(function (records) {
-            records.forEach(function (call) {
-                if (call.get('latitude') !== undefined && call.get('longitude') !== undefined) {
-                    me.callMarkers.push({
-                        type: 'Feature',
-                        id: call.get('callCardId'),
-                        customOptions: {
-                            objectType: call.get('objectType'),
-                            status: call.get('status'),
-                            callCardNum: call.get('callCardNum')
-                        },
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [call.get('latitude'), call.get('longitude')]
-                        },
-                        options: {
-                            iconImageHref: 'resources/icon/' + call.get('iconName'),
-                            iconImageSize: [25, 31]
-                        }
-                    })
-                }
-            });
-            me.createPolylineRoute();
-            me.createPolylineFactRoute();
-            me.createRouteForCalls();
-        });
+        Isidamaps.app.getController('AppController').readMarkersForCallHistory(call);
     },
 
     createTableRoute: function () {
-        var me = this,
-            store = me.viewModel.getStore('Route');
+        const me = this,
+            store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         me.arrRouteForTable.forEach(function (object) {
-            var x = Ext.create('Isidamaps.model.Route');
+            const x = Ext.create('Isidamaps.model.Route');
             x.set('brigadeId', object.brigadeId);
             x.set('brigadeNum', object.brigadeNum);
             x.set('profile', object.profile);
