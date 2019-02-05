@@ -15,47 +15,56 @@ Ext.define('Isidamaps.view.routeView.route.Route', {
             text: ' ',
             dataIndex: 'checkBox',
             xtype: 'checkcolumn',
+            reference: 'brigadeAssign',
             listeners: {
                 beforecheckchange: function () {
                     Ext.fireEvent('checkedBrigadeForAssign');
+                },
+                checkchange: function (me, rowIndex, checked, record, e, eOpts) {
+                    if (checked) {
+                        Ext.fireEvent('changeColorRoute', record);
+                    }
+                    if (!checked) {
+                        Ext.fireEvent('returnColorRoute', record);
+                    }
                 }
             },
             name: 'checkbox_name',
-            width: '10%',
+            flex: 0.5,
             fixed: true
         },
         {
             text: 'Номер<br>бригады',
             dataIndex: 'brigadeNum',
             id: 'brigadeId',
-            width: '20%',
+            flex: 1,
             fixed: true
 
         },
         {
             text: 'Профиль',
             dataIndex: 'profile',
-            width: '20%',
+            flex: 1,
             fixed: true
         },
         {
             text: 'Расстояние<br>(км)',
             dataIndex: 'distance',
-            width: '25%',
+            flex: 1.5,
             fixed: true
 
         },
         {
             text: 'Время<br>доезда<br>(мин)',
             dataIndex: 'time',
-            width: '24%',
+            flex: 1,
             fixed: true
         }
     ],
 
     dockedItems: [{
         xtype: 'toolbar',
-        dock: 'bottom',
+        dock: 'top',
         ui: 'footer',
         items: [{
             xtype: 'component',

@@ -135,17 +135,20 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     createRoute: function (call, brigade) {
         const me = this;
         let routeList = null;
+        console.dir(brigade.customOptions.brigadeNum);
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
-            avoidTrafficJams: true
+            avoidTrafficJams: true,
         }).then(function (route) {
             route.getWayPoints().options.set({
                 iconLayout: 'default#image',
                 iconImageHref: false,
-                hasBalloon: false,
+                hasBalloon: true,
                 zIndex: 1
             });
+            route.id = brigade.id;
             route.getPaths().options.set({
                 opacity: 0.9,
+                balloonContentLayout:ymaps.templateLayoutFactory.createClass('Маршрут '+brigade.customOptions.brigadeNum+' бригады'),
                 strokeWidth: 4
             });
             me.map.geoObjects.add(route);

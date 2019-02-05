@@ -6,12 +6,37 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     listen: {
         global: {
             jsonAnswerReady: 'buttonChecked',
-            checkedBrigadeForAssign: 'checkedBrigadeForAssign'
+            checkedBrigadeForAssign: 'checkedBrigadeForAssign',
+            changeColorRoute: 'changeColorRoute',
+            returnColorRoute: 'returnColorRoute'
         }
     },
 
+    changeColorRoute: function (checkbox) {
+        const me = this;
+        me.BrigadeForAssign.map.geoObjects.each(function (route) {
+            if (route.id === checkbox.id) {
+                route.options.set({
+                    routeActiveStrokeColor: "#ff0019",
+                });
+            }
+            else {
+                route.options.unset('routeActiveStrokeColor');
+            }
+        });
+    },
+
+    returnColorRoute: function (checkbox) {
+        const me = this;
+        me.BrigadeForAssign.map.geoObjects.each(function (route) {
+            if (route.id === checkbox.id) {
+                route.options.unset('routeActiveStrokeColor');
+            }
+        });
+    },
+
     checkedBrigadeForAssign: function () {
-        const store =Ext.getStore('Isidamaps.store.RouteForTableStore');
+        const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         store.each(function (rec) {
             rec.set('checkBox', false);
         })
@@ -19,11 +44,10 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
 
     createMap: function () {
         var me = this;
-
         me.BrigadeForAssign = Ext.create('Isidamaps.services.brigadeForAssign.MapService', {});
         me.BrigadeForAssign.listenerStore();
         me.BrigadeForAssign.optionsObjectManager();
-        Isidamaps.app.getController('AppController').readMarkersBrigadeForAssign('106198579', ['910','951','920']);
+        Isidamaps.app.getController('AppController').readMarkersBrigadeForAssign('106198579', ['910', '951', '920']);
         ASOV.setMapManager({
             setMarkers: me.BrigadeForAssign.setMarkers.bind(this)
         }, Ext.History.currentToken);
