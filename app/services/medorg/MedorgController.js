@@ -4,12 +4,17 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
 
     createClass: function () {
         const me = this,
-        Medorg = Ext.create('Isidamaps.services.medorg.MapService', {
-            markerClick: me.markerClick
-        });
+            Medorg = Ext.create('Isidamaps.services.medorg.MapService', {
+                markerClick: me.markerClick
+            });
         Medorg.optionsObjectManager();
         Medorg.listenerStore();
-        Isidamaps.app.getController('AppController').readMedOrg();
+        Isidamaps.app.getController('AppController').initial(f);
+
+        function f() {
+            Isidamaps.app.getController('AppController').readMedOrg();
+        }
+
         const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             Medorg.resizeMap();
@@ -25,7 +30,7 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
     fireTabEvent: function (tab) {
     },
 
-   /** clustersClick: function (coords, cluster) {
+    /** clustersClick: function (coords, cluster) {
         function errorMessage() {
             Ext.create('Ext.window.MessageBox').show({
                 title: 'Ошибка',
@@ -136,7 +141,7 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
         })
     },
 
-    markerClick: function (object, coords, infoMarker) {
+     markerClick: function (object, coords, infoMarker) {
         function errorMessage() {
             Ext.create('Ext.window.MessageBox').show({
                 title: 'Ошибка',
@@ -211,7 +216,7 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
             }
         })
     }
-   clustersClick: function (coords, cluster) {
+     clustersClick: function (coords, cluster) {
        function errorMessage() {
            Ext.create('Ext.window.MessageBox').show({
                title: 'Ошибка',
@@ -305,35 +310,36 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                 buttons: Ext.Msg.OK
             })
         }
-           const win = Ext.WindowManager.getActive();
+
+        const win = Ext.WindowManager.getActive();
         if (win) {
             win.close();
         }
 
-                        Ext.create('Ext.window.Window', {
-                            title: 'Мед. учереждение',
-                            layout: 'form',
-                            border: 'fit',
-                            resizable: false,
-                            width: 400,
-                            items: [{
-                                xtype: 'form',
-                                height: '100%',
-                                width: '100%',
-                                items: [{
-                                    xtype: 'form',
-                                    height: '100%',
-                                    width: '100%',
-                                    margin: 0,
-                                    items: [{
-                                        xtype: 'displayfield',
-                                        value: object.customOptions.organizationName,
-                                        labelWidth: '100%',
-                                        margin: 0
-                                    }]
-                                }]
-                            }]
+        Ext.create('Ext.window.Window', {
+            title: 'Мед. учереждение',
+            layout: 'form',
+            border: 'fit',
+            resizable: false,
+            width: 400,
+            items: [{
+                xtype: 'form',
+                height: '100%',
+                width: '100%',
+                items: [{
+                    xtype: 'form',
+                    height: '100%',
+                    width: '100%',
+                    margin: 0,
+                    items: [{
+                        xtype: 'displayfield',
+                        value: object.customOptions.organizationName,
+                        labelWidth: '100%',
+                        margin: 0
+                    }]
+                }]
+            }]
 
-                        }).show();
-                    }
+        }).show();
+    }
 });

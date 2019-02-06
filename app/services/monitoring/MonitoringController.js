@@ -6,6 +6,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     allStatusBrigade: [],
     allProfileBrigade: [],
     allStatusCall: [],
+    allStation: [],
     stateStatusBrigades: null,
     stateStation: null,
     stateProfileBrigades: null,
@@ -296,7 +297,6 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        me.setFilterBrigadeAndCall();
         const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             me.Monitoring.resizeMap();
@@ -315,7 +315,12 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         me.lookupReference('callStatusFilter').eachBox(function (item) {
             me.allStatusCall.push(item.inputValue);
         });
-        me.filterBrigadeArray = Ext.Array.merge(me.allProfileBrigade, me.allStatusBrigade, me.allStatusCall, Isidamaps.app.getController('AppController').stationArray);
+
+        me.lookupReference('stationFilter').eachBox(function (item) {
+            me.allStation.push(item.inputValue);
+        });
+
+        me.filterBrigadeArray = Ext.Array.merge(me.allProfileBrigade, me.allStatusBrigade, me.allStatusCall, me.allStation);
     }
     ,
 
@@ -366,6 +371,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 }
             }));
         });
+        me.setFilterBrigadeAndCall();
 
     }
     ,
@@ -376,6 +382,9 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             brigadeHave = brigadePanel.getComponent('id' + brigade.id);
         brigadeHave.removeCls('button_' + oldStatus);
         brigadeHave.addCls('button_' + brigade.customOptions.status);
+        if (Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.status) && !brigadeHave.isHidden()) {
+            brigadeHave.hide();
+        }
         brigadePanel.updateLayout();
     }
     ,

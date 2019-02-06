@@ -106,7 +106,12 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     setMarkers: function (call, brigades) {
-        Isidamaps.app.getController('AppController').readMarkers(call, brigades);
+        Isidamaps.app.getController('AppController').initial(f);
+
+        function f() {
+            Isidamaps.app.getController('AppController').readMarkers(call, brigades);
+        }
+
     },
 
     listenerStore: function () {

@@ -121,8 +121,13 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     setStation: function (stations) {
-        Isidamaps.app.getController('AppController').readStation(stations);
+        Isidamaps.app.getController('AppController').initial(f);
+
+        function f() {
+            Isidamaps.app.getController('AppController').readStation(stations);
+        }
     },
+
 
     createCallFeature: function (call) {
         return {

@@ -138,7 +138,12 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     },
 
     setMarkers: function (call, brigades) {
-        Isidamaps.app.getController('AppController').readMarkersBrigadeForAssign(call, brigades);
+        Isidamaps.app.getController('AppController').initial(f);
+
+        function f() {
+            Isidamaps.app.getController('AppController').readMarkersBrigadeForAssign(call, brigades);
+        }
+
     }
 
 });

@@ -127,7 +127,12 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     setMarkers: function (call) {
-        Isidamaps.app.getController('AppController').readMarkersForCallHistory(call);
+        Isidamaps.app.getController('AppController').initial(f);
+
+        function f() {
+            Isidamaps.app.getController('AppController').readMarkersForCallHistory(call);
+        }
+
     },
 
     createTableRoute: function () {

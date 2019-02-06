@@ -22,7 +22,7 @@ Ext.define('Isidamaps.controller.AppController', {
         return map;
     })(),
 
-    init: function () {
+    initial: function (getGeoInform) {
         const me = this,
             settingsStore = me.getStore('Isidamaps.store.SettingsStore');
         settingsStore.load({
@@ -30,6 +30,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 const settings = records[0];
                 me.urlGeodata = settings.get('urlGeodata');
                 me.urlWebSocket = settings.get('urlWebSocket');
+                getGeoInform();
             }
         });
     },

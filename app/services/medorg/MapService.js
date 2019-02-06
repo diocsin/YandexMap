@@ -30,7 +30,7 @@ Ext.define('Isidamaps.services.medorg.MapService', {
         const me = this,
             medorgMarkers = [];
         records.forEach(function (medorg) {
-            if (medorg.get('latitude') !== undefined && medorg.get('longitude') !== undefined) {
+            if (medorg.get('latitude') && medorg.get('longitude')) {
                 medorgMarkers.push({
                     type: 'Feature',
                     id: medorg.get('organizationId'),
