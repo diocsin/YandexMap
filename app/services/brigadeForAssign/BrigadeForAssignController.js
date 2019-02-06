@@ -17,10 +17,12 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
             if (route.id === checkbox.id) {
                 route.options.set({
                     routeActiveStrokeColor: "#ff0019",
+                    zIndex: 5000
                 });
             }
             else {
                 route.options.unset('routeActiveStrokeColor');
+                route.options.unset('zIndex');
             }
         });
     },
