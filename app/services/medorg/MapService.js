@@ -5,32 +5,9 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     markerClick: Ext.emptyFn,
 
     constructor: function (options) {
-        const me = this,
-            bounds = [
-                [60.2, 29.8],
-                [59.7, 30.5]
-            ];
+        const me = this;
+        me.createMap();
         me.markerClick = options.markerClick;
-        me.map = new ymaps.Map('mapId', {
-            bounds: bounds,
-            controls: ['trafficControl']
-        });
-        me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
-        me.objectManager = new ymaps.ObjectManager({
-            clusterize: false,
-            clusterDisableClickZoom: true,
-            clusterOpenBalloonOnClick: false
-        });
-        me.objectManager.objects.options.set({
-            iconLayout: 'default#image',
-            zIndex: 2000,
-            iconImageSize: [40, 40]
-
-        });
-        me.objectManager.clusters.options.set({
-            zIndex: 3000,
-            groupByCoordinates: true
-        });
         me.map.geoObjects.add(me.objectManager);
     },
 

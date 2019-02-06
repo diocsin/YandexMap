@@ -12,7 +12,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MonitoringBrigade', {
     items: [{
         xtype: 'panel',
         region: 'west',
-        reference: 'RouteBrigadePanel',
+        reference: 'navigationPanel',
         title: 'Маршрут бригады',
         publishes: 'size',
         width: 350,

@@ -15,35 +15,9 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
 
     constructor: function (options) {
-        var me = this,
-            bounds = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]
-            ];
-        me.map = new ymaps.Map('mapId', {
-            bounds: bounds,
-            controls: ['trafficControl']
-        });
-        me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
-        me.objectManager = new ymaps.ObjectManager({
-            clusterize: false,
-            clusterDisableClickZoom: true,
-            clusterOpenBalloonOnClick: false
-        });
-        me.objectManager.objects.options.set({
-            iconLayout: 'default#image',
-            zIndex: 2000,
-            iconImageSize: [40, 40]
-        });
-        me.objectManager.clusters.options.set({
-            zIndex: 3000,
-            groupByCoordinates: true
-        });
-        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
-        );
+        const me = this;
+        me.createMap();
         me.map.geoObjects.add(me.objectManager);
-
     },
 
     listenerStore: function () {
@@ -77,7 +51,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         let i = 1;
         rec.forEach(function (brigade) {
             if (brigade.get('latitude') && brigade.get('longitude')) {
-                brigade.data.deviceId = i++;
+                brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
                 const feature = me.createBrigadeFeature(brigade);
                 me.brigadesMarkers.push(feature);
                 me.objectManager.add(feature);
@@ -124,12 +98,10 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     createPolylineRoute: function (routeList) {
-        var me = this;
-
+        const me = this;
         me.arrRouteForTable = routeList;
         routeList.forEach(function (routes) {
-            console.dir(routes);
-            var polyline = new ymaps.Polyline(routes.route, {}, {
+            let polyline = new ymaps.Polyline(routes.route, {}, {
                 draggable: false,
                 strokeColor: '#000000',
                 strokeWidth: 3
@@ -140,12 +112,12 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     storeFactRouteHistory: function (records) {
-        var me = this,
+        const me = this,
             arrayLine = [];
         records.forEach(function (b) {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
         });
-        var polyline = new ymaps.Polyline(arrayLine, {}, {
+        let polyline = new ymaps.Polyline(arrayLine, {}, {
             draggable: false,
             strokeColor: '#FF0000',
             strokeWidth: 4,

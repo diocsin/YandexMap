@@ -1,6 +1,5 @@
 Ext.define('Isidamaps.model.InfoBrigade', {
     extend: 'Ext.data.Model',
-
     fields: [{
         name: 'address',
         mapping: 'brigade.address'

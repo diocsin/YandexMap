@@ -18,16 +18,19 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             margin: '5px 10px 0px 10px',
             listeners: {
                 change: function (checkbox, checked) {
+                    const stationGroup = Ext.getCmp('stationGroupId');
                     if (checked === true) {
-                        Ext.getCmp('stationGroupId').items.each(function (item) {
+                        stationGroup.items.each(function (item) {
                             item.setRawValue(true);
                         });
+                        stationGroup.fireEvent('customerchange');
                         Ext.fireEvent('selectAll', checkbox);
                         return;
                     }
                     Ext.getCmp('stationGroupId').items.each(function (item) {
                         item.setRawValue(false);
                     });
+                    stationGroup.fireEvent('customerchange');
                     Ext.fireEvent('deselectAll', checkbox);
 
                 }
@@ -44,7 +47,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 Ext.fireEvent('setStateStation', state);
             },
             stateEvents: [
-                'change'
+                'customerchange'
             ],
             stateId: 'checkBoxStation',
             stateful: true,
@@ -63,16 +66,19 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             margin: '5px 10px 0px 10px',
             listeners: {
                 change: function (checkbox, checked) {
+                    const statusGroup = Ext.getCmp('statusGroupId');
                     if (checked === true) {
-                        Ext.getCmp('statusGroupId').items.each(function (item) {
+                        statusGroup.items.each(function (item) {
                             item.setRawValue(true);
                         });
+                        statusGroup.fireEvent('customerchange');
                         Ext.fireEvent('selectAll', checkbox);
                         return;
                     }
-                    Ext.getCmp('statusGroupId').items.each(function (item) {
+                    statusGroup.items.each(function (item) {
                         item.setRawValue(false);
                     });
+                    statusGroup.fireEvent('customerchange');
                     Ext.fireEvent('deselectAll', checkbox);
                 }
             }
@@ -89,7 +95,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 Ext.fireEvent('setStateStatusBrigades', state);
             },
             stateEvents: [
-                'change'
+                'customerchange'
             ],
             stateId: 'checkBoxStatusBrigades',
             stateful: true,
@@ -218,18 +224,21 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 margin: '5px 10px 0px 10px',
                 listeners: {
                     change: function (checkbox, checked) {
+                        const profileGroup = Ext.getCmp('profileGroupId');
                         if (checked === true) {
-                            Ext.getCmp('profileGroupId').items.each(function (item) {
+                            profileGroup.items.each(function (item) {
                                 item.setRawValue(true);
                             });
+                            profileGroup.fireEvent('customerchange');
                             Ext.fireEvent('selectAll', checkbox);
                             return;
                         }
 
 
-                        Ext.getCmp('profileGroupId').items.each(function (item) {
+                        profileGroup.items.each(function (item) {
                             item.setRawValue(false);
                         });
+                        profileGroup.fireEvent('customerchange');
                         Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
@@ -245,7 +254,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     Ext.fireEvent('setStateProfileBrigades', state);
                 },
                 stateEvents: [
-                    'change'
+                    'customerchange'
                 ],
                 stateId: 'checkBoxProfileBrigades',
                 stateful: true,
@@ -354,16 +363,19 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 margin: '5px 10px 0px 10px',
                 listeners: {
                     change: function (checkbox, checked) {
+                        const callGroup = Ext.getCmp('callGroupId');
                         if (checked === true) {
-                            Ext.getCmp('callGroupId').items.each(function (item) {
+                            callGroup.items.each(function (item) {
                                 item.setRawValue(true);
                             });
+                            callGroup.fireEvent('customerchange');
                             Ext.fireEvent('selectAll', checkbox);
                             return;
                         }
-                        Ext.getCmp('callGroupId').items.each(function (item) {
+                        callGroup.items.each(function (item) {
                             item.setRawValue(false);
                         });
+                        callGroup.fireEvent('customerchange');
                         Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
@@ -376,10 +388,11 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     return {"checked": this.getValue()};
                 },
                 applyState: function (state) {
+
                     Ext.fireEvent('setStateStatusCalls', state);
                 },
                 stateEvents: [
-                    'change'
+                    'customerchange'
                 ],
                 stateId: 'checkBoxStatusCalls',
                 stateful: true,

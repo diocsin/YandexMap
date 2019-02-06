@@ -10,43 +10,8 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     MyIconContentLayout: null,
 
     constructor: function (options) {
-        const me = this,
-            bounds = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]
-            ];
-        me.map = new ymaps.Map('mapId', {
-            bounds: bounds,
-            controls: ['trafficControl']
-        });
-        me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
-        me.objectManager = new ymaps.ObjectManager({
-            clusterize: false,
-            clusterDisableClickZoom: true,
-            clusterOpenBalloonOnClick: false
-        });
-        me.objectManager.objects.options.set({
-            iconLayout: 'default#image',
-            zIndex: 2000,
-            iconImageSize: [40, 40]
-
-        });
-        me.objectManager.clusters.options.set({
-            zIndex: 3000,
-            groupByCoordinates: true
-        });
-        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
-        );
-    },
-
-    optionsObjectManager: function () {
         const me = this;
-        me.objectManager.objects.events.add(['click'], function (e) {
-            let object = me.objectManager.objects.getById(e.get('objectId'));
-            Ext.widget('callInfo').getController().markerClick(object);
-        });
-
+        me.createMap();
     },
 
     callback: function () {
@@ -66,16 +31,9 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
 
     },
 
-    storeCall: function (records) {
+    checkArrayFeatureComplete: function (array) {
         const me = this;
-        Ext.Array.clean(me.callMarkers);
-        records.forEach(function (call) {
-            if (call.get('latitude') && call.get('longitude')) {
-                const feature = me.createCallFeature(call);
-                me.callMarkers.push(feature);
-            }
-        });
-        if (me.brigadesMarkers.length !== 0) {
+        if (array.length !== 0) {
             me.addMarkers();
         }
     },
@@ -89,16 +47,14 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
                 me.brigadesMarkers.push(feature);
             }
         });
-        if (me.callMarkers.length !== 0) {
-            me.addMarkers();
+        if (me.callMarkers.length === 0) {
+            me.createCallAlert();
         }
+        me.checkArrayFeatureComplete(me.callMarkers);
     },
 
     addMarkers: function () {
         const me = this;
-        if (me.callMarkers.length === 0) {
-            me.createCallAlert();
-        }
         me.createBouns();
         me.brigadesMarkers.forEach(function (brigadeMarker) {
             me.createRoute(me.callMarkers[0], brigadeMarker);
@@ -107,7 +63,6 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
         me.objectManager.add(me.callMarkers);
         me.map.geoObjects.add(me.objectManager);
     },
-
 
     createAnswer: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore'),
@@ -135,7 +90,6 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     createRoute: function (call, brigade) {
         const me = this;
         let routeList = null;
-        console.dir(brigade.customOptions.brigadeNum);
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true,
         }).then(function (route) {
@@ -148,7 +102,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
             route.id = brigade.id;
             route.getPaths().options.set({
                 opacity: 0.9,
-                balloonContentLayout:ymaps.templateLayoutFactory.createClass('Маршрут '+brigade.customOptions.brigadeNum+' бригады'),
+                balloonContentLayout: ymaps.templateLayoutFactory.createClass('Маршрут ' + brigade.customOptions.brigadeNum + ' бригады'),
                 strokeWidth: 4
             });
             me.map.geoObjects.add(route);

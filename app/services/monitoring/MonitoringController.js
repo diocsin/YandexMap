@@ -22,8 +22,6 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             setStateStation: 'setStateStation',
             setStateProfileBrigades: 'setStateProfileBrigades',
             setStateStatusCalls: 'setStateStatusCalls',
-            addButtonsBrigadeOnPanel: 'addButtonsBrigadeOnPanel',
-            addStationFilter: 'addStationFilter',
             getButtonBrigadeForChangeButton: 'getButtonBrigadeForChangeButton',
             buttonSearch: 'buttonSearch',
             selectAll: 'selectAll',
@@ -122,6 +120,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 me.lookupReference('allCalls').setRawValue(false)
             }
             me.setFilterObjectManager();
+            callStatusFilterComp.fireEvent('customerchange');
             return;
         }
         let j = 0;
@@ -135,6 +134,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (callStatusFilterComp.items.length === j) {
             me.lookupReference('allCalls').setRawValue(true)
         }
+        callStatusFilterComp.fireEvent('customerchange');
     },
 
     checkedStationBrigade: function (checkbox) {
@@ -154,6 +154,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 me.lookupReference('allStation').setRawValue(false)
             }
             me.setFilterObjectManager();
+            stationFilter.fireEvent('customerchange');
             return;
         }
         let j = 0;
@@ -167,6 +168,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (stationFilter.items.length === j) {
             me.lookupReference('allStation').setRawValue(true)
         }
+        stationFilter.fireEvent('customerchange');
 
     },
 
@@ -187,6 +189,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 me.lookupReference('allProfile').setRawValue(false)
             }
             me.setFilterObjectManager();
+            profileBrigadeFilter.fireEvent('customerchange');
             return;
         }
 
@@ -201,6 +204,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (profileBrigadeFilter.items.length === j) {
             me.lookupReference('allProfile').setRawValue(true)
         }
+        profileBrigadeFilter.fireEvent('customerchange');
     }
     ,
 
@@ -221,6 +225,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 me.lookupReference('allStatus').setRawValue(false)
             }
             me.setFilterObjectManager();
+            statusBrigadeFilter.fireEvent('customerchange');
             return;
         }
         let j = 0;
@@ -234,6 +239,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (statusBrigadeFilter.items.length === j) {
             me.lookupReference('allStatus').setRawValue(true)
         }
+        statusBrigadeFilter.fireEvent('customerchange');
 
     },
 
@@ -266,11 +272,11 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     mainBoxReady: function () {
         const me = this;
         ymaps.ready(function () {
-            me.createMap();
+            me.createClass();
         });
     },
 
-    createMap: function () {
+    createClass: function () {
         const me = this;
         me.myMask = new Ext.LoadMask({
             msg: 'Подождите пожалуйста. Загрузка...',
@@ -278,6 +284,8 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         });
         me.myMask.show();
         me.Monitoring = Ext.create('Isidamaps.services.monitoring.MapService', {
+            addButtonsBrigadeOnPanel: me.addButtonsBrigadeOnPanel.bind(me),
+            addStationFilter: me.addStationFilter.bind(me),
             getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
             setCheckbox: me.setCheckbox.bind(me),
             addNewButtonOnPanel: me.addNewButtonOnPanel.bind(me),
@@ -285,11 +293,9 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         });
         me.Monitoring.listenerStore();
         me.Monitoring.optionsObjectManager();
-
         ASOV.setMapManager({
             setStation: me.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        Isidamaps.app.getController('AppController').readStation(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
         me.setFilterBrigadeAndCall();
         const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {

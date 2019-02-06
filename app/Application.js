@@ -54,7 +54,7 @@ Ext.define('Isidamaps.Application', {
     },
 
     changeRoute: function (id) {
-        var viewport = Ext.getCmp('content');
+        const viewport = Ext.getCmp('content');
         viewport.removeAll();
         viewport.add({
             xtype: id

@@ -10,16 +10,25 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     setCheckbox: Ext.emptyFn,
     addNewButtonOnPanel: Ext.emptyFn,
     destroyButtonOnPanel: Ext.emptyFn,
+    addButtonsBrigadeOnPanel: Ext.emptyFn,
+    addStationFilter: Ext.emptyFn,
     // ====
 
     constructor: function (options) {
+        const me = this;
+        me.createMap();
+        me.setCheckbox = options.setCheckbox;
+        me.addNewButtonOnPanel = options.addNewButtonOnPanel;
+        me.destroyButtonOnPanel = options.destroyButtonOnPanel;
+        me.addButtonsBrigadeOnPanel = options.addButtonsBrigadeOnPanel;
+        me.addStationFilter = options.addStationFilter;
+    },
+
+    createMap: function () {
         const me = this,
             bound = [
                 [60.007645, 30.092139],
                 [59.923862, 30.519157]];
-        me.setCheckbox = options.setCheckbox;
-        me.addNewButtonOnPanel = options.addNewButtonOnPanel;
-        me.destroyButtonOnPanel = options.destroyButtonOnPanel;
         me.map = new ymaps.Map('mapId', {
             bounds: bound,
             controls: ['trafficControl']
@@ -39,13 +48,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
         );
-    },
-
-    addButtonsBrigadeOnPanel: function () {
-        Ext.fireEvent('addButtonsBrigadeOnPanel');
-    },
-    addStationFilter: function () {
-        Ext.fireEvent('addStationFilter');
     },
 
     optionsObjectManager: function () {
@@ -182,11 +184,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 me.brigadesMarkers.push(feature);
             }
         });
-        if (me.callMarkers.length !== 0) {
-            me.addStationFilter();
-            me.addMarkers();
-            me.listenerWebSockedStore();
-        }
+        me.checkArrayFeatureComplete(me.callMarkers);
     },
 
     storeCall: function (records) {
@@ -198,11 +196,17 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 me.callMarkers.push(feature);
             }
         });
-        if (me.brigadesMarkers.length !== 0) {
+        me.checkArrayFeatureComplete(me.brigadesMarkers);
+    },
+
+    checkArrayFeatureComplete: function (array) {
+        const me = this;
+        if (array.length !== 0) {
             me.addStationFilter();
             me.addMarkers();
             me.listenerWebSockedStore();
         }
+
     },
 
     createCallOfSocked: function (calls) {
@@ -221,7 +225,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = me.createBrigadeFeature(brigade);
 
-            var brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
+            let brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
                 if (brigadeInArray.id === brigade.get('deviceId')) {
                     return brigadeInArray;
                 }

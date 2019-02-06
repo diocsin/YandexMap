@@ -40,7 +40,6 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 // FIXME define formula in VM
                 const status = Isidamaps.app.getController('AppController').brigadeStatusesMap.get(records[0].get('status')) || 'Неизвестно',
                     record = records[0];
-                console.dir(record);
                 record.set({
                     'status': status,
                     'profile': object.customOptions.profile
@@ -72,6 +71,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             }
         })
     },
+
     errorMessage: function (msg) {
         Ext.Msg.show({
             title: 'Ошибка',

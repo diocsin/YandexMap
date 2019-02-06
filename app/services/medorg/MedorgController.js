@@ -2,15 +2,15 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
     extend: 'Isidamaps.services.monitoring.MonitoringController',
     alias: 'controller.medorg',
 
-    createMap: function () {
-        var me = this,
+    createClass: function () {
+        const me = this,
         Medorg = Ext.create('Isidamaps.services.medorg.MapService', {
             markerClick: me.markerClick
         });
         Medorg.optionsObjectManager();
         Medorg.listenerStore();
         Isidamaps.app.getController('AppController').readMedOrg();
-        var ymapWrapper = me.lookupReference('ymapWrapper');
+        const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             Medorg.resizeMap();
         });

@@ -34,31 +34,10 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     constructor: function (options) {
-        const me = this,
-            bounds = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]
-            ];
-        me.map = new ymaps.Map('mapId', {
-            bounds: bounds,
-            controls: ['trafficControl']
-        });
-        me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
-        me.objectManager = new ymaps.ObjectManager({
-            clusterize: false,
-            clusterDisableClickZoom: true,
-            clusterOpenBalloonOnClick: false
-        });
-        me.objectManager.objects.options.set({
-            iconLayout: 'default#image',
-            zIndex: 2000,
-            iconImageSize: [40, 40]
-
-        });
-        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
-        );
+        const me = this;
+        me.createMap();
     },
+
 
     addMarkers: function () {
         const me = this;
@@ -88,7 +67,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     addMarkersSocket: function (marker) {
         const me = this,
-        object = me.objectManager.objects.getById(marker.id);
+            object = me.objectManager.objects.getById(marker.id);
         if (marker.customOptions.objectType === 'BRIGADE') {
             if (object) {
                 me.objectManager.objects.remove(object);
@@ -104,6 +83,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 });
                 me.createRoute(me.callMarkers[0], marker);
             }
+
             setTimeout(func, 1);
             return;
         }
@@ -148,10 +128,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 me.brigadesMarkers.push(feature);
             }
         });
-        if (me.callMarkers.length !== 0) {
-            me.addMarkers();
-            me.listenerWebSockedStore();
-        }
+        me.checkArrayFeatureComplete(me.callMarkers);
     },
 
     createBrigadeOfSocked: function (brigades) {
@@ -164,22 +141,11 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         }
     },
 
-    storeCall: function (records) {
+    checkArrayFeatureComplete: function (array) {
         const me = this;
-        Ext.Array.clean(me.callMarkers);
-        records.forEach(function (call) {
-            if (call.get('latitude') && call.get('longitude')) {
-                const feature = me.createCallFeature(call);
-                me.callMarkers.push(feature);
-            }
-        });
-        if (me.brigadesMarkers.length !== 0) {
+        if (array.length !== 0) {
             me.addMarkers();
             me.listenerWebSockedStore();
         }
-    },
-
-    resizeMap: function () {
-        this.map.container.fitToViewport();
     }
 });
