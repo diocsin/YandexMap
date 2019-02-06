@@ -277,7 +277,7 @@
       ]
     },
     {
-      "path": "/resources/css/button.css"
+      "path": "${workspace.dir}/resources/css/button.css"
     }
   ],
   /**
