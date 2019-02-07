@@ -243,7 +243,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 }
                 else if (!brigadeHas) {
                     me.addNewButtonOnPanel(marker);
-                    alert('Новая');
                 }
             }
             else {
