@@ -385,6 +385,13 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.status) && !brigadeHave.isHidden()) {
             brigadeHave.hide();
         }
+        if (!Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.station) &&
+            !Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.status) &&
+            !Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.profile) &&
+            brigadeHave.isHidden()) {
+            brigadeHave.show();
+        }
+
         brigadePanel.updateLayout();
     }
     ,

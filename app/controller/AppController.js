@@ -48,7 +48,7 @@ Ext.define('Isidamaps.controller.AppController', {
             }.bind(me),
             function (e) {
                 console.error(e, "Reconnecting WS");
-                Ext.defer(me.connect, 2500, me);
+                Ext.defer(me.connectWebSocked, 2500, me);
             }.bind(me)
         );
     },
