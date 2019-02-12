@@ -30,11 +30,12 @@ readPropertyFile();
 
 function startApp(urlYandex) {
     Ext.Loader.loadScript({
-        url: [urlYandex],
+        url: [urlYandex, 'resources/lib/heatmap.min.js'],
         onError: function () {
             console.log('Нет доступа к yandexApi');
         }
     });
+
     Ext.application({
         name: 'Isidamaps',
 

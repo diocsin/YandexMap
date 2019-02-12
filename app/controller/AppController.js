@@ -113,6 +113,25 @@ Ext.define('Isidamaps.controller.AppController', {
         me.connectWebSocked('monitoring');
     },
 
+    readCallsForHeatMap: function(station){
+        const me = this,
+        callStore = me.getStore('Isidamaps.store.CallsFirstLoadStore');
+
+        station.forEach(function (st) {
+                me.stationArray.push(Ext.String.trim(st));
+
+        });
+        const paramsCalls = {
+            stations: me.stationArray,
+            statuses: ['COMPLETED']
+        };
+
+        callStore.load({
+            url: Ext.String.format(me.urlGeodata + '/call'),
+            params: paramsCalls,
+        });
+    },
+
     readMarkers: function (call, brigades) {
         const me = this,
             brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),

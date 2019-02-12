@@ -31,7 +31,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 [59.923862, 30.519157]];
         me.map = new ymaps.Map('mapId', {
             bounds: bound,
-            controls: ['trafficControl']
+            controls: ['trafficControl', 'searchControl']
         });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
