@@ -22,7 +22,8 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
         ].join(''));
         const firstButton = new ymaps.control.Button({
             data: {
-                content: "Подтвердить и закрыть",
+                content: "Подтвердить",
+                title: "Подтвердить координаты"
             },
             options: {
                 layout: ButtonLayout,
@@ -33,7 +34,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
             if (me.feature) {
                 Ext.create('Ext.window.MessageBox').show({
                     title: 'Подтвердите действия',
-                    message: me.feature.properties.getAll().balloonContent !== null ? me.feature.properties.getAll().balloonContent : me.feature.geometry.getCoordinates(),
+                    message: me.feature.properties.getAll().balloonContent ? me.feature.properties.getAll().balloonContent : me.feature.geometry.getCoordinates(),
                     icon: Ext.Msg.QUESTION,
                     buttons: Ext.Msg.YESNOCANCEL,
                     fn: function (btn) {
@@ -93,7 +94,6 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
         else {
             me.feature = me.createPlacemark(coords);
             me.map.geoObjects.add(me.feature);
-
             // Слушаем событие окончания перетаскивания на метке.
             me.feature.events.add('dragend', function () {
                 me.getAddress(me.feature.geometry.getCoordinates());
@@ -105,6 +105,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
     createPlacemark: function (coords) {
         return new ymaps.Placemark(coords, {
             iconCaption: 'поиск...'
+
         }, {
             preset: 'islands#violetDotIconWithCaption',
             draggable: true,

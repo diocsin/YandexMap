@@ -673,6 +673,12 @@
     background:#ffdb4d;
     -webkit-box-shadow:0px 0px 2px #bababa, inset 0px 0px 1px #ffffff;
     -moz-box-shadow: 0px 0px 2px #bababa,  inset 0px 0px 1px #ffffff;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
     box-shadow:0px 0px 2px #bababa, inset 0px 0px 1px #ffffff;
 
 }.button_confirm:hover{
@@ -686,6 +692,12 @@
      background:#ffdb4d;
      -webkit-box-shadow:0px 0px 2px #cfcfcf, inset 0px 0px 4px #999999;
      -moz-box-shadow: 0px 0px 2px #cfcfcf,  inset 0px 0px 4px #999999;
+     -webkit-touch-callout: none; /* iOS Safari */
+     -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Firefox */
+     -ms-user-select: none; /* Internet Explorer/Edge */
+     user-select: none;
      box-shadow:0px 0px 2px #cfcfcf, inset 0px 0px 4px #999999;
 
  }.button_confirm:active{
@@ -698,6 +710,12 @@
       background:#ffdb4d;
       -webkit-box-shadow:0px 0px 2px #bababa, inset 0px 0px 1px #ffffff;
       -moz-box-shadow: 0px 0px 2px #bababa,  inset 0px 0px 1px #ffffff;
+       -webkit-touch-callout: none; /* iOS Safari */
+       -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+       -ms-user-select: none; /* Internet Explorer/Edge */
+       user-select: none;
       box-shadow:0px 0px 2px #bababa, inset 0px 0px 1px #ffffff;
 
   }
