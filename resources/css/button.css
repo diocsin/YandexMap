@@ -682,6 +682,7 @@
      border-radius: 4px;
      font:13px Arial, Helvetica, sans-serif;
      color:#000000;
+     cursor: pointer;
      background:#ffdb4d;
      -webkit-box-shadow:0px 0px 2px #cfcfcf, inset 0px 0px 4px #999999;
      -moz-box-shadow: 0px 0px 2px #cfcfcf,  inset 0px 0px 4px #999999;
