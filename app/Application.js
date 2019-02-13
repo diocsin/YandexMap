@@ -10,7 +10,8 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.services.brigadeForAssign.BrigadeForAssign',
         'Isidamaps.services.callHistory.CallHistory',
         'Isidamaps.services.medorg.Medorg',
-        'Isidamaps.services.heatMapForCall.HeatMapForCall'
+        'Isidamaps.services.heatMapForCall.HeatMapForCall',
+        'Isidamaps.services.searchAddressForCall.SearchAddressForCall'
     ],
     controllers: 'Isidamaps.controller.AppController',
 

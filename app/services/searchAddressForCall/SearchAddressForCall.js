@@ -1,14 +1,14 @@
-Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCall', {
+Ext.define('Isidamaps.services.searchAddressForCall.SearchAddressForCall', {
     extend: 'Ext.panel.Panel',
-    xtype: 'heatMapForCall',
-    id: 'heatMapForCallPanel',
+    xtype: 'searchAddressForCall',
+    id: 'searchAddressForCallPanel',
 
     requires: [
-        'Isidamaps.services.heatMapForCall.HeatMapForCallController',
-        'Isidamaps.services.heatMapForCall.MapService'
+        'Isidamaps.services.searchAddressForCall.SearchAddressForCallController',
+        'Isidamaps.services.searchAddressForCall.MapService'
     ],
 
-    controller: 'heatMapForCall',
+    controller: 'searchAddressForCall',
     layout: 'border',
     items: [{
         xtype: 'container',

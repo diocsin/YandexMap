@@ -2,9 +2,11 @@ Ext.define('Isidamaps.services.heatMapForCall.MapService', {
     extend: 'Isidamaps.services.monitoring.MapService',
     map: null,
     heatmap: null,
+    myMask: null,
 
     constructor: function (options) {
         const me = this;
+        me.myMask =options.myMask;
         me.createMap();
         ymaps.modules.require(['Heatmap'], function (Heatmap) {
             me.heatmap = new Heatmap();
@@ -20,6 +22,7 @@ Ext.define('Isidamaps.services.heatMapForCall.MapService', {
 
     storeCall: function (records) {
         const me = this;
+        me.myMask.hide();
         Ext.Array.clean(me.callMarkers);
         records.forEach(function (call) {
             if (call.get('latitude') && call.get('longitude')) {

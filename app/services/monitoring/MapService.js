@@ -31,7 +31,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 [59.923862, 30.519157]];
         me.map = new ymaps.Map('mapId', {
             bounds: bound,
-            controls: ['trafficControl', 'searchControl']
+            controls: ['trafficControl']
         });
         me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
         me.objectManager = new ymaps.ObjectManager({
@@ -45,9 +45,36 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             iconImageSize: [40, 40]
 
         });
+        me.searchControl();
         me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
         );
+    },
+
+    searchControl: function () {
+        const me = this,
+            searchControl = new ymaps.control.SearchControl({
+                options: {
+                    // Будет производиться поиск только по топонимам.
+                    provider: 'yandex#map',
+                    noPlacemark: true,
+                    noSelect: true
+
+                }
+            });
+        me.map.controls.add(searchControl);
+        searchControl.events.add('resultselect', function (e) {
+            // Получает массив результатов.
+            const results = searchControl.getResultsArray();
+            console.dir(results);
+            // Индекс выбранного объекта.
+            const selected = e.get('index');
+            // Получает координаты выбранного объекта.
+            const point = results[selected].geometry.getCoordinates();
+            console.dir(point);
+            const balloonContent = results[selected].properties.getAll().name;
+            me.map.balloon.open(point, balloonContent, {});
+        });
     },
 
     optionsObjectManager: function () {

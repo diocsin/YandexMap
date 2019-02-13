@@ -1,11 +1,18 @@
-Ext.define('Isidamaps.services.heatMapForCall.heatMapForCallController', {
+Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
     extend: 'Isidamaps.services.monitoring.MonitoringController',
     alias: 'controller.heatMapForCall',
 
     createClass: function () {
         const me = this,
-            HeatMapForCall = Ext.create('Isidamaps.services.heatMapForCall.MapService', {
-            });
+        myMask = new Ext.LoadMask({
+            msg: 'Подождите пожалуйста. Загрузка...',
+            target: Ext.getCmp('heatMapForCallPanel')
+        }),
+        HeatMapForCall = Ext.create('Isidamaps.services.heatMapForCall.MapService', {
+            myMask: myMask
+        });
+
+        myMask.show();
         HeatMapForCall.optionsObjectManager();
         HeatMapForCall.listenerStore();
         Isidamaps.app.getController('AppController').initial(f);
