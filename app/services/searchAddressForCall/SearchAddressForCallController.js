@@ -7,8 +7,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.SearchAddressForCallControll
         
         SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
         });
-        SearchAddressForCall.optionsObjectManager();
-        SearchAddressForCall.listenerStore();
+        SearchAddressForCall.searchControl();
         Isidamaps.app.getController('AppController').initial(Ext.emptyFn);
         const ymapWrapper = me.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {

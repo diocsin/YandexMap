@@ -14,12 +14,18 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
     },
 
     createButtonOnControlPanel: function () {
-        const me = this;
+        const me = this,
+        ButtonLayout = ymaps.templateLayoutFactory.createClass([
+            '<div title="{{ data.title}}" class="button_confirm">',
+            '{{ data.content}}',
+            '</div>'
+        ].join(''));
         const firstButton = new ymaps.control.Button({
             data: {
                 content: "Подтвердить и закрыть",
             },
             options: {
+                layout: ButtonLayout,
                 maxWidth: [28, 150, 178]
             }
         });

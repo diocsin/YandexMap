@@ -45,7 +45,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             iconImageSize: [40, 40]
 
         });
-        me.searchControl();
         me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
         );

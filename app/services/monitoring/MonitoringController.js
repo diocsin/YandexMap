@@ -292,6 +292,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             addNewButtonOnPanel: me.addNewButtonOnPanel.bind(me),
             destroyButtonOnPanel: me.destroyButtonOnPanel.bind(me),
         });
+        me.Monitoring.searchControl();
         me.Monitoring.listenerStore();
         me.Monitoring.optionsObjectManager();
         ASOV.setMapManager({
