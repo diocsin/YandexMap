@@ -63,13 +63,13 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         const me = this;
         let routeList = null;
         records.forEach(function (b) {
-            routeList = Ext.decode(b.get('routeList'));
+            b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
             me.createPolylineRoute(routeList);
             routeList.forEach(function (brigade) {
                 if (brigade.latitude && brigade.longitude) {
                     const feature = {
                         type: 'Feature',
-                        id: brigade.brigadeId,
+                        id: brigade.brigadeId ? brigade.brigadeId : brigade.deviceId,
                         customOptions: {
                             objectType: brigade.objectType,
                             brigadeNum: brigade.brigadeNum,
@@ -140,7 +140,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         me.arrRouteForTable.forEach(function (object) {
             const x = Ext.create('Isidamaps.model.Route');
-            x.set('brigadeId', object.brigadeId);
+            object.brigadeId ? x.set('brigadeId', object.brigadeId) : x.set('brigadeId', object.deviceId);
             x.set('brigadeNum', object.brigadeNum);
             x.set('profile', object.profile);
             x.set('distance', object.distance);
