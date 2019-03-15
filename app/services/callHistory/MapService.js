@@ -81,7 +81,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: 'resources/icon/' + brigade.iconName,
+                            iconImageHref: 'resources/icon/free.png',
                             iconContentLayout: me.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
