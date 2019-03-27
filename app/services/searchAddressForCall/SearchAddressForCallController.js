@@ -3,13 +3,11 @@ Ext.define('Isidamaps.services.searchAddressForCall.SearchAddressForCallControll
     alias: 'controller.searchAddressForCall',
 
     createClass: function () {
-        const me = this,
-        
-        SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
+        const SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
         });
         SearchAddressForCall.searchControl();
         Isidamaps.app.getController('AppController').initial(Ext.emptyFn);
-        const ymapWrapper = me.lookupReference('ymapWrapper');
+        const ymapWrapper = this.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', function () {
             SearchAddressForCall.resizeMap();
         });

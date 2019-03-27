@@ -22,7 +22,11 @@ function readPropertyFile() {
             var data = Ext.decode(rawFile.responseText);
             startApp(data.urlYandex);
         }
+        else if(rawFile.status!==200){
+            Ext.log({indent:1, level:'error'}, 'Ошибка чтения файла property, status ' +rawFile.status);
+        }
     };
+
     rawFile.send(null);
 }
 
@@ -32,7 +36,7 @@ function startApp(urlYandex) {
     Ext.Loader.loadScript({
         url: [urlYandex, 'resources/lib/heatmap.min.js'],
         onError: function () {
-            console.log('Нет доступа к yandexApi');
+            Ext.log({indent: 1, level: 'error'}, 'Нет доступа к yandexApi');
         }
     });
 

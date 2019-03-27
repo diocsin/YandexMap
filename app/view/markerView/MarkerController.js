@@ -3,8 +3,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
     alias: 'controller.MarkerController',
 
     markerClick: function (object) {
-        const me = this,
-            win = Ext.WindowManager.getActive();
+        const win = Ext.WindowManager.getActive();
         if (win) {
             win.close();
         }
@@ -20,21 +19,20 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             store: storeMarker
         };
         if (object.customOptions.objectType === 'BRIGADE') {
-            me.brigadeMarkerClick(options, object);
+            this.brigadeMarkerClick(options, object);
             return;
         }
 
-        me.callMarkerClick(options);
+        this.callMarkerClick(options);
     }
     ,
 
     brigadeMarkerClick: function (options, object) {
-        const me = this;
         options.store.load({
             params: options.params,
-            callback: function (records, operation, success) {
+            callback: (records, operation, success) => {
                 if ((success === true && records.length === 0) || success === false) {
-                    me.errorMessage('Данные о бригаде временно не доступны');
+                    this.errorMessage('Данные о бригаде временно не доступны');
                     return;
                 }
                 // FIXME define formula in VM
@@ -56,12 +54,11 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
     ,
 
     callMarkerClick: function (options) {
-        const me = this;
         options.store.load({
             params: options.params,
-            callback: function (records, operation, success) {
+            callback: (records, operation, success) => {
                 if ((success === true && records.length === 0) || success === false) {
-                    me.errorMessage('Данные о вызове временно недоступны');
+                    this.errorMessage('Данные о вызове временно недоступны');
                     return;
                 }
                 const callInfoWidget = Ext.widget('callInfo'),

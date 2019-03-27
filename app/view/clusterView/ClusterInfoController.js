@@ -10,8 +10,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
     })(),
 
     clustersClick: function (cluster) {
-        const me = this,
-            win = Ext.WindowManager.getActive();
+        const win = Ext.WindowManager.getActive();
         if (win) {
             win.close();
         }
@@ -20,26 +19,26 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
         clusterInfo.show();
         const buttonsHolder = clusterInfo.lookup('buttonsHolder'),
             infoHolder = clusterInfo.lookup('infoHolder');
-        cluster.getProperties().features.forEach(function (marker) {
+        cluster.getProperties().features.forEach((marker) => {
             const params = {
                 objecttype: marker.getProperties().customOptions.objectType,
                 objectid: marker.getProperties().id
             };
             if (marker.getProperties().customOptions.objectType === 'CALL') {
                 buttonsHolder.add(Ext.create('Ext.Button', {
-                    text: 'Выз.№ ' + marker.getProperties().customOptions.callCardNum + " " + me.callStatusesMap.get(marker.getProperties().customOptions.status || 'Неизвестно'),
+                    text: `Выз.№ ${marker.getProperties().customOptions.callCardNum} ${this.callStatusesMap.get(marker.getProperties().customOptions.status || 'Неизвестно')}`,
                     maxWidth: 170,
                     minWidth: 170,
                     margin: 5,
                     listeners: {
-                        click: function () {
+                        click: () => {
                             const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(marker);
                             infoHolder.removeAll();
                             storeMarker.load({
                                 params: params,
-                                callback: function (records, operation, success) {
+                                callback: (records, operation, success) => {
                                     if ((success === true && records.length === 0) || success === false) {
-                                        me.errorMessage('Данные о вызове временно недоступны');
+                                        this.errorMessage('Данные о вызове временно недоступны');
                                         return;
                                     }
                                     const callInfoForm = Ext.widget('callInfoForm'),
@@ -54,19 +53,19 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
             }
             if (marker.getProperties().customOptions.objectType === 'BRIGADE') {
                 buttonsHolder.add(Ext.create('Ext.Button', {
-                    text: 'Бр.№ ' + marker.getProperties().customOptions.brigadeNum + " " + "(" + marker.getProperties().customOptions.profile + ")" + " " + marker.getProperties().customOptions.station,
+                    text: `Бр.№ ${marker.getProperties().customOptions.brigadeNum} (${marker.getProperties().customOptions.profile}) ${marker.getProperties().customOptions.station}`,
                     maxWidth: 170,
                     minWidth: 170,
                     margin: 5,
                     listeners: {
-                        click: function () {
+                        click: () => {
                             const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(marker);
                             infoHolder.removeAll();
                             storeMarker.load({
                                 params: params,
-                                callback: function (records, operation, success) {
+                                callback: (records, operation, success) => {
                                     if ((success === true && records.length === 0) || success === false) {
-                                        me.errorMessage('Данные о бригаде временно недоступны');
+                                        this.errorMessage('Данные о бригаде временно недоступны');
                                         return;
                                     }
                                     // FIXME formula?

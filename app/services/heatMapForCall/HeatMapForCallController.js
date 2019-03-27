@@ -3,26 +3,25 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
     alias: 'controller.heatMapForCall',
 
     createClass: function () {
-        const me = this,
-        myMask = new Ext.LoadMask({
-            msg: 'Подождите пожалуйста. Загрузка...',
-            target: Ext.getCmp('heatMapForCallPanel')
-        }),
-        HeatMapForCall = Ext.create('Isidamaps.services.heatMapForCall.MapService', {
-            myMask: myMask
-        });
+        const myMask = new Ext.LoadMask({
+                msg: 'Подождите пожалуйста. Загрузка...',
+                target: Ext.getCmp('heatMapForCallPanel')
+            }),
+            HeatMapForCall = Ext.create('Isidamaps.services.heatMapForCall.MapService', {
+                myMask: myMask
+            }),
+            readCalls = () => {
+                Isidamaps.app.getController('AppController').readCallsForHeatMap(['9'])
+            };
 
         myMask.show();
         HeatMapForCall.optionsObjectManager();
         HeatMapForCall.listenerStore();
-        Isidamaps.app.getController('AppController').initial(f);
+        Isidamaps.app.getController('AppController').initial(readCalls);
 
-        function f() {
-            Isidamaps.app.getController('AppController').readCallsForHeatMap(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-        }
 
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
             HeatMapForCall.resizeMap();
         });
     },

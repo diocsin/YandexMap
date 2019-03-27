@@ -15,57 +15,53 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
 
     constructor: function (options) {
-        const me = this;
-        me.createMap();
-        me.map.geoObjects.add(me.objectManager);
+        this.createMap();
+        this.map.geoObjects.add(this.objectManager);
     },
 
     listenerStore: function () {
-        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
             this.storeFactHistoryCall(records)
         }, this);
-        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', (store, records, options) => {
             this.storeFactHistoryBrigade(records)
         }, this);
-        Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', (store, records, options) => {
             this.storeRouteHistory(records)
         }, this);
-        Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', (store, records, options) => {
             this.storeFactRouteHistory(records)
         }, this);
     },
 
     storeFactHistoryCall: function (rec) {
-        const me = this;
-        rec.forEach(function (call) {
+        rec.forEach((call) => {
             if (call.get('latitude') && call.get('longitude')) {
-                const feature = me.createCallFeature(call);
-                me.callMarkers.push(feature);
-                me.callMarkers.length === 1 ? me.objectManager.add(feature) : me.createBouns();
+                const feature = this.createCallFeature(call);
+                this.callMarkers.push(feature);
+                this.callMarkers.length === 1 ? this.objectManager.add(feature) : this.createBouns();
             }
         });
     },
 
     storeFactHistoryBrigade: function (rec) {
-        const me = this;
         let i = 1;
-        rec.forEach(function (brigade) {
+        rec.forEach((brigade) => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
-                const feature = me.createBrigadeFeature(brigade);
-                me.brigadesMarkers.push(feature);
-                me.objectManager.add(feature);
+                const feature = this.createBrigadeFeature(brigade);
+                this.brigadesMarkers.push(feature);
+                this.objectManager.add(feature);
             }
         });
     },
 
     storeRouteHistory: function (records) {
-        const me = this;
         let routeList = null;
-        records.forEach(function (b) {
+        records.forEach((b) => {
             routeList = Ext.decode(b.get('routeList'));
-            me.createPolylineRoute(routeList);
-            routeList.forEach(function (brigade) {
+            this.createPolylineRoute(routeList);
+            routeList.forEach((brigade) => {
                 if (brigade.latitude && brigade.longitude) {
                     const feature = {
                         type: 'Feature',
@@ -81,40 +77,38 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: 'resources/icon/' + brigade.iconName,
-                            iconContentLayout: me.MyIconContentLayout,
+                            iconImageHref: `resources/icon/${brigade.iconName}`,
+                            iconContentLayout: this.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
                         properties: {
-                            iconContent: brigade.brigadeNum + "(" + brigade.profile + ")"
+                            iconContent: `${brigade.brigadeNum}(${brigade.profile})`
                         }
                     };
-                    me.brigadesMarkers.push(feature);
-                    me.objectManager.add(feature);
+                    this.brigadesMarkers.push(feature);
+                    this.objectManager.add(feature);
                 }
             })
         });
     },
 
     createPolylineRoute: function (routeList) {
-        const me = this;
-        me.arrRouteForTable = routeList;
-        routeList.forEach(function (routes) {
+        this.arrRouteForTable = routeList;
+        routeList.forEach((routes) => {
             let polyline = new ymaps.Polyline(routes.route, {}, {
                 draggable: false,
                 strokeColor: '#000000',
                 strokeWidth: 3
             });
-            me.map.geoObjects.add(polyline);
+            this.map.geoObjects.add(polyline);
         });
-        me.createTableRoute();
+        this.createTableRoute();
     },
 
     storeFactRouteHistory: function (records) {
-        const me = this,
-            arrayLine = [];
-        records.forEach(function (b) {
+        const arrayLine = [];
+        records.forEach((b) => {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
         });
         let polyline = new ymaps.Polyline(arrayLine, {}, {
@@ -123,22 +117,19 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             strokeWidth: 4,
             strokeStyle: '3 2'
         });
-        me.map.geoObjects.add(polyline);
+        this.map.geoObjects.add(polyline);
     },
 
     setMarkers: function (call) {
-        Isidamaps.app.getController('AppController').initial(f);
-
-        function f() {
-            Isidamaps.app.getController('AppController').readMarkersForCallHistory(call);
-        }
-
+        const readMarkers = () => {
+            Isidamaps.app.getController('AppController').readMarkersForCallHistory(call)
+        };
+        Isidamaps.app.getController('AppController').initial(readMarkers);
     },
 
     createTableRoute: function () {
-        const me = this,
-            store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-        me.arrRouteForTable.forEach(function (object) {
+        const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
+        this.arrRouteForTable.forEach((object) => {
             const x = Ext.create('Isidamaps.model.Route');
             x.set('brigadeId', object.brigadeId);
             x.set('brigadeNum', object.brigadeNum);

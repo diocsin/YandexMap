@@ -4,18 +4,16 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
     feature: null,
 
     constructor: function (options) {
-        const me = this;
-        me.createMap();
-        me.createButtonOnControlPanel();
-        me.map.events.add('click', function (e) {
+        this.createMap();
+        this.createButtonOnControlPanel();
+        this.map.events.add('click', (e) => {
             const coords = e.get('coords');
-            me.checkFeature(coords);
+            this.checkFeature(coords);
         });
     },
 
     createButtonOnControlPanel: function () {
-        const me = this,
-        ButtonLayout = ymaps.templateLayoutFactory.createClass([
+        const ButtonLayout = ymaps.templateLayoutFactory.createClass([
             '<div title="{{ data.title}}" class="button_confirm">',
             '{{ data.content}}',
             '</div>'
@@ -30,16 +28,16 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
                 maxWidth: [28, 150, 178]
             }
         });
-        firstButton.events.add('click', function f(e) {
-            if (me.feature) {
+        firstButton.events.add('click', (e) => {
+            if (this.feature) {
                 Ext.create('Ext.window.MessageBox').show({
                     title: 'Подтвердите действия',
-                    message: me.feature.properties.getAll().balloonContent ? me.feature.properties.getAll().balloonContent : me.feature.geometry.getCoordinates(),
+                    message: this.feature.properties.getAll().balloonContent ? this.feature.properties.getAll().balloonContent : this.feature.geometry.getCoordinates(),
                     icon: Ext.Msg.QUESTION,
                     buttons: Ext.Msg.YESNOCANCEL,
-                    fn: function (btn) {
+                    fn: (btn) => {
                         if (btn === 'yes') {
-                            console.dir(me.feature.geometry.getCoordinates());
+                            console.dir(this.feature.geometry.getCoordinates());
                             Isidamaps.app.getController('AppController').windowClose();
                         } else if (btn === 'no') {
 
@@ -58,20 +56,19 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
                 })
             }
         });
-        me.map.controls.add(firstButton, {float: 'left'});
+        this.map.controls.add(firstButton, {float: 'left'});
     },
 
     searchControl: function () {
-        const me = this,
-            searchControl = new ymaps.control.SearchControl({
+        const searchControl = new ymaps.control.SearchControl({
                 options: {
                     provider: 'yandex#map',
                     noPlacemark: true,
                     noSelect: true
                 }
             });
-        me.map.controls.add(searchControl);
-        searchControl.events.add('resultselect', function (e) {
+        this.map.controls.add(searchControl);
+        searchControl.events.add('resultselect', (e) => {
             // Получает массив результатов.
             const results = searchControl.getResultsArray();
             // Индекс выбранного объекта.
@@ -79,27 +76,26 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
             // Получает координаты выбранного объекта.
             const point = results[selected].geometry.getCoordinates();
             const balloonContent = results[selected].properties.getAll().name;
-            //me.map.balloon.open(point, balloonContent, {});
-            me.checkFeature(point);
+            //this.map.balloon.open(point, balloonContent, {});
+            this.checkFeature(point);
 
         });
     },
 
     checkFeature: function (coords) {
-        const me = this;
-        if (me.feature !== null) {
-            me.feature.geometry.setCoordinates(coords);
-            me.feature.properties.set('balloonContent', null);
+        if (this.feature !== null) {
+            this.feature.geometry.setCoordinates(coords);
+            this.feature.properties.set('balloonContent', null);
         }
         else {
-            me.feature = me.createPlacemark(coords);
-            me.map.geoObjects.add(me.feature);
+            this.feature = this.createPlacemark(coords);
+            this.map.geoObjects.add(this.feature);
             // Слушаем событие окончания перетаскивания на метке.
-            me.feature.events.add('dragend', function () {
-                me.getAddress(me.feature.geometry.getCoordinates());
+            this.feature.events.add('dragend', () => {
+                this.getAddress(this.feature.geometry.getCoordinates());
             });
         }
-        me.getAddress(coords);
+        this.getAddress(coords);
     },
 
     createPlacemark: function (coords) {
@@ -114,11 +110,10 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
     },
 
     getAddress: function (coords) {
-        const me = this;
-        me.feature.properties.set('iconCaption', 'поиск...');
-        ymaps.geocode(coords).then(function (res) {
+        this.feature.properties.set('iconCaption', 'поиск...');
+        ymaps.geocode(coords).then((res) => {
             const firstGeoObject = res.geoObjects.get(0);
-            me.feature.properties
+            this.feature.properties
                 .set({
                     iconCaption: [
                         // Название населенного пункта или вышестоящее административно-территориальное образование.

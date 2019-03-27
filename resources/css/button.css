@@ -655,14 +655,7 @@
     background-image: linear-gradient(top, #f74a4a 0% ,#faff69 100%);
     -webkit-box-shadow:0px 0px 2px #bababa;  -moz-box-shadow: 0px 0px 2px #bababa;  box-shadow:0px 0px 2px #bababa;
 }
-.x-accordion-hd .x-panel-header-text-container {
-    right: 0 !important;
-    left: auto !important;
-}
-.x-panel-header-default-horizontal .x-tool-after-title {
-    left: 0 !important;
-    right: auto !important;
-}
+
 .button_confirm{text-decoration:none; text-align:center;
     padding:7px 7px;
     -webkit-border-radius:4px;

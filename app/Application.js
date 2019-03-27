@@ -36,7 +36,6 @@ Ext.define('Isidamaps.Application', {
     },
 
     launch: function () {
-        // TODO - Launch the application
         if (Ext.supports.LocalStorage) {
             Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider());
         }
@@ -46,7 +45,7 @@ Ext.define('Isidamaps.Application', {
     },
 
     onAppUpdate: function () {
-        Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
+        Ext.Msg.confirm('Обновление приложения', 'Это приложение нуждается в обновлении, обновить?',
             function (choice) {
                 if (choice === 'yes') {
                     window.location.reload();

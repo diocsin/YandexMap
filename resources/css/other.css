@@ -1,0 +1,14 @@
+.x-accordion-hd .x-panel-header-text-container {
+    right: 0 !important;
+    left: auto !important;
+}
+.x-panel-header-default-horizontal .x-tool-after-title {
+    left: 0 !important;
+    right: auto !important;
+}
+
+.x-form-display-field {
+    font-family: tahoma, arial, verdana, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+}
