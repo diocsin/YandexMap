@@ -30,14 +30,15 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
         });
         firstButton.events.add('click', (e) => {
             if (this.feature) {
+                const {properties, geometry} = this.feature;
                 Ext.create('Ext.window.MessageBox').show({
                     title: 'Подтвердите действия',
-                    message: this.feature.properties.getAll().balloonContent ? this.feature.properties.getAll().balloonContent : this.feature.geometry.getCoordinates(),
+                    message: properties.getAll().balloonContent ? properties.getAll().balloonContent : geometry.getCoordinates(),
                     icon: Ext.Msg.QUESTION,
                     buttons: Ext.Msg.YESNOCANCEL,
                     fn: (btn) => {
                         if (btn === 'yes') {
-                            console.dir(this.feature.geometry.getCoordinates());
+                            console.dir(geometry.getCoordinates());
                             Isidamaps.app.getController('AppController').windowClose();
                         } else if (btn === 'no') {
 
@@ -61,12 +62,12 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
 
     searchControl: function () {
         const searchControl = new ymaps.control.SearchControl({
-                options: {
-                    provider: 'yandex#map',
-                    noPlacemark: true,
-                    noSelect: true
-                }
-            });
+            options: {
+                provider: 'yandex#map',
+                noPlacemark: true,
+                noSelect: true
+            }
+        });
         this.map.controls.add(searchControl);
         searchControl.events.add('resultselect', (e) => {
             // Получает массив результатов.

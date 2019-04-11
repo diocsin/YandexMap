@@ -3,14 +3,15 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
     alias: 'controller.MarkerController',
 
     markerClick: function (object) {
-        const win = Ext.WindowManager.getActive();
+        const win = Ext.WindowManager.getActive(),
+            {id, customOptions: {objectType}} = object;
         if (win) {
             win.close();
         }
         const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(object),
             params = {
-                objecttype: object.customOptions.objectType,
-                objectid: object.id
+                objecttype: objectType,
+                objectid: id
             };
 
 
@@ -18,7 +19,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             params: params,
             store: storeMarker
         };
-        if (object.customOptions.objectType === 'BRIGADE') {
+        if (objectType === 'BRIGADE') {
             this.brigadeMarkerClick(options, object);
             return;
         }
@@ -35,9 +36,8 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                     this.errorMessage('Данные о бригаде временно не доступны');
                     return;
                 }
-                // FIXME define formula in VM
-                const status = Isidamaps.app.getController('AppController').brigadeStatusesMap.get(records[0].get('status')) || 'Неизвестно',
-                    record = records[0];
+                const record = records[0],
+                    status = Isidamaps.app.getController('AppController').getBrigadeStatuses(record.get('status'));
                 record.set({
                     'status': status,
                     'profile': object.customOptions.profile

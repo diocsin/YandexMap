@@ -25,8 +25,8 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     createMap: function () {
         const bound = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]];
+            [60.007645, 30.092139],
+            [59.923862, 30.519157]];
         this.map = new ymaps.Map('mapId', {
             bounds: bound,
             controls: ['trafficControl', 'rulerControl']
@@ -50,14 +50,14 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     searchControl: function () {
         const searchControl = new ymaps.control.SearchControl({
-                options: {
-                    // Будет производиться поиск только по топонимам.
-                    provider: 'yandex#map',
-                    noPlacemark: true,
-                    noSelect: true
+            options: {
+                // Будет производиться поиск только по топонимам.
+                provider: 'yandex#map',
+                noPlacemark: true,
+                noSelect: true
 
-                }
-            });
+            }
+        });
         this.map.controls.add(searchControl);
         searchControl.events.add('resultselect', (e) => {
             // Получает массив результатов.
@@ -117,23 +117,26 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         const object = this.objectManager.objects.getById(marker.id),
             addFeature = () => {
                 this.objectManager.objects.add(marker);
-            };
+            },
+            {customOptions: {objectType, status}} = marker;
         if (object) {
             this.objectManager.objects.remove(object);
         }
-        if (marker.customOptions.objectType === 'BRIGADE') {
-            if (marker.customOptions.status !== 'WITHOUT_SHIFT') {
+        if (objectType === 'BRIGADE') {
+            if (status !== 'WITHOUT_SHIFT') {
                 Ext.defer(addFeature, 1, this);
             }
             return;
         }
-        if (marker.customOptions.status !== 'COMPLETED') {
+        if (status !== 'COMPLETED') {
             Ext.defer(addFeature, 1, this);
         }
     },
 
     setStation: function (stations) {
-        const readStation = () =>{ Isidamaps.app.getController('AppController').readStation(stations)};
+        const readStation = () => {
+            Isidamaps.app.getController('AppController').readStation(stations)
+        };
         Isidamaps.app.getController('AppController').initial(readStation);
     },
 
@@ -146,7 +149,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 objectType: call.get('objectType'),
                 status: call.get('status'),
                 callCardNum: call.get('callCardNum'),
-                station: '' + call.get('station')
+                station: call.get('station').toString()
             },
             geometry: {
                 type: 'Point',
@@ -167,7 +170,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 objectType: brigade.get('objectType'),
                 profile: brigade.get('profile'),
                 status: brigade.get('status'),
-                station: '' + brigade.get('station'),
+                station: brigade.get('station').toString(),
                 brigadeNum: brigade.get('brigadeNum')
             },
             geometry: {
@@ -264,12 +267,13 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         if (this.arrRouteForTable.length === this.brigadesMarkers.length) {
             const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
             this.arrRouteForTable.forEach(object => {
+                const {route, brigade: {id, customOptions: {brigadeNum, profile}}} = object;
                 let x = Ext.create('Isidamaps.model.Route');
-                x.set('brigadeId', object.brigade.id);
-                x.set('brigadeNum', object.brigade.customOptions.brigadeNum);
-                x.set('profile', object.brigade.customOptions.profile);
-                x.set('distance', (object.route.getLength() / 1000).toFixed(1));
-                x.set('time', (object.route.getJamsTime() / 60).toFixed(0));
+                x.set('brigadeId', id);
+                x.set('brigadeNum', brigadeNum);
+                x.set('profile', profile);
+                x.set('distance', (route.getLength() / 1000).toFixed(1));
+                x.set('time', (route.getJamsTime() / 60).toFixed(0));
                 store.add(x);
             });
         }

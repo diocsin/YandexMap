@@ -14,7 +14,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     },
 
     callback: function () {
-        if (this.arrRoute.length === mthis.brigadesMarkers.length) {
+        if (this.arrRoute.length === this.brigadesMarkers.length) {
             ASOV.setRoutes(this.arrRoute);
         }
     },
@@ -61,8 +61,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
 
     createAnswer: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore'),
-            br = store.query('checkBox', 'true'),
-            brigadeId = br.getValues('brigadeId', 'data');
+            brigadeId = store.query('checkBox', 'true').getValues('brigadeId', 'data');
         if (brigadeId.length === 1) {
             ASOV.setBrigade(brigadeId[0]);
         } else (Ext.create('Ext.window.MessageBox').show({
@@ -83,8 +82,9 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     },
 
     createRoute: function (call, brigade) {
+        const {id, geometry: {coordinates}, customOptions: {brigadeNum, objectType, profile}} = brigade;
         let routeList = null;
-        ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
+        ymaps.route([coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true,
         }).then((route) => {
             route.getWayPoints().options.set({
@@ -93,10 +93,10 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
                 hasBalloon: true,
                 zIndex: 1
             });
-            route.id = brigade.id;
+            route.id = id;
             route.getPaths().options.set({
                 opacity: 0.9,
-                balloonContentLayout: ymaps.templateLayoutFactory.createClass(`Маршрут ${brigade.customOptions.brigadeNum} бригады`),
+                balloonContentLayout: ymaps.templateLayoutFactory.createClass(`Маршрут ${brigadeNum} бригады`),
                 strokeWidth: 4
             });
             this.map.geoObjects.add(route);
@@ -114,16 +114,16 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
                         [point[0][0], point[0][1]]
                     );
                 }
-                this.arrpoints.unshift(brigade.geometry.coordinates);
+                this.arrpoints.unshift(coordinates);
                 this.arrpoints.push(call.geometry.coordinates);
             }
             this.arrRoute.push({
-                brigadeId: brigade.id,
-                objectType: brigade.customOptions.objectType,
-                profile: brigade.customOptions.profile,
-                brigadeNum: brigade.customOptions.brigadeNum,
-                longitude: brigade.geometry.coordinates[1],
-                latitude: brigade.geometry.coordinates[0],
+                brigadeId: id,
+                objectType: objectType,
+                profile: profile,
+                brigadeNum: brigadeNum,
+                longitude: coordinates[1],
+                latitude: coordinates[0],
                 distance: (route.getLength() / 1000).toFixed(1),
                 time: (route.getJamsTime() / 60).toFixed(0),
                 route: this.arrpoints

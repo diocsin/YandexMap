@@ -62,28 +62,29 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             routeList = Ext.decode(b.get('routeList'));
             this.createPolylineRoute(routeList);
             routeList.forEach((brigade) => {
-                if (brigade.latitude && brigade.longitude) {
+                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, iconName} = brigade;
+                if (latitude && longitude) {
                     const feature = {
                         type: 'Feature',
-                        id: brigade.brigadeId,
+                        id: brigadeId,
                         customOptions: {
-                            objectType: brigade.objectType,
-                            brigadeNum: brigade.brigadeNum,
-                            profile: brigade.profile
+                            objectType: objectType,
+                            brigadeNum: brigadeNum,
+                            profile: profile
                         },
                         geometry: {
                             type: 'Point',
-                            coordinates: [brigade.latitude, brigade.longitude]
+                            coordinates: [latitude, longitude]
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: `resources/icon/${brigade.iconName}`,
+                            iconImageHref: `resources/icon/${iconName}`,
                             iconContentLayout: this.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
                         properties: {
-                            iconContent: `${brigade.brigadeNum}(${brigade.profile})`
+                            iconContent: `${brigadeNum}(${profile})`
                         }
                     };
                     this.brigadesMarkers.push(feature);
@@ -130,12 +131,13 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     createTableRoute: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         this.arrRouteForTable.forEach((object) => {
+            const {brigadeId, brigadeNum, profile, distance, time} = object;
             const x = Ext.create('Isidamaps.model.Route');
-            x.set('brigadeId', object.brigadeId);
-            x.set('brigadeNum', object.brigadeNum);
-            x.set('profile', object.profile);
-            x.set('distance', object.distance);
-            x.set('time', object.time);
+            x.set('brigadeId', brigadeId);
+            x.set('brigadeNum', brigadeNum);
+            x.set('profile', profile);
+            x.set('distance', distance);
+            x.set('time', time);
             store.add(x);
         });
     }

@@ -8,19 +8,22 @@ Ext.define('Isidamaps.controller.AppController', {
     brigadeId: null,
     urlOpenStreetServerTiles: null,
     urlOpenStreetServerRoute: null,
-    brigadeStatusesMap: (function () {
-        const map = Ext.create('Ext.util.HashMap');
-        map.add('FREE', 'Свободна');
-        map.add('ON_EVENT', 'Дежурство на мероприятии');
-        map.add('WITHOUT_SHIFT', 'Вне графика');
-        map.add('CRASH_CAR', 'Ремонт');
-        map.add('PASSED_BRIGADE', 'Принял вызов');
-        map.add('AT_CALL', 'На вызове');
-        map.add('RELAXON', 'Обед');
-        map.add('GO_HOSPITAL', 'Транспортировка в стационар');
-        map.add('HIJACKING', 'Нападение на бригаду');
-        return map;
-    })(),
+    brigadeStatuses: [
+        {eng: 'FREE', rus: 'Свободна'},
+        {eng: 'ON_EVENT', rus: 'black_widow'},
+        {eng: 'WITHOUT_SHIFT', rus: 'Вне графика'},
+        {eng: 'CRASH_CAR', rus: 'Ремонт'},
+        {eng: 'PASSED_BRIGADE', rus: 'Принял вызов'},
+        {eng: 'AT_CALL', rus: 'На вызове'},
+        {eng: 'RELAXON', rus: 'Обед'},
+        {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
+        {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
+    ],
+
+    getBrigadeStatuses: function (eng) {
+        const args = this.brigadeStatuses.find(status => status.eng === eng);
+        return args ? args.rus : 'Неизвестно';
+    },
 
     initial: function (getGeoInform) {
         const settingsStore = this.getStore('Isidamaps.store.SettingsStore');
@@ -42,7 +45,7 @@ Ext.define('Isidamaps.controller.AppController', {
             },
             conn = (frame) => {
                 Ext.log({indent: 1, level: 'info'}, `Connected: ${frame}`);
-                this.stompClient.subscribe('/geo-queue/geodata-updates', function (msg) {
+                this.stompClient.subscribe('/geo-queue/geodata-updates', (msg) => {
                     service === 'monitoring' ? this.loadSocketData(JSON.parse(msg.body)) : this.loadSocketDataForMonitoringBrigade(JSON.parse(msg.body));
 
                 });
@@ -52,24 +55,24 @@ Ext.define('Isidamaps.controller.AppController', {
     },
 
     loadSocketDataForMonitoringBrigade: function (message) {
-        message.deviceId = '' + message.deviceId;
-        if (message.objectType === 'BRIGADE' && this.brigadeId === message.deviceId) {
+        const {deviceId, objectType} = message;
+        if (objectType === 'BRIGADE' && this.brigadeId === '' + deviceId) {
             let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWebSockedStore');
             storeBrigades.add(message);
         }
 
-        if (message.objectType === 'CALL' && this.callId === message.deviceId) {
+        if (objectType === 'CALL' && this.callId === '' + deviceId) {
             let storeCalls = this.getStore('Isidamaps.store.CallFromWebSockedStore');
             storeCalls.add(message);
         }
     },
 
     loadSocketData: function (message) {
-        message.station = '' + message.station;
-        if (!Ext.Array.contains(this.stationArray, message.station)) {
+        const {station, objectType} = message;
+        if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }
-        const store = this.getStore(message.objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWebSockedStore');
+        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWebSockedStore');
         store.add(message);
     },
 
@@ -89,8 +92,8 @@ Ext.define('Isidamaps.controller.AppController', {
             paramsCalls = {
                 stations: this.stationArray,
                 statuses: ['NEW', 'ASSIGNED']
-            };
-        callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
+            },
+            callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
         Ext.log({outdent: 1}, `Подстанции ${station}`);
         station.forEach((st) => {
             if (Ext.String.trim(st) !== '20') {

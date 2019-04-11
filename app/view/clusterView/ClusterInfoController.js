@@ -71,7 +71,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                                     // FIXME formula?
                                     const record = records[0];
                                     record.set({
-                                        'status': Isidamaps.app.getController('AppController').brigadeStatusesMap.get(records[0].get('status') || 'Неизвестно'),
+                                        'status': Isidamaps.app.getController('AppController').getBrigadeStatuses(records[0].get('status')),
                                         'profile': marker.getProperties().customOptions.profile
                                     });
                                     const brigadeInfoForm = Ext.widget('brigadeInfoForm'),
