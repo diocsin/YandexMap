@@ -45,7 +45,7 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
             groupable: false,
             sortable: false,
             renderer: Ext.util.Format.dateRenderer('Y-m-d, H:i:s'),
-            flex: 1,
+            flex: 2,
             fixed: true
 
         },
