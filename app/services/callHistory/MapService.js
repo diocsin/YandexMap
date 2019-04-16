@@ -12,7 +12,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     arrRouteForTable: [],
     callMarkersFactRoute: [],
     MyIconContentLayout: null,
-    myPlacemar: null,
+    placemarkForRouteHistory: null,
 
 
     constructor: function (options) {
@@ -63,11 +63,11 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
             this.createPolylineRoute(routeList);
             routeList.forEach((brigade) => {
-                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId} = brigade;
+                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, deviceId} = brigade;
                 if (latitude && longitude) {
                     const feature = {
                         type: 'Feature',
-                        id: brigade.brigadeId ? brigade.brigadeId : brigade.deviceId,
+                        id: brigadeId ? brigadeId : deviceId,
                         customOptions: {
                             objectType: objectType,
                             brigadeNum: brigadeNum,
@@ -158,7 +158,6 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             g = 0,
             place = '',
             place2 = '';
-
         for (const object of records) {
             if (i <= records.length - 3) {
                 let y = i;
@@ -170,7 +169,6 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                     g++;
                     place2 = `${place} - ${address}`;
                     place = address;
-
                 }
             }
             let row = {
@@ -194,9 +192,9 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     test: function (A, B, C) {
-        var AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2));
-        var BC = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(C.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(C.get('latitude')), 2));
-        var AC = Math.sqrt(Math.pow(parseFloat(C.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(C.get('latitude')) - parseFloat(A.get('latitude')), 2));
+        const AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2)),
+            BC = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(C.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(C.get('latitude')), 2)),
+            AC = Math.sqrt(Math.pow(parseFloat(C.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(C.get('latitude')) - parseFloat(A.get('latitude')), 2));
         return (AC < 0.00002) ? 180 : Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
     },
 
@@ -208,12 +206,12 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     cellClick: function (rec) {
-        if (!this.myPlacemark) {
-            this.myPlacemark = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
-            this.map.geoObjects.add(this.myPlacemark);
+        if (!this.placemarkForRouteHistory) {
+            this.placemarkForRouteHistory = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
+            this.map.geoObjects.add(this.placemarkForRouteHistory);
         }
         else {
-            const index = this.map.geoObjects.indexOf(this.myPlacemark);
+            const index = this.map.geoObjects.indexOf(this.placemarkForRouteHistory);
             let object = this.map.geoObjects.get(index);
             object.geometry.setCoordinates(Ext.String.splitWords(rec.get('point')));
         }
