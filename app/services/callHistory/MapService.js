@@ -60,14 +60,14 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     storeRouteHistory: function (records) {
         let routeList = null;
         records.forEach((b) => {
-            routeList = Ext.decode(b.get('routeList'));
+            b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
             this.createPolylineRoute(routeList);
             routeList.forEach((brigade) => {
-                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, iconName} = brigade;
+                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId} = brigade;
                 if (latitude && longitude) {
                     const feature = {
                         type: 'Feature',
-                        id: brigadeId,
+                        id: brigade.brigadeId ? brigade.brigadeId : brigade.deviceId,
                         customOptions: {
                             objectType: objectType,
                             brigadeNum: brigadeNum,
@@ -79,7 +79,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: `resources/icon/${iconName}`,
+                            iconImageHref: 'resources/icon/free.png',
                             iconContentLayout: this.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
@@ -133,9 +133,9 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     createTableRoute: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         this.arrRouteForTable.forEach((object) => {
-            const {brigadeId, brigadeNum, profile, distance, time} = object;
+            const {brigadeId, brigadeNum, profile, distance, time, deviceId} = object;
             const x = Ext.create('Isidamaps.model.Route');
-            x.set('brigadeId', brigadeId);
+            brigadeId ? x.set('brigadeId', brigadeId) : x.set('brigadeId', deviceId);
             x.set('brigadeNum', brigadeNum);
             x.set('profile', profile);
             x.set('distance', distance);
