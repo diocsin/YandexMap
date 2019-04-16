@@ -1,4 +1,4 @@
 Ext.define('Isidamaps.model.FactRoute', {
     extend: 'Ext.data.Model',
-    fields: ['latitude', 'longitude']
+    fields: ['latitude', 'longitude', {name:'lastUpdateTime',   type: 'date'}]
 });

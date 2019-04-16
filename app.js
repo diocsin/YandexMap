@@ -51,7 +51,8 @@ function startApp(urlYandex) {
             'Ext.form.CheckboxGroup',
             'Ext.container.Viewport',
             'Isidamaps.Viewport',
-            'Ext.container.Container'
+            'Ext.container.Container',
+            'Ext.ux.grid.Printer'
 
         ],
         // The name of the initial view to create. With the classic toolkit this class

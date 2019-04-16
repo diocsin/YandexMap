@@ -1,6 +1,7 @@
 Ext.define('Isidamaps.view.routeView.route.Route', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.routeView-route',
+    id: 'table',
     border: false,
     title: 'Table Layout',
     store: 'Isidamaps.store.RouteForTableStore',

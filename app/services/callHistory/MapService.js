@@ -12,6 +12,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     arrRouteForTable: [],
     callMarkersFactRoute: [],
     MyIconContentLayout: null,
+    myPlacemar: null,
 
 
     constructor: function (options) {
@@ -119,6 +120,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             strokeStyle: '3 2'
         });
         this.map.geoObjects.add(polyline);
+        this.createHistoryTable(records);
     },
 
     setMarkers: function (call) {
@@ -140,5 +142,80 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             x.set('time', time);
             store.add(x);
         });
+    },
+
+    createHistoryTable: async function (records) {
+        const grid = Ext.getCmp('MyGrid'),
+            arr = [],
+            store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
+        grid.on({
+            cellclick: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
+                this.cellClick(record);
+            }
+        });
+        let i = 0,
+            h = 0,
+            g = 0,
+            place = '',
+            place2 = '';
+
+        for (const object of records) {
+            if (i <= records.length - 3) {
+                let y = i;
+                if (this.test(records[y], records[y + 1], records[y + 2]) <= 150) {
+                    h = i + 1;
+                }
+                if (h === i) {
+                    const address = await this.getAddress([object.get('latitude'), object.get('longitude')]);
+                    g++;
+                    place2 = `${place} - ${address}`;
+                    place = address;
+
+                }
+            }
+            let row = {
+                place: `#${g} ${place2}`,
+                point: `${object.get('latitude')} ${object.get('longitude')}`,
+                time: object.get('lastUpdateTime'),
+                speed: '60'
+            };
+            arr.push(row);
+            i++;
+        }
+        arr.forEach((row) => {
+            const x = Ext.create('Isidamaps.model.RouteHistoryTable');
+            x.set('place', row.place);
+            x.set('point', row.point);
+            x.set('time', row.time);
+            x.set('speed', row.speed);
+            store.add(x);
+        });
+        grid.el.unmask();
+    },
+
+    test: function (A, B, C) {
+        var AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2));
+        var BC = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(C.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(C.get('latitude')), 2));
+        var AC = Math.sqrt(Math.pow(parseFloat(C.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(C.get('latitude')) - parseFloat(A.get('latitude')), 2));
+        return (AC < 0.00002) ? 180 : Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
+    },
+
+    getAddress: function (coords) {
+        return ymaps.geocode(coords).then((res) => {
+            const firstGeoObject = res.geoObjects.get(0);
+            return `${(firstGeoObject.getThoroughfare()) ? firstGeoObject.getThoroughfare() : ''} ${(firstGeoObject.getPremiseNumber()) ? firstGeoObject.getPremiseNumber() : ''}`;
+        });
+    },
+
+    cellClick: function (rec) {
+        if (!this.myPlacemark) {
+            this.myPlacemark = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
+            this.map.geoObjects.add(this.myPlacemark);
+        }
+        else {
+            const index = this.map.geoObjects.indexOf(this.myPlacemark);
+            let object = this.map.geoObjects.get(index);
+            object.geometry.setCoordinates(Ext.String.splitWords(rec.get('point')));
+        }
     }
 });

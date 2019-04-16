@@ -11,7 +11,7 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.services.callHistory.CallHistory',
         'Isidamaps.services.medorg.Medorg',
         'Isidamaps.services.heatMapForCall.HeatMapForCall',
-        'Isidamaps.services.searchAddressForCall.SearchAddressForCall'
+        'Isidamaps.services.searchAddressForCall.SearchAddressForCall',
     ],
     controllers: 'Isidamaps.controller.AppController',
 
@@ -27,6 +27,7 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.BrigadeInfoStore',
         'Isidamaps.store.RouteForTableStore',
         'Isidamaps.store.RouteHistoryStore',
+        'Isidamaps.store.RouteHistoryTableStore',
         'Isidamaps.store.FactRouteHistoryStore',
         'Isidamaps.store.MedOrgStore'
     ],

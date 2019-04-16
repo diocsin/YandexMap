@@ -95,19 +95,19 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     listenerWebSockedStore: function () {
-        Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', function (store, records, index) {
+        Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', (store, records, index) => {
             this.createBrigadeOfSocked(records)
         }, this);
-        Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', function (store, records, index) {
+        Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', (store, records, index) => {
             this.createCallOfSocked(records)
         }, this);
     },
 
     listenerStore: function () {
-        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('load', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('load', (store, records, options) => {
             this.storeBrigade(records)
         }, this);
-        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', (store, records, options) => {
             this.storeCall(records)
         }, this);
 

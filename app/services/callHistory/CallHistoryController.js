@@ -4,6 +4,8 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
     CallHistory: null,
 
     createClass: function () {
+        const grid = Ext.getCmp('MyGrid');
+        grid.el.mask('Загрузка данных');
         this.CallHistory = Ext.create('Isidamaps.services.callHistory.MapService', {});
         this.CallHistory.listenerStore();
         this.CallHistory.optionsObjectManager();
@@ -11,7 +13,7 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
             setMarkers: this.CallHistory.setMarkers.bind(this)
         }, Ext.History.currentToken);
         const ymapWrapper = this.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
+        ymapWrapper.on('resize', () => {
             this.CallHistory.resizeMap();
         });
     }
