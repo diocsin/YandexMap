@@ -31,70 +31,63 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     },
 
     selectAll: function (checkbox) {
-        const me = this;
         switch (checkbox.reference) {
             case 'allStation':
-                me.filterBrigadeArray = Ext.Array.difference(me.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
+                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
                 break;
             case 'allStatus':
-                me.filterBrigadeArray = Ext.Array.difference(me.filterBrigadeArray, me.allStatusBrigade);
+                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allStatusBrigade);
                 break;
             case  'allProfile':
-                me.filterBrigadeArray = Ext.Array.difference(me.filterBrigadeArray, me.allProfileBrigade);
+                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allProfileBrigade);
                 break;
             case 'allCalls':
-                me.filterBrigadeArray = Ext.Array.difference(me.filterBrigadeArray, me.allStatusCall);
+                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allStatusCall);
                 break;
         }
-        me.setFilterObjectManager();
+        this.setFilterObjectManager();
     },
 
     deselectAll: function (checkbox) {
-        const me = this;
         switch (checkbox.reference) {
             case 'allStation':
-                me.filterBrigadeArray = Ext.Array.merge(me.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
+                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
                 break;
             case 'allStatus':
-                me.filterBrigadeArray = Ext.Array.merge(me.filterBrigadeArray, me.allStatusBrigade);
+                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allStatusBrigade);
                 break;
             case  'allProfile':
-                me.filterBrigadeArray = Ext.Array.merge(me.filterBrigadeArray, me.allProfileBrigade);
+                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allProfileBrigade);
                 break;
             case 'allCalls':
-                me.filterBrigadeArray = Ext.Array.merge(me.filterBrigadeArray, me.allStatusCall);
+                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allStatusCall);
                 break;
         }
-        me.setFilterObjectManager();
+        this.setFilterObjectManager();
     },
 
     setStateStatusBrigades: function (state) {
-        const me = this;
-        me.stateStatusBrigades = state;
+        this.stateStatusBrigades = state;
     },
 
     setStateStation: function (state) {
-        const me = this;
-        me.stateStation = state;
+        this.stateStation = state;
     },
 
     setStateProfileBrigades: function (state) {
-        const me = this;
-        me.stateProfileBrigades = state;
+        this.stateProfileBrigades = state;
     },
 
     setStateStatusCalls: function (state) {
-        const me = this;
-        me.stateStatusCalls = state;
+        this.stateStatusCalls = state;
     },
 
     buttonSearch: function () {
-        const me = this;
         let searchTrue = null,
             searchText = Ext.getCmp('searchTextField').getValue();
-        Ext.Array.each(me.Monitoring.objectManager.objects.getAll(), function (object) {
+        Ext.Array.each(this.Monitoring.objectManager.objects.getAll(), (object) => {
             if (object.customOptions.brigadeNum === searchText) {
-                me.Monitoring.map.setCenter([object.geometry.coordinates[0], object.geometry.coordinates[1]], 14);
+                this.Monitoring.map.setCenter([object.geometry.coordinates[0], object.geometry.coordinates[1]], 14);
                 searchTrue = object;
                 return false;
             }
@@ -105,259 +98,249 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     },
 
     checkedCallStatus: function (checkbox) {
-        const me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
+        const {inputValue, checked} = checkbox,
             callStatusFilterComp = this.lookupReference('callStatusFilter');
-        if (!checkboxChecked) {
-            me.filterBrigadeArray.push(checkboxValue);
+        if (!checked) {
+            this.filterBrigadeArray.push(inputValue);
             let i = 0;
-            callStatusFilterComp.items.each(function (checkbox) {
+            callStatusFilterComp.items.each((checkbox) => {
                 if (checkbox.checked) {
                     i++
                 }
             });
             if (callStatusFilterComp.items.length === i + 1) {
-                me.lookupReference('allCalls').setRawValue(false)
+                this.lookupReference('allCalls').setRawValue(false)
             }
-            me.setFilterObjectManager();
+            this.setFilterObjectManager();
             callStatusFilterComp.fireEvent('customerchange');
             return;
         }
         let j = 0;
-        Ext.Array.remove(me.filterBrigadeArray, checkboxValue);
-        me.setFilterObjectManager();
-        callStatusFilterComp.items.each(function (checkbox) {
+        Ext.Array.remove(this.filterBrigadeArray, inputValue);
+        this.setFilterObjectManager();
+        callStatusFilterComp.items.each((checkbox) => {
             if (checkbox.checked) {
                 j++
             }
         });
         if (callStatusFilterComp.items.length === j) {
-            me.lookupReference('allCalls').setRawValue(true)
+            this.lookupReference('allCalls').setRawValue(true)
         }
         callStatusFilterComp.fireEvent('customerchange');
     },
 
     checkedStationBrigade: function (checkbox) {
-        const me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            stationFilter = me.lookupReference('stationFilter');
-        if (!checkboxChecked) {
-            me.filterBrigadeArray.push(checkboxValue);
+        const {inputValue, checked} = checkbox,
+            stationFilter = this.lookupReference('stationFilter');
+        if (!checked) {
+            this.filterBrigadeArray.push(inputValue);
             let i = 0;
-            stationFilter.items.each(function (checkbox) {
+            stationFilter.items.each((checkbox) => {
                 if (checkbox.checked) {
                     i++
                 }
             });
             if (stationFilter.items.length === i + 1) {
-                me.lookupReference('allStation').setRawValue(false)
+                this.lookupReference('allStation').setRawValue(false)
             }
-            me.setFilterObjectManager();
+            this.setFilterObjectManager();
             stationFilter.fireEvent('customerchange');
             return;
         }
         let j = 0;
-        Ext.Array.remove(me.filterBrigadeArray, checkboxValue);
-        me.setFilterObjectManager();
-        stationFilter.items.each(function (checkbox) {
+        Ext.Array.remove(this.filterBrigadeArray, inputValue);
+        this.setFilterObjectManager();
+        stationFilter.items.each((checkbox) => {
             if (checkbox.checked) {
                 j++
             }
         });
         if (stationFilter.items.length === j) {
-            me.lookupReference('allStation').setRawValue(true)
+            this.lookupReference('allStation').setRawValue(true)
         }
         stationFilter.fireEvent('customerchange');
 
     },
 
     checkedProfileBrigade: function (checkbox) {
-        const me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            profileBrigadeFilter = me.lookupReference('profileBrigadeFilter');
-        if (!checkboxChecked) {
-            me.filterBrigadeArray.push(checkboxValue);
+        const {inputValue, checked} = checkbox,
+            profileBrigadeFilter = this.lookupReference('profileBrigadeFilter');
+        if (!checked) {
+            this.filterBrigadeArray.push(inputValue);
             let i = 0;
-            profileBrigadeFilter.items.each(function (checkbox) {
+            profileBrigadeFilter.items.each((checkbox) => {
                 if (checkbox.checked) {
                     i++
                 }
             });
             if (profileBrigadeFilter.items.length === i + 1) {
-                me.lookupReference('allProfile').setRawValue(false)
+                this.lookupReference('allProfile').setRawValue(false)
             }
-            me.setFilterObjectManager();
+            this.setFilterObjectManager();
             profileBrigadeFilter.fireEvent('customerchange');
             return;
         }
 
         let j = 0;
-        Ext.Array.remove(me.filterBrigadeArray, checkboxValue);
-        me.setFilterObjectManager();
-        profileBrigadeFilter.items.each(function (checkbox) {
+        Ext.Array.remove(this.filterBrigadeArray, inputValue);
+        this.setFilterObjectManager();
+        profileBrigadeFilter.items.each((checkbox) => {
             if (checkbox.checked) {
                 j++
             }
         });
         if (profileBrigadeFilter.items.length === j) {
-            me.lookupReference('allProfile').setRawValue(true)
+            this.lookupReference('allProfile').setRawValue(true)
         }
         profileBrigadeFilter.fireEvent('customerchange');
     }
     ,
 
     checkedStatusBrigade: function (checkbox) {
-        const me = this,
-            checkboxValue = checkbox.inputValue,
-            checkboxChecked = checkbox.checked,
-            statusBrigadeFilter = me.lookupReference('statusBrigadeFilter');
-        if (!checkboxChecked) {
-            me.filterBrigadeArray.push(checkboxValue);
+        const {inputValue, checked} = checkbox,
+            statusBrigadeFilter = this.lookupReference('statusBrigadeFilter');
+        if (!checked) {
+            this.filterBrigadeArray.push(inputValue);
             let i = 0;
-            statusBrigadeFilter.items.each(function (checkbox) {
+            statusBrigadeFilter.items.each((checkbox) => {
                 if (checkbox.checked) {
                     i++
                 }
             });
             if (statusBrigadeFilter.items.length === i + 1) {
-                me.lookupReference('allStatus').setRawValue(false)
+                this.lookupReference('allStatus').setRawValue(false)
             }
-            me.setFilterObjectManager();
+            this.setFilterObjectManager();
             statusBrigadeFilter.fireEvent('customerchange');
             return;
         }
         let j = 0;
-        Ext.Array.remove(me.filterBrigadeArray, checkboxValue);
-        me.setFilterObjectManager();
-        statusBrigadeFilter.items.each(function (checkbox) {
+        Ext.Array.remove(this.filterBrigadeArray, inputValue);
+        this.setFilterObjectManager();
+        statusBrigadeFilter.items.each((checkbox) => {
             if (checkbox.checked) {
                 j++
             }
         });
         if (statusBrigadeFilter.items.length === j) {
-            me.lookupReference('allStatus').setRawValue(true)
+            this.lookupReference('allStatus').setRawValue(true)
         }
         statusBrigadeFilter.fireEvent('customerchange');
 
     },
 
     setFilterObjectManager: function () {
-        const me = this,
-            arrayForShowButton = [],
+        const arrayForShowButton = [],
             arrayForHideButton = [];
-        me.Monitoring.objectManager.setFilter(function (object) {
-            if (object.customOptions.objectType === 'BRIGADE' && !Ext.Array.contains(me.filterBrigadeArray, object.customOptions.station) &&
-                !Ext.Array.contains(me.filterBrigadeArray, object.customOptions.status) &&
-                !Ext.Array.contains(me.filterBrigadeArray, object.customOptions.profile)) {
+        this.Monitoring.objectManager.setFilter((object) => {
+            const {customOptions: {objectType, status, profile, station}} = object;
+            if (objectType === 'BRIGADE' && !Ext.Array.contains(this.filterBrigadeArray, station) &&
+                !Ext.Array.contains(this.filterBrigadeArray, status) &&
+                !Ext.Array.contains(this.filterBrigadeArray, profile)) {
                 arrayForShowButton.push(object);
                 return true;
             }
-            if (object.customOptions.objectType === 'CALL' && !Ext.Array.contains(me.filterBrigadeArray, object.customOptions.station) &&
-                !Ext.Array.contains(me.filterBrigadeArray, object.customOptions.status)) {
+            if (objectType === 'CALL' && !Ext.Array.contains(this.filterBrigadeArray, station) &&
+                !Ext.Array.contains(this.filterBrigadeArray, status)) {
                 return true;
             }
             else {
-                if (object.customOptions.objectType === 'BRIGADE') {
+                if (objectType === 'BRIGADE') {
                     arrayForHideButton.push(object);
                 }
                 return false;
             }
         });
-        me.showButtonInPanel(arrayForShowButton);
-        me.hideButtonInPanel(arrayForHideButton);
+        this.showButtonInPanel(arrayForShowButton);
+        this.hideButtonInPanel(arrayForHideButton);
     },
 
     mainBoxReady: function () {
-        const me = this;
-        ymaps.ready(function () {
-            me.createClass();
+        ymaps.ready(() => {
+            this.createClass();
         });
     },
 
     createClass: function () {
-        const me = this;
-        me.myMask = new Ext.LoadMask({
+        this.myMask = new Ext.LoadMask({
             msg: 'Подождите пожалуйста. Загрузка...',
             target: Ext.getCmp('monitoringPanel')
         });
-        me.myMask.show();
-        me.Monitoring = Ext.create('Isidamaps.services.monitoring.MapService', {
-            addButtonsBrigadeOnPanel: me.addButtonsBrigadeOnPanel.bind(me),
-            addStationFilter: me.addStationFilter.bind(me),
-            getButtonBrigadeForChangeButton: me.getButtonBrigadeForChangeButton,
-            setCheckbox: me.setCheckbox.bind(me),
-            addNewButtonOnPanel: me.addNewButtonOnPanel.bind(me),
-            destroyButtonOnPanel: me.destroyButtonOnPanel.bind(me),
+        this.myMask.show();
+        this.Monitoring = Ext.create('Isidamaps.services.monitoring.MapService', {
+            addButtonsBrigadeOnPanel: this.addButtonsBrigadeOnPanel.bind(this),
+            addStationFilter: this.addStationFilter.bind(this),
+            getButtonBrigadeForChangeButton: this.getButtonBrigadeForChangeButton,
+            setCheckbox: this.setCheckbox.bind(this),
+            addNewButtonOnPanel: this.addNewButtonOnPanel.bind(this),
+            destroyButtonOnPanel: this.destroyButtonOnPanel.bind(this),
         });
-        me.Monitoring.listenerStore();
-        me.Monitoring.optionsObjectManager();
+        this.Monitoring.searchControl();
+        this.Monitoring.listenerStore();
+        this.Monitoring.optionsObjectManager();
         ASOV.setMapManager({
-            setStation: me.Monitoring.setStation.bind(this)
+            setStation: this.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            me.Monitoring.resizeMap();
+        this.Monitoring.setStation(['1', '9']);
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
+            this.Monitoring.resizeMap();
         });
     }
     ,
 
     setFilterBrigadeAndCall: function () {
-        const me = this;
-        me.lookupReference('profileBrigadeFilter').eachBox(function (item) {
-            me.allProfileBrigade.push(item.inputValue);
+        this.lookupReference('profileBrigadeFilter').eachBox((item) => {
+            this.allProfileBrigade.push(item.inputValue);
         });
-        me.lookupReference('statusBrigadeFilter').eachBox(function (item) {
-            me.allStatusBrigade.push(item.inputValue);
+        this.lookupReference('statusBrigadeFilter').eachBox((item) => {
+            this.allStatusBrigade.push(item.inputValue);
         });
-        me.lookupReference('callStatusFilter').eachBox(function (item) {
-            me.allStatusCall.push(item.inputValue);
-        });
-
-        me.lookupReference('stationFilter').eachBox(function (item) {
-            me.allStation.push(item.inputValue);
+        this.lookupReference('callStatusFilter').eachBox((item) => {
+            this.allStatusCall.push(item.inputValue);
         });
 
-        me.filterBrigadeArray = Ext.Array.merge(me.allProfileBrigade, me.allStatusBrigade, me.allStatusCall, me.allStation);
+        this.lookupReference('stationFilter').eachBox((item) => {
+            this.allStation.push(item.inputValue);
+        });
+
+        this.filterBrigadeArray = Ext.Array.merge(this.allProfileBrigade, this.allStatusBrigade, this.allStatusCall, this.allStation);
     }
     ,
 
     setCheckbox: function () {
-        const me = this;
         try {
-            me.lookupReference('stationFilter').setValue(me.stateStation.checked);
-            me.lookupReference('profileBrigadeFilter').setValue(me.stateProfileBrigades.checked);
-            me.lookupReference('statusBrigadeFilter').setValue(me.stateStatusBrigades.checked);
-            me.lookupReference('callStatusFilter').setValue(me.stateStatusCalls.checked);
+            this.lookupReference('stationFilter').setValue(this.stateStation.checked);
+            this.lookupReference('profileBrigadeFilter').setValue(this.stateProfileBrigades.checked);
+            this.lookupReference('statusBrigadeFilter').setValue(this.stateStatusBrigades.checked);
+            this.lookupReference('callStatusFilter').setValue(this.stateStatusCalls.checked);
         }
         catch (e) {
+            Ext.log({indent: 1, level: 'error'}, e);
         }
-        me.myMask.hide();
+        this.myMask.hide();
     }
     ,
 
     addStationFilter: function () {
-        const me = this,
-            checkboxStation = me.lookupReference('stationFilter'),
-            buttonBrigade = me.lookupReference('BrigadePanel'),
+        const checkboxStation = this.lookupReference('stationFilter'),
+            buttonBrigade = this.lookupReference('BrigadePanel'),
             records = Isidamaps.app.getController('AppController').stationArray;
-        Ext.Array.each(records, function (rec) {
+        Ext.Array.each(records, (rec) => {
             checkboxStation.add(Ext.create('Ext.form.field.Checkbox', {
                 boxLabel: rec,
                 inputValue: rec,
                 checked: false,
                 listeners: {
                     change: {
-                        fn: function (checkbox, checked) {
+                        fn: (checkbox, checked) => {
                             Ext.fireEvent('checkedStationBrigade', checkbox, checked);
                         }
                     }
                 }
             }));
             buttonBrigade.add(Ext.create('Ext.panel.Panel', {
-                itemId: 'panel_' + rec,
+                itemId: `panel_${rec}`,
                 title: rec,
                 width: 260,
                 renderTo: Ext.getBody(),
@@ -371,23 +354,23 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 }
             }));
         });
-        me.setFilterBrigadeAndCall();
+        this.setFilterBrigadeAndCall();
 
     }
     ,
 
     getButtonBrigadeForChangeButton: function (brigade, oldStatus) {
-        const me = this,
-            brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station),
-            brigadeHave = brigadePanel.getComponent('id' + brigade.id);
-        brigadeHave.removeCls('button_' + oldStatus);
-        brigadeHave.addCls('button_' + brigade.customOptions.status);
-        if (Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.status) && !brigadeHave.isHidden()) {
+        const {id, customOptions: {status, station, profile}} = brigade,
+            brigadePanel = this.buttonBrigade.getComponent(`panel_${station}`),
+            brigadeHave = brigadePanel.getComponent(`id${id}`);
+        brigadeHave.removeCls(`button_${oldStatus}`);
+        brigadeHave.addCls(`button_${status}`);
+        if (Ext.Array.contains(this.filterBrigadeArray, status) && !brigadeHave.isHidden()) {
             brigadeHave.hide();
         }
-        if (!Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.station) &&
-            !Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.status) &&
-            !Ext.Array.contains(me.filterBrigadeArray, brigade.customOptions.profile) &&
+        if (!Ext.Array.contains(this.filterBrigadeArray, station) &&
+            !Ext.Array.contains(this.filterBrigadeArray, status) &&
+            !Ext.Array.contains(this.filterBrigadeArray, profile) &&
             brigadeHave.isHidden()) {
             brigadeHave.show();
         }
@@ -397,84 +380,79 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     ,
 
     hideButtonInPanel: function (brigades) {
-        const me = this;
         Ext.suspendLayouts();
-        Ext.Array.each(brigades, function (brigade) {
-            let brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-            brigadePanel.getComponent('id' + brigade.id).hide();
+        Ext.Array.each(brigades, (brigade) => {
+            let brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
+            brigadePanel.getComponent(`id${brigade.id}`).hide();
         });
         Ext.resumeLayouts(true);
     }
     ,
 
     showButtonInPanel: function (brigades) {
-        const me = this;
         Ext.suspendLayouts();
-        Ext.Array.each(brigades, function (brigade) {
-            let brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-            brigadePanel.getComponent('id' + brigade.id).show();
+        Ext.Array.each(brigades, (brigade) => {
+            let brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
+            brigadePanel.getComponent(`id${brigade.id}`).show();
         });
         Ext.resumeLayouts(true);
     }
     ,
 
     destroyButtonOnPanel: function (brigade) {
-        const me = this;
         try {
-            const brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-            brigadePanel.getComponent('id' + brigade.id).destroy();
+            const brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
+            brigadePanel.getComponent(`id${brigade.id}`).destroy();
         }
         catch (e) {
+            Ext.log({indent: 1, level: 'error'}, e);
         }
     }
     ,
 
     addNewButtonOnPanel: function (brigade) {
-        const me = this,
-            brigadePanel = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station),
-            button = me.createButton(brigade);
+        const brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`),
+            button = this.createButton(brigade);
         brigadePanel.add(button);
-        me.setFilterObjectManager();
+        this.setFilterObjectManager();
     }
     ,
 
-    addButtonsBrigadeOnPanel:
-        function () {
-            const me = this,
-                brigadeSort = [];
-            me.buttonBrigade = me.lookupReference('BrigadePanel');
-            Ext.Array.each(me.Monitoring.brigadesMarkers, function (brigade) {
-                brigadeSort.push(brigade);
-            });
-            brigadeSort.sort(function (a, b) {
-                return a.customOptions.station - b.customOptions.station
-            });
-            brigadeSort.sort(function (a, b) {
-                return a.customOptions.status === b.customOptions.status ? -1 : 1
-            });
-            Ext.Array.each(brigadeSort, function (brigade) {
-                const button = me.createButton(brigade),
-                    stationPanelBrigades = me.buttonBrigade.getComponent('panel_' + brigade.customOptions.station);
-                stationPanelBrigades.add(button);
-            });
-        }
+    addButtonsBrigadeOnPanel: function () {
+        const brigadeSort = [];
+        this.buttonBrigade = this.lookupReference('BrigadePanel');
+        Ext.Array.each(this.Monitoring.brigadesMarkers, (brigade) => {
+            brigadeSort.push(brigade);
+        });
+        brigadeSort.sort(function (a, b) {
+            return a.customOptions.station - b.customOptions.station
+        });
+        brigadeSort.sort(function (a, b) {
+            return a.customOptions.status === b.customOptions.status ? -1 : 1
+        });
+        Ext.Array.each(brigadeSort, (brigade) => {
+            const button = this.createButton(brigade),
+                stationPanelBrigades = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
+            stationPanelBrigades.add(button);
+        });
+    }
 
     ,
 
     createButton: function (brigade) {
-        const me = this;
+        const {id, customOptions: {brigadeNum, profile, status}} = brigade;
         return Ext.create('Ext.Button', {
-            itemId: 'id' + brigade.id,
-            text: brigade.customOptions.brigadeNum + " " + "(" + brigade.customOptions.profile + ")",
+            itemId: `id${id}`,
+            text: `${brigadeNum} (${profile})`,
             maxWidth: 110,
             minWidth: 110,
             margin: 5,
             hidden: true,
             hideMode: 'offsets',
-            cls: 'button_' + brigade.customOptions.status,
+            cls: `button_${status}`,
             listeners: {
-                click: function () {
-                    me.clickButton(brigade);
+                click: () => {
+                    this.clickButton(brigade);
                 }
             }
         });
@@ -482,10 +460,9 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     ,
 
     clickButton: function (brigade) {
-        const me = this,
-            marker = me.Monitoring.objectManager.objects.getById(brigade.id);
+        const marker = this.Monitoring.objectManager.objects.getById(brigade.id);
         if (marker) {
-            me.Monitoring.map.setCenter([marker.geometry.coordinates[0], marker.geometry.coordinates[1]], 14);
+            this.Monitoring.map.setCenter([marker.geometry.coordinates[0], marker.geometry.coordinates[1]], 14);
         }
     }
     ,

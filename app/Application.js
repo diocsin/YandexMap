@@ -9,7 +9,9 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.services.monitoringBrigadeOnCall.MonitoringBrigade',
         'Isidamaps.services.brigadeForAssign.BrigadeForAssign',
         'Isidamaps.services.callHistory.CallHistory',
-        'Isidamaps.services.medorg.Medorg'
+        'Isidamaps.services.medorg.Medorg',
+        'Isidamaps.services.heatMapForCall.HeatMapForCall',
+        'Isidamaps.services.searchAddressForCall.SearchAddressForCall',
     ],
     controllers: 'Isidamaps.controller.AppController',
 
@@ -25,6 +27,7 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.BrigadeInfoStore',
         'Isidamaps.store.RouteForTableStore',
         'Isidamaps.store.RouteHistoryStore',
+        'Isidamaps.store.RouteHistoryTableStore',
         'Isidamaps.store.FactRouteHistoryStore',
         'Isidamaps.store.MedOrgStore'
     ],
@@ -34,7 +37,6 @@ Ext.define('Isidamaps.Application', {
     },
 
     launch: function () {
-        // TODO - Launch the application
         if (Ext.supports.LocalStorage) {
             Ext.state.Manager.setProvider(new Ext.state.LocalStorageProvider());
         }
@@ -44,7 +46,7 @@ Ext.define('Isidamaps.Application', {
     },
 
     onAppUpdate: function () {
-        Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
+        Ext.Msg.confirm('Обновление приложения', 'Это приложение нуждается в обновлении, обновить?',
             function (choice) {
                 if (choice === 'yes') {
                     window.location.reload();

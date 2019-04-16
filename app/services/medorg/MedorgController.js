@@ -3,21 +3,20 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
     alias: 'controller.medorg',
 
     createClass: function () {
-        const me = this,
-            Medorg = Ext.create('Isidamaps.services.medorg.MapService', {
-                markerClick: me.markerClick
-            });
-        Medorg.optionsObjectManager();
-        Medorg.listenerStore();
-        Isidamaps.app.getController('AppController').initial(f);
+        const medorg = Ext.create('Isidamaps.services.medorg.MapService', {
+                markerClick: this.markerClick
+            }),
+            readMedOrg = () => {
+                Isidamaps.app.getController('AppController').readMedOrg()
+            };
+        medorg.optionsObjectManager();
+        medorg.listenerStore();
+        Isidamaps.app.getController('AppController').initial(readMedOrg);
 
-        function f() {
-            Isidamaps.app.getController('AppController').readMedOrg();
-        }
 
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            Medorg.resizeMap();
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
+            medorg.resizeMap();
         });
     },
 

@@ -5,31 +5,28 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     markerClick: Ext.emptyFn,
 
     constructor: function (options) {
-        const me = this;
-        me.createMap();
-        me.markerClick = options.markerClick;
-        me.map.geoObjects.add(me.objectManager);
+        this.createMap();
+        this.markerClick = options.markerClick;
+        this.map.geoObjects.add(this.objectManager);
     },
 
     optionsObjectManager: function () {
-        const me = this;
-        me.objectManager.objects.events.add(['click'], function (e) {
-            let object = me.objectManager.objects.getById(e.get('objectId'));
-            me.markerClick(object);
+        this.objectManager.objects.events.add(['click'], (e) => {
+            let object = this.objectManager.objects.getById(e.get('objectId'));
+            this.markerClick(object);
         });
 
     },
 
     listenerStore: function () {
-        Ext.getStore('Isidamaps.store.MedOrgStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.MedOrgStore').on('add', (store, records, options) => {
             this.storeMedOrg(records)
         }, this);
     },
 
     storeMedOrg: function (records) {
-        const me = this,
-            medorgMarkers = [];
-        records.forEach(function (medorg) {
+        const medorgMarkers = [];
+        records.forEach((medorg) => {
             if (medorg.get('latitude') && medorg.get('longitude')) {
                 medorgMarkers.push({
                     type: 'Feature',
@@ -43,7 +40,7 @@ Ext.define('Isidamaps.services.medorg.MapService', {
                         coordinates: [medorg.get('latitude'), medorg.get('longitude')]
                     },
                     options: {
-                        iconImageHref: 'resources/icon/' + medorg.get('iconName')
+                        iconImageHref: `resources/icon/${medorg.get('iconName')}`
                     },
                     properties: {
                         hintContent: medorg.get('organizationName')
@@ -51,6 +48,6 @@ Ext.define('Isidamaps.services.medorg.MapService', {
                 })
             }
         });
-        me.objectManager.add(medorgMarkers);
+        this.objectManager.add(medorgMarkers);
     }
 });

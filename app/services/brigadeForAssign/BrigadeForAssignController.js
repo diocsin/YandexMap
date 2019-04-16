@@ -12,8 +12,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     },
 
     changeColorRoute: function (checkbox) {
-        const me = this;
-        me.BrigadeForAssign.map.geoObjects.each(function (route) {
+        this.BrigadeForAssign.map.geoObjects.each((route) => {
             if (route.id === checkbox.id) {
                 route.options.set({
                     routeActiveStrokeColor: "#ff0019",
@@ -28,8 +27,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     },
 
     returnColorRoute: function (checkbox) {
-        const me = this;
-        me.BrigadeForAssign.map.geoObjects.each(function (route) {
+        this.BrigadeForAssign.map.geoObjects.each((route) => {
             if (route.id === checkbox.id) {
                 route.options.unset('routeActiveStrokeColor');
             }
@@ -38,22 +36,21 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
 
     checkedBrigadeForAssign: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-        store.each(function (rec) {
+        store.each((rec) => {
             rec.set('checkBox', false);
         })
     },
 
     createClass: function () {
-        const me = this;
-        me.BrigadeForAssign = Ext.create('Isidamaps.services.brigadeForAssign.MapService', {});
-        me.BrigadeForAssign.listenerStore();
-        me.BrigadeForAssign.optionsObjectManager();
+        this.BrigadeForAssign = Ext.create('Isidamaps.services.brigadeForAssign.MapService', {});
+        this.BrigadeForAssign.listenerStore();
+        this.BrigadeForAssign.optionsObjectManager();
         ASOV.setMapManager({
-            setMarkers: me.BrigadeForAssign.setMarkers.bind(this)
+            setMarkers: this.BrigadeForAssign.setMarkers.bind(this)
         }, Ext.History.currentToken);
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            me.BrigadeForAssign.resizeMap();
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
+            this.BrigadeForAssign.resizeMap();
         })
     },
 

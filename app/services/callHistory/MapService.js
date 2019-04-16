@@ -12,109 +12,105 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     arrRouteForTable: [],
     callMarkersFactRoute: [],
     MyIconContentLayout: null,
+    myPlacemar: null,
 
 
     constructor: function (options) {
-        const me = this;
-        me.createMap();
-        me.map.geoObjects.add(me.objectManager);
+        this.createMap();
+        this.map.geoObjects.add(this.objectManager);
     },
 
     listenerStore: function () {
-        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
             this.storeFactHistoryCall(records)
         }, this);
-        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', (store, records, options) => {
             this.storeFactHistoryBrigade(records)
         }, this);
-        Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', (store, records, options) => {
             this.storeRouteHistory(records)
         }, this);
-        Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', (store, records, options) => {
             this.storeFactRouteHistory(records)
         }, this);
     },
 
     storeFactHistoryCall: function (rec) {
-        const me = this;
-        rec.forEach(function (call) {
+        rec.forEach((call) => {
             if (call.get('latitude') && call.get('longitude')) {
-                const feature = me.createCallFeature(call);
-                me.callMarkers.push(feature);
-                me.callMarkers.length === 1 ? me.objectManager.add(feature) : me.createBouns();
+                const feature = this.createCallFeature(call);
+                this.callMarkers.push(feature);
+                this.callMarkers.length === 1 ? this.objectManager.add(feature) : this.createBouns();
             }
         });
     },
 
     storeFactHistoryBrigade: function (rec) {
-        const me = this;
         let i = 1;
-        rec.forEach(function (brigade) {
+        rec.forEach((brigade) => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
-                const feature = me.createBrigadeFeature(brigade);
-                me.brigadesMarkers.push(feature);
-                me.objectManager.add(feature);
+                const feature = this.createBrigadeFeature(brigade);
+                this.brigadesMarkers.push(feature);
+                this.objectManager.add(feature);
             }
         });
     },
 
     storeRouteHistory: function (records) {
-        const me = this;
         let routeList = null;
-        records.forEach(function (b) {
-            b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
-            me.createPolylineRoute(routeList);
-            routeList.forEach(function (brigade) {
-                if (brigade.latitude && brigade.longitude) {
+        records.forEach((b) => {
+            routeList = Ext.decode(b.get('routeList'));
+            this.createPolylineRoute(routeList);
+            routeList.forEach((brigade) => {
+                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, iconName} = brigade;
+                if (latitude && longitude) {
                     const feature = {
                         type: 'Feature',
-                        id: brigade.brigadeId ? brigade.brigadeId : brigade.deviceId,
+                        id: brigadeId,
                         customOptions: {
-                            objectType: brigade.objectType,
-                            brigadeNum: brigade.brigadeNum,
-                            profile: brigade.profile
+                            objectType: objectType,
+                            brigadeNum: brigadeNum,
+                            profile: profile
                         },
                         geometry: {
                             type: 'Point',
-                            coordinates: [brigade.latitude, brigade.longitude]
+                            coordinates: [latitude, longitude]
                         },
                         options: {
                             iconLayout: 'default#imageWithContent',
-                            iconImageHref: 'resources/icon/free.png',
-                            iconContentLayout: me.MyIconContentLayout,
+                            iconImageHref: `resources/icon/${iconName}`,
+                            iconContentLayout: this.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
                         properties: {
-                            iconContent: brigade.brigadeNum + "(" + brigade.profile + ")"
+                            iconContent: `${brigadeNum}(${profile})`
                         }
                     };
-                    me.brigadesMarkers.push(feature);
-                    me.objectManager.add(feature);
+                    this.brigadesMarkers.push(feature);
+                    this.objectManager.add(feature);
                 }
             })
         });
     },
 
     createPolylineRoute: function (routeList) {
-        const me = this;
-        me.arrRouteForTable = routeList;
-        routeList.forEach(function (routes) {
+        this.arrRouteForTable = routeList;
+        routeList.forEach((routes) => {
             let polyline = new ymaps.Polyline(routes.route, {}, {
                 draggable: false,
                 strokeColor: '#000000',
                 strokeWidth: 3
             });
-            me.map.geoObjects.add(polyline);
+            this.map.geoObjects.add(polyline);
         });
-        me.createTableRoute();
+        this.createTableRoute();
     },
 
     storeFactRouteHistory: function (records) {
-        const me = this,
-            arrayLine = [];
-        records.forEach(function (b) {
+        const arrayLine = [];
+        records.forEach((b) => {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
         });
         let polyline = new ymaps.Polyline(arrayLine, {}, {
@@ -123,29 +119,103 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             strokeWidth: 4,
             strokeStyle: '3 2'
         });
-        me.map.geoObjects.add(polyline);
+        this.map.geoObjects.add(polyline);
+        this.createHistoryTable(records);
     },
 
     setMarkers: function (call) {
-        Isidamaps.app.getController('AppController').initial(f);
-
-        function f() {
-            Isidamaps.app.getController('AppController').readMarkersForCallHistory(call);
-        }
-
+        const readMarkers = () => {
+            Isidamaps.app.getController('AppController').readMarkersForCallHistory(call)
+        };
+        Isidamaps.app.getController('AppController').initial(readMarkers);
     },
 
     createTableRoute: function () {
-        const me = this,
-            store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-        me.arrRouteForTable.forEach(function (object) {
+        const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
+        this.arrRouteForTable.forEach((object) => {
+            const {brigadeId, brigadeNum, profile, distance, time} = object;
             const x = Ext.create('Isidamaps.model.Route');
-            object.brigadeId ? x.set('brigadeId', object.brigadeId) : x.set('brigadeId', object.deviceId);
-            x.set('brigadeNum', object.brigadeNum);
-            x.set('profile', object.profile);
-            x.set('distance', object.distance);
-            x.set('time', object.time);
+            x.set('brigadeId', brigadeId);
+            x.set('brigadeNum', brigadeNum);
+            x.set('profile', profile);
+            x.set('distance', distance);
+            x.set('time', time);
             store.add(x);
         });
+    },
+
+    createHistoryTable: async function (records) {
+        const grid = Ext.getCmp('MyGrid'),
+            arr = [],
+            store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
+        grid.on({
+            cellclick: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
+                this.cellClick(record);
+            }
+        });
+        let i = 0,
+            h = 0,
+            g = 0,
+            place = '',
+            place2 = '';
+
+        for (const object of records) {
+            if (i <= records.length - 3) {
+                let y = i;
+                if (this.test(records[y], records[y + 1], records[y + 2]) <= 150) {
+                    h = i + 1;
+                }
+                if (h === i) {
+                    const address = await this.getAddress([object.get('latitude'), object.get('longitude')]);
+                    g++;
+                    place2 = `${place} - ${address}`;
+                    place = address;
+
+                }
+            }
+            let row = {
+                place: `#${g} ${place2}`,
+                point: `${object.get('latitude')} ${object.get('longitude')}`,
+                time: object.get('lastUpdateTime'),
+                speed: '60'
+            };
+            arr.push(row);
+            i++;
+        }
+        arr.forEach((row) => {
+            const x = Ext.create('Isidamaps.model.RouteHistoryTable');
+            x.set('place', row.place);
+            x.set('point', row.point);
+            x.set('time', row.time);
+            x.set('speed', row.speed);
+            store.add(x);
+        });
+        grid.el.unmask();
+    },
+
+    test: function (A, B, C) {
+        var AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2));
+        var BC = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(C.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(C.get('latitude')), 2));
+        var AC = Math.sqrt(Math.pow(parseFloat(C.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(C.get('latitude')) - parseFloat(A.get('latitude')), 2));
+        return (AC < 0.00002) ? 180 : Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
+    },
+
+    getAddress: function (coords) {
+        return ymaps.geocode(coords).then((res) => {
+            const firstGeoObject = res.geoObjects.get(0);
+            return `${(firstGeoObject.getThoroughfare()) ? firstGeoObject.getThoroughfare() : ''} ${(firstGeoObject.getPremiseNumber()) ? firstGeoObject.getPremiseNumber() : ''}`;
+        });
+    },
+
+    cellClick: function (rec) {
+        if (!this.myPlacemark) {
+            this.myPlacemark = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
+            this.map.geoObjects.add(this.myPlacemark);
+        }
+        else {
+            const index = this.map.geoObjects.indexOf(this.myPlacemark);
+            let object = this.map.geoObjects.get(index);
+            object.geometry.setCoordinates(Ext.String.splitWords(rec.get('point')));
+        }
     }
 });

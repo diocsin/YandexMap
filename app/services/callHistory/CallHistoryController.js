@@ -4,16 +4,17 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
     CallHistory: null,
 
     createClass: function () {
-        const me = this;
-        me.CallHistory = Ext.create('Isidamaps.services.callHistory.MapService', {});
-        me.CallHistory.listenerStore();
-        me.CallHistory.optionsObjectManager();
+        const grid = Ext.getCmp('MyGrid');
+        grid.el.mask('Загрузка данных');
+        this.CallHistory = Ext.create('Isidamaps.services.callHistory.MapService', {});
+        this.CallHistory.listenerStore();
+        this.CallHistory.optionsObjectManager();
         ASOV.setMapManager({
-            setMarkers: me.CallHistory.setMarkers.bind(this)
+            setMarkers: this.CallHistory.setMarkers.bind(this)
         }, Ext.History.currentToken);
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            me.CallHistory.resizeMap();
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
+            this.CallHistory.resizeMap();
         });
     }
 

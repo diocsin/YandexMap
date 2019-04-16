@@ -38,9 +38,9 @@ Ext.define('Isidamaps.model.InfoCall', {
                     return v1
                 }
 
-                return und(record.get('addrComment')) + ', подъезд:' + und(record.get('porchNumber')) +
-                    ', этаж:' + und(record.get('floor')) + ', домофон:' + und(record.get('keyCode')) +
-                    ', ' + und(record.get('enter')) + ', ' + und(record.get('place'))
+                return `${und(record.get('addrComment'))}, подъезд: ${und(record.get('porchNumber'))}
+                , этаж: ${und(record.get('floor'))}, домофон: ${und(record.get('keyCode'))}, 
+                ${und(record.get('enter'))}, ${und(record.get('place'))}`
             }
         },
         {
@@ -52,8 +52,8 @@ Ext.define('Isidamaps.model.InfoCall', {
                     }
                     return v1
                 }
-                return und(record.get('lastName')) + ' ' + und(record.get('firstName')) + ' ' + und(record.get('secondName')) +
-                    ',  Возраст: ' + und(record.get('age')) + ',  Пол: ' + und(record.get('sex'))
+                return `${und(record.get('lastName'))} ${und(record.get('firstName'))} ${und(record.get('secondName'))},
+                  Возраст: ${und(record.get('age'))}, Пол: ${und(record.get('sex'))}`
             }
         },
 
@@ -72,9 +72,8 @@ Ext.define('Isidamaps.model.InfoCall', {
                     return v1
                 }
 
-                return und(record.get('streetName')) + '/' + und(record.get('crossroadStreetName')) +
-                    ', д.' + und(record.get('houseNumber')) + ', корп.' + und(record.get('corpus')) +
-                    ', кв.' + und(record.get('flatNumber'))
+                return `${und(record.get('streetName'))}/${und(record.get('crossroadStreetName'))}, д.${und(record.get('houseNumber'))}
+                 , корп.'${und(record.get('corpus'))}, кв.${und(record.get('flatNumber'))}`
             }
         },
 

@@ -22,7 +22,11 @@ function readPropertyFile() {
             var data = Ext.decode(rawFile.responseText);
             startApp(data.urlYandex);
         }
+        else if(rawFile.status!==200){
+            Ext.log({indent:1, level:'error'}, 'Ошибка чтения файла property, status ' +rawFile.status);
+        }
     };
+
     rawFile.send(null);
 }
 
@@ -30,11 +34,12 @@ readPropertyFile();
 
 function startApp(urlYandex) {
     Ext.Loader.loadScript({
-        url: [urlYandex],
+        url: [urlYandex, 'resources/lib/heatmap.min.js'],
         onError: function () {
-            console.log('Нет доступа к yandexApi');
+            Ext.log({indent: 1, level: 'error'}, 'Нет доступа к yandexApi');
         }
     });
+
     Ext.application({
         name: 'Isidamaps',
 
@@ -46,7 +51,8 @@ function startApp(urlYandex) {
             'Ext.form.CheckboxGroup',
             'Ext.container.Viewport',
             'Isidamaps.Viewport',
-            'Ext.container.Container'
+            'Ext.container.Container',
+            'Ext.ux.grid.Printer'
 
         ],
         // The name of the initial view to create. With the classic toolkit this class

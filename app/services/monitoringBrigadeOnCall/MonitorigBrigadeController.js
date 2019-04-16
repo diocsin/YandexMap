@@ -4,16 +4,16 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MonitoringBrigadeControll
     MonitoringBrigade: null,
 
     createClass: function () {
-        const me = this;
-        me.MonitoringBrigade = Ext.create('Isidamaps.services.monitoringBrigadeOnCall.MapService', {});
-        me.MonitoringBrigade.listenerStore();
-        me.MonitoringBrigade.optionsObjectManager();
+        this.MonitoringBrigade = Ext.create('Isidamaps.services.monitoringBrigadeOnCall.MapService', {});
+        this.MonitoringBrigade.listenerStore();
+        this.MonitoringBrigade.optionsObjectManager();
         ASOV.setMapManager({
-            setMarkers: me.MonitoringBrigade.setMarkers.bind(this)
+            setMarkers: this.MonitoringBrigade.setMarkers.bind(this)
         }, Ext.History.currentToken);
-        const ymapWrapper = me.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            me.MonitoringBrigade.resizeMap();
+        this.MonitoringBrigade.setMarkers('109459881', ['959']);
+        const ymapWrapper = this.lookupReference('ymapWrapper');
+        ymapWrapper.on('resize', () => {
+            this.MonitoringBrigade.resizeMap();
         });
 
     }

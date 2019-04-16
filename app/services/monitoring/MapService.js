@@ -15,117 +15,129 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     // ====
 
     constructor: function (options) {
-        const me = this;
-        me.createMap();
-        me.setCheckbox = options.setCheckbox;
-        me.addNewButtonOnPanel = options.addNewButtonOnPanel;
-        me.destroyButtonOnPanel = options.destroyButtonOnPanel;
-        me.addButtonsBrigadeOnPanel = options.addButtonsBrigadeOnPanel;
-        me.addStationFilter = options.addStationFilter;
+        this.createMap();
+        this.setCheckbox = options.setCheckbox;
+        this.addNewButtonOnPanel = options.addNewButtonOnPanel;
+        this.destroyButtonOnPanel = options.destroyButtonOnPanel;
+        this.addButtonsBrigadeOnPanel = options.addButtonsBrigadeOnPanel;
+        this.addStationFilter = options.addStationFilter;
     },
 
     createMap: function () {
-        const me = this,
-            bound = [
-                [60.007645, 30.092139],
-                [59.923862, 30.519157]];
-        me.map = new ymaps.Map('mapId', {
+        const bound = [
+            [60.007645, 30.092139],
+            [59.923862, 30.519157]];
+        this.map = new ymaps.Map('mapId', {
             bounds: bound,
-            controls: ['trafficControl']
+            controls: ['trafficControl', 'rulerControl']
         });
-        me.map.behaviors.disable('dblClickZoom'); //отключение приближения при двойном клике по карте
-        me.objectManager = new ymaps.ObjectManager({
+        this.map.behaviors.disable('dblClickZoom').enable(['rightMouseButtonMagnifier']);
+        this.objectManager = new ymaps.ObjectManager({
             clusterize: false, //true
             clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: false
         });
-        me.objectManager.objects.options.set({
+        this.objectManager.objects.options.set({
             iconLayout: 'default#image',
             zIndex: 2000,
             iconImageSize: [40, 40]
 
         });
-        me.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
+        this.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
         );
     },
 
+    searchControl: function () {
+        const searchControl = new ymaps.control.SearchControl({
+            options: {
+                // Будет производиться поиск только по топонимам.
+                provider: 'yandex#map',
+                noPlacemark: true,
+                noSelect: true
+
+            }
+        });
+        this.map.controls.add(searchControl);
+        searchControl.events.add('resultselect', (e) => {
+            // Получает массив результатов.
+            const results = searchControl.getResultsArray();
+            console.dir(results);
+            // Индекс выбранного объекта.
+            const selected = e.get('index');
+            // Получает координаты выбранного объекта.
+            const point = results[selected].geometry.getCoordinates();
+            console.dir(point);
+            const balloonContent = results[selected].properties.getAll().name;
+            this.map.balloon.open(point, balloonContent, {});
+        });
+    },
+
     optionsObjectManager: function () {
-        const me = this;
-        me.objectManager.objects.events.add(['click'], function (e) {
-            let object = me.objectManager.objects.getById(e.get('objectId'));
+        this.objectManager.objects.events.add(['click'], (e) => {
+            let object = this.objectManager.objects.getById(e.get('objectId'));
             Ext.widget('callInfo').getController().markerClick(object);
         });
-        /*me.objectManager.clusters.events.add(['click'], function (e) {
-             var object = me.objectManager.clusters.getById(e.get('objectId'));
-             me.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
+        /*this.objectManager.clusters.events.add(['click'], (e) => {
+             let object = this.objectManager.clusters.getById(e.get('objectId'));
+             this.clustersClick([e._sourceEvent.originalEvent.clientPixels[0] - 20, e._sourceEvent.originalEvent.clientPixels[1] + 20], object);
          });
          */
     },
 
     addMarkers: function () {
-        const me = this;
-        me.objectManager.add(me.brigadesMarkers);
-        me.objectManager.add(me.callMarkers);
-        me.map.geoObjects.add(me.objectManager);
-        me.addButtonsBrigadeOnPanel();
-        me.setCheckbox();
+        this.objectManager.add(this.brigadesMarkers);
+        this.objectManager.add(this.callMarkers);
+        this.map.geoObjects.add(this.objectManager);
+        this.addButtonsBrigadeOnPanel();
+        this.setCheckbox();
 
     },
 
     listenerWebSockedStore: function () {
-        Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', function (store, records, index) {
+        Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', (store, records, index) => {
             this.createBrigadeOfSocked(records)
         }, this);
-        Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', function (store, records, index) {
+        Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', (store, records, index) => {
             this.createCallOfSocked(records)
         }, this);
     },
 
     listenerStore: function () {
-        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('load', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('load', (store, records, options) => {
             this.storeBrigade(records)
         }, this);
-        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', function (store, records, options) {
+        Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', (store, records, options) => {
             this.storeCall(records)
         }, this);
 
     },
 
     addMarkersSocket: function (marker) {
-        const me = this,
-            object = me.objectManager.objects.getById(marker.id);
-        if (marker.customOptions.objectType === 'BRIGADE') {
-            if (object) {
-                me.objectManager.objects.remove(object);
-            }
-            if (marker.customOptions.status !== 'WITHOUT_SHIFT') {
-                function func() {
-                    me.objectManager.objects.add(marker);
-                }
-
-                setTimeout(func, 1);
+        const object = this.objectManager.objects.getById(marker.id),
+            addFeature = () => {
+                this.objectManager.objects.add(marker);
+            },
+            {customOptions: {objectType, status}} = marker;
+        if (object) {
+            this.objectManager.objects.remove(object);
+        }
+        if (objectType === 'BRIGADE') {
+            if (status !== 'WITHOUT_SHIFT') {
+                Ext.defer(addFeature, 1, this);
             }
             return;
         }
-        if (object) {
-            me.objectManager.remove(object);
-        }
-        if (marker.customOptions.status !== "COMPLETED") {
-            function func() {
-                me.objectManager.objects.add(marker);
-            }
-
-            setTimeout(func, 1);
+        if (status !== 'COMPLETED') {
+            Ext.defer(addFeature, 1, this);
         }
     },
 
     setStation: function (stations) {
-        Isidamaps.app.getController('AppController').initial(f);
-
-        function f() {
-            Isidamaps.app.getController('AppController').readStation(stations);
-        }
+        const readStation = () => {
+            Isidamaps.app.getController('AppController').readStation(stations)
+        };
+        Isidamaps.app.getController('AppController').initial(readStation);
     },
 
 
@@ -137,21 +149,20 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 objectType: call.get('objectType'),
                 status: call.get('status'),
                 callCardNum: call.get('callCardNum'),
-                station: '' + call.get('station')
+                station: call.get('station').toString()
             },
             geometry: {
                 type: 'Point',
                 coordinates: [call.get('latitude'), call.get('longitude')]
             },
             options: {
-                iconImageHref: 'resources/icon/' + call.get('iconName'),
+                iconImageHref: `resources/icon/${call.get('iconName')}`,
                 iconImageSize: [25, 31]
             }
         }
     },
 
     createBrigadeFeature: function (brigade) {
-        const me = this;
         return {
             type: 'Feature',
             id: brigade.get('deviceId'),
@@ -159,7 +170,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 objectType: brigade.get('objectType'),
                 profile: brigade.get('profile'),
                 status: brigade.get('status'),
-                station: '' + brigade.get('station'),
+                station: brigade.get('station').toString(),
                 brigadeNum: brigade.get('brigadeNum')
             },
             geometry: {
@@ -168,87 +179,82 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             },
             options: {
                 iconLayout: 'default#imageWithContent',
-                iconImageHref: 'resources/icon/' + brigade.get('iconName'),
-                iconContentLayout: me.MyIconContentLayout,
+                iconImageHref: `resources/icon/${brigade.get('iconName')}`,
+                iconContentLayout: this.MyIconContentLayout,
                 iconImageOffset: [-24, -24],
                 iconContentOffset: [30, -10],
             },
             properties: {
-                hintContent: 'Бригада ' + brigade.get('brigadeNum'),
-                iconContent: brigade.get('brigadeNum') + "(" + brigade.get('profile') + ")"
+                hintContent: `Бригада ${brigade.get('brigadeNum')}`,
+                iconContent: `${brigade.get('brigadeNum')}(${brigade.get('profile')})`
             }
         }
     },
 
     storeBrigade: function (records) {
-        const me = this;
-        Ext.Array.clean(me.brigadesMarkers);
-        records.forEach(function (brigade) {
+        Ext.Array.clean(this.brigadesMarkers);
+        records.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
-                const feature = me.createBrigadeFeature(brigade);
-                me.brigadesMarkers.push(feature);
+                const feature = this.createBrigadeFeature(brigade);
+                this.brigadesMarkers.push(feature);
             }
         });
-        me.checkArrayFeatureComplete(me.callMarkers);
+        this.checkArrayFeatureComplete(this.callMarkers);
     },
 
     storeCall: function (records) {
-        const me = this;
-        Ext.Array.clean(me.callMarkers);
-        records.forEach(function (call) {
+        Ext.Array.clean(this.callMarkers);
+        records.forEach(call => {
             if (call.get('latitude') && call.get('longitude')) {
-                const feature = me.createCallFeature(call);
-                me.callMarkers.push(feature);
+                const feature = this.createCallFeature(call);
+                this.callMarkers.push(feature);
             }
         });
-        me.checkArrayFeatureComplete(me.brigadesMarkers);
+        this.checkArrayFeatureComplete(this.brigadesMarkers);
     },
 
     checkArrayFeatureComplete: function (array) {
-        const me = this;
         if (array.length !== 0) {
-            me.addStationFilter();
-            me.addMarkers();
-            me.listenerWebSockedStore();
+            this.addStationFilter();
+            this.addMarkers();
+            this.listenerWebSockedStore();
         }
 
     },
 
     createCallOfSocked: function (calls) {
-        const me = this,
-            call = calls[0];
+        const call = calls[0];
         if (call.get('latitude') && call.get('longitude')) {
-            let marker = me.createCallFeature(call);
-            me.addMarkersSocket(marker);
+            let marker = this.createCallFeature(call);
+            this.addMarkersSocket(marker);
             Ext.getStore('Isidamaps.store.CallFromWebSockedStore').clearData();
         }
     },
 
     createBrigadeOfSocked: function (brigades) {
-        const me = this,
-            brigade = brigades[0];
+        const brigade = brigades[0];
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
-            let marker = me.createBrigadeFeature(brigade);
+            let marker = this.createBrigadeFeature(brigade);
 
-            let brigadeHas = Ext.Array.findBy(me.brigadesMarkers, function (brigadeInArray, index) {
+            let brigadeHas = Ext.Array.findBy(this.brigadesMarkers, (brigadeInArray, index) => {
                 if (brigadeInArray.id === brigade.get('deviceId')) {
                     return brigadeInArray;
                 }
             });
-            Ext.Array.remove(me.brigadesMarkers, brigadeHas);
+            Ext.Array.remove(this.brigadesMarkers, brigadeHas);
             if (brigade.get('status') !== 'WITHOUT_SHIFT') {
-                Ext.Array.push(me.brigadesMarkers, marker);
+                Ext.Array.push(this.brigadesMarkers, marker);
                 if (brigadeHas && brigadeHas.customOptions.status !== marker.customOptions.status) {
                     Ext.fireEvent('getButtonBrigadeForChangeButton', marker, brigadeHas.customOptions.status);
                 }
                 else if (!brigadeHas) {
-                    me.addNewButtonOnPanel(marker);
+                    this.addNewButtonOnPanel(marker);
                 }
             }
             else {
-                me.destroyButtonOnPanel(marker);
+                this.destroyButtonOnPanel(marker);
             }
-            me.addMarkersSocket(marker);
+            this.addMarkersSocket(marker);
             Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
         }
     },
@@ -258,30 +264,29 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     createTableRoute: function () {
-        const me = this;
-        if (me.arrRouteForTable.length === me.brigadesMarkers.length) {
+        if (this.arrRouteForTable.length === this.brigadesMarkers.length) {
             const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-            me.arrRouteForTable.forEach(function (object) {
+            this.arrRouteForTable.forEach(object => {
+                const {route, brigade: {id, customOptions: {brigadeNum, profile}}} = object;
                 let x = Ext.create('Isidamaps.model.Route');
-                x.set('brigadeId', object.brigade.id);
-                x.set('brigadeNum', object.brigade.customOptions.brigadeNum);
-                x.set('profile', object.brigade.customOptions.profile);
-                x.set('distance', (object.route.getLength() / 1000).toFixed(1));
-                x.set('time', (object.route.getJamsTime() / 60).toFixed(0));
+                x.set('brigadeId', id);
+                x.set('brigadeNum', brigadeNum);
+                x.set('profile', profile);
+                x.set('distance', (route.getLength() / 1000).toFixed(1));
+                x.set('time', (route.getJamsTime() / 60).toFixed(0));
                 store.add(x);
             });
         }
     },
 
     createBouns: function () {
-        const me = this,
-            arrayLatitude = [],
+        const arrayLatitude = [],
             arrayLongitude = [],
-            call = me.callMarkers[0];
+            call = this.callMarkers[0];
         arrayLatitude.push(call.geometry.coordinates[0]);
         arrayLongitude.push(call.geometry.coordinates[1]);
 
-        me.brigadesMarkers.forEach(function (brigade) {
+        this.brigadesMarkers.forEach(brigade => {
             arrayLatitude.push(brigade.geometry.coordinates[0]);
             arrayLongitude.push(brigade.geometry.coordinates[1]);
         });
@@ -295,7 +300,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             [arrayLatitude[arrayLatitude.length - 1] + 0.015, arrayLongitude[0] - 0.015],
             [arrayLatitude[0] - 0.015, arrayLongitude[arrayLatitude.length - 1] + 0.015]
         ];
-        me.map.setBounds(bounds);
+        this.map.setBounds(bounds);
     },
 })
 ;

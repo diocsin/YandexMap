@@ -8,142 +8,168 @@ Ext.define('Isidamaps.controller.AppController', {
     brigadeId: null,
     urlOpenStreetServerTiles: null,
     urlOpenStreetServerRoute: null,
-    brigadeStatusesMap: (function () {
-        const map = Ext.create('Ext.util.HashMap');
-        map.add('FREE', 'Свободна');
-        map.add('ON_EVENT', 'Дежурство на мероприятии');
-        map.add('WITHOUT_SHIFT', 'Вне графика');
-        map.add('CRASH_CAR', 'Ремонт');
-        map.add('PASSED_BRIGADE', 'Принял вызов');
-        map.add('AT_CALL', 'На вызове');
-        map.add('RELAXON', 'Обед');
-        map.add('GO_HOSPITAL', 'Транспортировка в стационар');
-        map.add('HIJACKING', 'Нападение на бригаду');
-        return map;
-    })(),
+    brigadeStatuses: [
+        {eng: 'FREE', rus: 'Свободна'},
+        {eng: 'ON_EVENT', rus: 'black_widow'},
+        {eng: 'WITHOUT_SHIFT', rus: 'Вне графика'},
+        {eng: 'CRASH_CAR', rus: 'Ремонт'},
+        {eng: 'PASSED_BRIGADE', rus: 'Принял вызов'},
+        {eng: 'AT_CALL', rus: 'На вызове'},
+        {eng: 'RELAXON', rus: 'Обед'},
+        {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
+        {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
+    ],
+
+    getBrigadeStatuses: function (eng) {
+        const args = this.brigadeStatuses.find(status => status.eng === eng);
+        return args ? args.rus : 'Неизвестно';
+    },
 
     initial: function (getGeoInform) {
-        const me = this,
-            settingsStore = me.getStore('Isidamaps.store.SettingsStore');
+        const settingsStore = this.getStore('Isidamaps.store.SettingsStore');
         settingsStore.load({
-            callback: function (records) {
+            callback: (records) => {
                 const settings = records[0];
-                me.urlGeodata = settings.get('urlGeodata');
-                me.urlWebSocket = settings.get('urlWebSocket');
+                this.urlGeodata = settings.get('urlGeodata');
+                this.urlWebSocket = settings.get('urlWebSocket');
                 getGeoInform();
             }
         });
     },
 
     connectWebSocked: function (service) {
-        const me = this,
-            socket = new SockJS(me.urlWebSocket + '/geo');
-        me.stompClient = Stomp.over(socket);
-        me.stompClient.connect({}, function (frame) {
-                console.log('Connected: ' + frame);
-                me.stompClient.subscribe('/geo-queue/geodata-updates', function (msg) {
-                    service === 'monitoring' ? me.loadSocketData(JSON.parse(msg.body)) : me.loadSocketDataForMonitoringBrigade(JSON.parse(msg.body));
+        const socket = new SockJS(`${this.urlWebSocket}/geo`),
+            reconn = () => {
+                Ext.log({indent: 1, level: 'error'}, "Reconnecting WS");
+                Ext.defer(this.connectWebSocked, 2500, this);
+            },
+            conn = (frame) => {
+                Ext.log({indent: 1, level: 'info'}, `Connected: ${frame}`);
+                this.stompClient.subscribe('/geo-queue/geodata-updates', (msg) => {
+                    service === 'monitoring' ? this.loadSocketData(JSON.parse(msg.body)) : this.loadSocketDataForMonitoringBrigade(JSON.parse(msg.body));
 
                 });
-            }.bind(me),
-            function (e) {
-                console.error(e, "Reconnecting WS");
-                Ext.defer(me.connectWebSocked, 2500, me);
-            }.bind(me)
-        );
+            };
+        this.stompClient = Stomp.over(socket);
+        this.stompClient.connect({}, conn, reconn);
     },
 
     loadSocketDataForMonitoringBrigade: function (message) {
-        const me = this;
-        message.deviceId = '' + message.deviceId;
-        if (message.objectType === 'BRIGADE' && me.brigadeId === message.deviceId) {
-            let storeBrigades = me.getStore('Isidamaps.store.BrigadeFromWebSockedStore');
+        const {deviceId, objectType} = message;
+        if (objectType === 'BRIGADE' && this.brigadeId === '' + deviceId) {
+            let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWebSockedStore');
             storeBrigades.add(message);
         }
 
-        if (message.objectType === 'CALL' && me.callId === message.deviceId) {
-            let storeCalls = me.getStore('Isidamaps.store.CallFromWebSockedStore');
+        if (objectType === 'CALL' && this.callId === '' + deviceId) {
+            let storeCalls = this.getStore('Isidamaps.store.CallFromWebSockedStore');
             storeCalls.add(message);
         }
     },
 
     loadSocketData: function (message) {
-        const me = this;
-        message.station = '' + message.station;
-        if (!Ext.Array.contains(me.stationArray, message.station)) {
+        const {station, objectType} = message;
+        if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }
-        const store = me.getStore(message.objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWebSockedStore');
+        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWebSockedStore');
         store.add(message);
     },
 
     getStoreMarkerInfo: function (object) {
-        const me = this,
-            urlInfoMarker = me.urlGeodata + '/info';
-        const store = me.getStore(object.customOptions.objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeInfoStore' : 'Isidamaps.store.CallInfoStore');
+        const urlInfoMarker = `${this.urlGeodata}/info`,
+            store = this.getStore(object.customOptions.objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeInfoStore' : 'Isidamaps.store.CallInfoStore');
         store.getProxy().setUrl(urlInfoMarker);
         return store;
     },
 
     readStation: function (station) {
-        const me = this,
-            brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-            callStore = me.getStore('Isidamaps.store.CallsFirstLoadStore');
-        station.forEach(function (st) {
+        const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+            paramsBrigades = {
+                stations: this.stationArray,
+                statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE']
+            },
+            paramsCalls = {
+                stations: this.stationArray,
+                statuses: ['NEW', 'ASSIGNED']
+            },
+            callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
+        Ext.log({outdent: 1}, `Подстанции ${station}`);
+        station.forEach((st) => {
             if (Ext.String.trim(st) !== '20') {
-                me.stationArray.push(Ext.String.trim(st));
+                this.stationArray.push(Ext.String.trim(st));
             }
         });
-        const paramsBrigades = {
-            stations: me.stationArray,
-            statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE']
-        };
-        const paramsCalls = {
-            stations: me.stationArray,
-            statuses: ['NEW', 'ASSIGNED']
-        };
         brigadeStore.load({
-            url: Ext.String.format(me.urlGeodata + '/data'),
+            url: Ext.String.format(`${this.urlGeodata}/data`),
             params: paramsBrigades,
+            callback: (records, operation, success) => {
+                if (success) {
+                    Ext.log({outdent: 1}, `Бригад из geoService ${records.length}`);
+                    return
+                }
+                Ext.log({outdent: 1, level: 'error'}, 'Ошибка загрузки данных из geoService');
+            }
         });
         callStore.load({
-            url: Ext.String.format(me.urlGeodata + '/call'),
+            url: Ext.String.format(`${this.urlGeodata}/call`),
+            params: paramsCalls,
+            callback: (records, operation, success) => {
+                if (success) {
+                    Ext.log({outdent: 1}, `Вызовов из geoService ${records.length}`);
+                    return
+                }
+                Ext.log({outdent: 1, level: 'error'}, 'Ошибка загрузки данных из geoService');
+            }
+        });
+        this.connectWebSocked('monitoring');
+    },
+
+    readCallsForHeatMap: function (station) {
+        const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            paramsCalls = {
+                stations: this.stationArray,
+                statuses: ['COMPLETED']
+            };
+        station.forEach((st) => {
+            this.stationArray.push(Ext.String.trim(st));
+        });
+        callStore.load({
+            url: Ext.String.format(`${this.urlGeodata}/call`),
             params: paramsCalls,
         });
-        me.connectWebSocked('monitoring');
     },
 
     readMarkers: function (call, brigades) {
-        const me = this,
-            brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-            callStore = me.getStore('Isidamaps.store.CallsFirstLoadStore');
-        me.callId = call;
-        me.brigadeId = brigades[0];
-        const params = {
-            callcardid: me.callId,
-            brigades: me.brigadeId
-        };
+        const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+            callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            params = {
+                callcardid: this.callId,
+                brigades: this.brigadeId
+            };
+        Ext.log({outdent: 1}, `callId= ${call} , brigadeId= ${brigades}`);
+        this.callId = call;
+        this.brigadeId = brigades[0];
         Ext.Ajax.request({
-            url: me.urlGeodata + '/brigade?',
+            url: `${this.urlGeodata}/brigade?`,
             params: params,
             method: 'GET',
-
-            success: function (response, opts) {
+            success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);
                 brigadeStore.add(obj.brigades);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
             },
 
-            failure: function (response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
         });
-        me.connectWebSocked();
+        this.connectWebSocked();
     },
 
     readMedOrg: function () {
-        const me = this,
-            medOrgStore = me.getStore('Isidamaps.store.MedOrgStore'),
+        const medOrgStore = this.getStore('Isidamaps.store.MedOrgStore'),
             paramsHOSPITAL = {
                 organizationtype: 'HOSPITAL'
             },
@@ -155,72 +181,74 @@ Ext.define('Isidamaps.controller.AppController', {
             },
             paramsArray = [paramsHOSPITAL, paramsPOLYCLINIC, paramsEMERGENCY_ROOM];
 
-        paramsArray.forEach(function (params) {
+        paramsArray.forEach((params) => {
             Ext.Ajax.request({
-                url: me.urlGeodata + '/organization',
+                url: `${this.urlGeodata}/organization`,
                 params: params,
                 method: 'GET',
 
-                success: function (response, opts) {
+                success: (response, opts) => {
                     let obj = Ext.decode(response.responseText);
                     medOrgStore.add(obj);
+                    Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
                 },
 
-                failure: function (response, opts) {
-                    console.log('server-side failure with status code ' + response.status);
+                failure: (response, opts) => {
+                    Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
                 }
             });
         });
     },
 
     readMarkersForCallHistory: function (call) {
-        const me = this,
-            callStore = me.getStore('Isidamaps.store.CallsFirstLoadStore'),
-            brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-            routeHistoryStore = me.getStore('Isidamaps.store.RouteHistoryStore'),
-            factRouteHistoryStore = me.getStore('Isidamaps.store.FactRouteHistoryStore'),
+        const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+            routeHistoryStore = this.getStore('Isidamaps.store.RouteHistoryStore'),
+            factRouteHistoryStore = this.getStore('Isidamaps.store.FactRouteHistoryStore'),
             params = {
                 callcardid: call
             };
 
         Ext.Ajax.request({
-            url: me.urlGeodata + '/route?',
+            url: `${this.urlGeodata}/route?`,
             params: params,
             method: 'GET',
 
-            success: function (response, opts) {
+            success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);
                 routeHistoryStore.add(obj.brigadeRoute);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
             },
 
-            failure: function (response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
-        });
+        })
+        ;
         Ext.Ajax.request({
-            url: me.urlGeodata + '/route/fact?',
+            url: `${this.urlGeodata}/route/fact?`,
             params: params,
             method: 'GET',
 
-            success: function (response, opts) {
+            success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 brigadeStore.add([obj.endPoint, obj.startPoint]);
                 factRouteHistoryStore.add(obj.points);
                 callStore.add(obj.call);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
             },
 
-            failure: function (response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
         });
 
     },
 
     readMarkersBrigadeForAssign: function (call, brigades) {
-        const me = this,
-            callStore = me.getStore('Isidamaps.store.CallsFirstLoadStore'),
-            brigadeStore = me.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+        const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
 
             params = {
                 callcardid: call,
@@ -228,18 +256,19 @@ Ext.define('Isidamaps.controller.AppController', {
             };
 
         Ext.Ajax.request({
-            url: me.urlGeodata + '/brigade?',
+            url: `${this.urlGeodata}/brigade?`,
             params: params,
             method: 'GET',
 
-            success: function (response, opts) {
+            success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);
                 brigadeStore.add(obj.brigades);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
             },
 
-            failure: function (response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
         });
     },
