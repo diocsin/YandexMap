@@ -10,7 +10,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MonitoringBrigadeControll
         ASOV.setMapManager({
             setMarkers: this.MonitoringBrigade.setMarkers.bind(this)
         }, Ext.History.currentToken);
-        this.MonitoringBrigade.setMarkers('109459881', ['959']);
         const ymapWrapper = this.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', () => {
             this.MonitoringBrigade.resizeMap();

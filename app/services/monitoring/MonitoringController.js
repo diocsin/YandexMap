@@ -281,7 +281,6 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         ASOV.setMapManager({
             setStation: this.Monitoring.setStation.bind(this)
         }, Ext.History.currentToken);
-        this.Monitoring.setStation(['1', '9']);
         const ymapWrapper = this.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', () => {
             this.Monitoring.resizeMap();
