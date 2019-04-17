@@ -161,7 +161,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         for (const object of records) {
             if (i <= records.length - 3) {
                 let y = i;
-                if (this.test(records[y], records[y + 1], records[y + 2]) <= 150) {
+                if (this.angleOfRotation(records[y], records[y + 1], records[y + 2]) <= 150) {
                     h = i + 1;
                 }
                 if (h === i) {
@@ -191,11 +191,12 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         grid.el.unmask();
     },
 
-    test: function (A, B, C) {
+
+    angleOfRotation: function (A, B, C) {
         const AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2)),
             BC = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(C.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(C.get('latitude')), 2)),
             AC = Math.sqrt(Math.pow(parseFloat(C.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(C.get('latitude')) - parseFloat(A.get('latitude')), 2));
-        return (AC < 0.00002) ? 180 : Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
+        return (AC < 0.00003) ? 180 : Math.acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
     },
 
     getAddress: function (coords) {

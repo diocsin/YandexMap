@@ -43,13 +43,13 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         if (this.callMarkers.length === 0) {
             this.createCallAlert();
         }
-        this.circle = new ymaps.Circle([this.callMarkers[0].geometry.coordinates, 100], null, {draggable: false * /, visible: false*/});
+       // this.circle = new ymaps.Circle([this.callMarkers[0].geometry.coordinates, 100], null, {draggable: false * /, visible: false*/});
         this.createBouns();
         this.objectManager.add(this.brigadesMarkers);
         this.objectManager.add(this.callMarkers);
         this.map.geoObjects.add(this.objectManager);
-        this.map.geoObjects.add(this.circle);
-        this.getGeoQueryObject(this.brigadesMarkers[0]);  ////Будет отправлять ответ(смену статуса) каждый раз когда будет открываться окно когда бригада уже в круге
+        //this.map.geoObjects.add(this.circle);
+       // this.getGeoQueryObject(this.brigadesMarkers[0]);  ////Будет отправлять ответ(смену статуса) каждый раз когда будет открываться окно когда бригада уже в круге
         if (this.callMarkers.length > 0 && this.brigadesMarkers.length > 0) {
             this.brigadesMarkers.forEach(brigadeMarker => {
                 this.createRoute(this.callMarkers[0], brigadeMarker);
@@ -70,7 +70,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     addMarkersSocket: function (marker) {
         const object = this.objectManager.objects.getById(marker.id),
             addFeatureCall = () => {
-                this.getGeoQueryObject(marker);
+              //  this.getGeoQueryObject(marker);
                 this.objectManager.objects.add(marker);
                 this.map.geoObjects.each(route => {
                     if (route.requestPoints !== undefined) {
