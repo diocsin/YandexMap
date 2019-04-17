@@ -6,7 +6,6 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     callMarkers: [],
     brigadeRoute: null,
     brigadesMarkers: [],
-    factRoute: null,
     brigadesStartPoint: null,
     brigadesEndPoint: null,
     arrRouteForTable: [],
@@ -47,6 +46,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     storeFactHistoryBrigade: function (rec) {
         let i = 1;
+        Ext.getCmp('MyGrid').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
         rec.forEach((brigade) => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
