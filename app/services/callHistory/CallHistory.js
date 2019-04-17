@@ -21,6 +21,7 @@ Ext.define('Isidamaps.services.callHistory.CallHistory', {
         titleAlign: 'center',
         collapseToolText: 'Скрыть панель',
         expandToolText: 'Открыть панель',
+        layout: 'fit',
 
         items: [{
             title: 'Параметры доезда',
@@ -34,10 +35,10 @@ Ext.define('Isidamaps.services.callHistory.CallHistory', {
         width: 500,
         floatable: true,
         collapsible: true,
-        scrollable: 'vertical',
         titleAlign: 'center',
         collapseToolText: 'Скрыть панель',
         expandToolText: 'Открыть панель',
+        layout: 'fit',
 
         items: [{
             title: 'История маршрута',

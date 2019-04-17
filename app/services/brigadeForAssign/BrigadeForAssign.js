@@ -17,10 +17,10 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssign', {
         width: 400,
         floatable: true,
         collapsible: true,
-        scrollable: 'vertical',
         titleAlign: 'center',
         collapseToolText: 'Скрыть панель',
         expandToolText: 'Открыть панель',
+        layout: 'fit',
 
         items: [{
             title: 'Параметры доезда',
