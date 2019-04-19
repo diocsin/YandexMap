@@ -43,7 +43,7 @@ Ext.define('Isidamaps.view.routeHistoryView.routeHistory.RouteHistory', {
 
     dockedItems: [{
         xtype: 'toolbar',
-        dock: 'bottom',
+        dock: 'top',
         ui: 'footer',
         items: [{
             xtype: 'component',

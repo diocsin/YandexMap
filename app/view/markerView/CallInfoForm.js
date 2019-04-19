@@ -26,7 +26,7 @@ Ext.define('Isidamaps.view.markerView.CallInfoForm', {
         margin: 0
     }, {
         xtype: 'textareafield',
-        bind: '{recod.reason}',
+        bind: '{record.reason}',
         labelWidth: 100,
         width: 500,
         readOnly: true,
