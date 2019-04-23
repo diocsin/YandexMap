@@ -162,7 +162,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             if (i <= records.length - 3) {
                 let y = i;
                 if (this.angleOfRotation(records[y], records[y + 1], records[y + 2]) <= 150) {
-                    h = i + 1;
+                    h = i + 2;
                 }
                 if (h === i) {
                     const address = await this.getAddress([object.get('latitude'), object.get('longitude')]);
