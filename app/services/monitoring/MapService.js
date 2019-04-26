@@ -54,7 +54,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 // Будет производиться поиск только по топонимам.
                 provider: 'yandex#map',
                 noPlacemark: true,
-                noSelect: true,
+                noSelect: false,
                 maxWidth: [90, 172, 615],
                 fitMaxWidth: true
 
