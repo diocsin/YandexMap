@@ -55,7 +55,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 provider: 'yandex#map',
                 noPlacemark: true,
                 noSelect: false,
-                maxWidth: [90, 172, 615],
+                maxWidth: [90, 172, 590],
                 fitMaxWidth: true
 
             }
