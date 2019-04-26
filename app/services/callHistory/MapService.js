@@ -210,11 +210,13 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         if (!this.placemarkForRouteHistory) {
             this.placemarkForRouteHistory = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
             this.map.geoObjects.add(this.placemarkForRouteHistory);
+            this.map.setCenter(Ext.String.splitWords(rec.get('point')), 14);
         }
         else {
             const index = this.map.geoObjects.indexOf(this.placemarkForRouteHistory);
             let object = this.map.geoObjects.get(index);
             object.geometry.setCoordinates(Ext.String.splitWords(rec.get('point')));
+            this.map.setCenter(Ext.String.splitWords(rec.get('point')), 14);
         }
     }
 });
