@@ -15,7 +15,7 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
         fieldLabel: 'Номер бригады'
     }, {
         xtype: 'displayfield',
-        bind:  '{record.station}',
+        bind: '{record.station}',
         fieldLabel: 'Номер подстанции'
     }, {
         xtype: 'displayfield',
@@ -44,5 +44,9 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
         name: 'passToBrigadeTime',
         fieldLabel: 'Время получения бригадой',
         renderer: Ext.util.Format.dateRenderer('Y-m-d, H:i:s')
+    }, {
+        xtype: 'displayfield',
+        bind: '{record.stationary}',
+        fieldLabel: 'Стационар'
     }]
 });

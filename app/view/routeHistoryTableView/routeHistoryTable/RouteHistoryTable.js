@@ -15,6 +15,7 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
     },
     features: [{
         ftype: 'grouping',
+        enableNoGroups: false,
         collapseTip: 'Скрыть',
         expandTip: 'Раскрыть'
     }],

@@ -12,3 +12,7 @@
     font-weight: bold;
     font-size: 14px;
 }
+
+.x-grid-group-hd {
+    white-space: normal !important;
+}
