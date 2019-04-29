@@ -24,10 +24,12 @@ Ext.define('Isidamaps.services.monitoring.Monitoring', {
         width: 250,
         floatable: true,
         collapsible: true,
+        titleCollapse: true,
         scrollable: 'vertical',
         titleAlign: 'center',
         collapseToolText: 'Скрыть панель',
         expandToolText: 'Открыть панель',
+        cls: 'panel-brigade',
 
         items: [{
 
@@ -43,6 +45,7 @@ Ext.define('Isidamaps.services.monitoring.Monitoring', {
         width: 300,
         floatable: true,
         collapsible: true,
+        titleCollapse: true,
         titleAlign: 'center',
         collapseToolText: 'Скрыть панель',
         expandToolText: 'Открыть панель',

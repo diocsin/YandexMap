@@ -3,6 +3,11 @@
     left: auto !important;
 }
 .x-panel-header-default-horizontal .x-tool-after-title {
+    right: 0 !important;
+    left: auto !important;
+}
+
+.panel-history .x-tool-after-title, .panel-brigade .x-tool-after-title{
     left: 0 !important;
     right: auto !important;
 }

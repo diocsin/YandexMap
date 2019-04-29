@@ -4,7 +4,7 @@ Ext.define('Isidamaps.services.callHistory.CallHistoryController', {
     CallHistory: null,
 
     createClass: function () {
-        const grid = Ext.getCmp('MyGrid');
+        const grid = Ext.getCmp('GridHistory');
         grid.el.mask('Загрузка данных');
         this.CallHistory = Ext.create('Isidamaps.services.callHistory.MapService', {});
         this.CallHistory.listenerStore();

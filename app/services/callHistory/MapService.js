@@ -36,6 +36,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     storeFactHistoryCall: function (rec) {
         rec.forEach((call) => {
+            Ext.getCmp('GridAssignHistory').setTitle(`Параметры доезда к вызову №${call.get('callCardNum')}`);
             if (call.get('latitude') && call.get('longitude')) {
                 const feature = this.createCallFeature(call);
                 this.callMarkers.push(feature);
@@ -46,7 +47,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     storeFactHistoryBrigade: function (rec) {
         let i = 1;
-        Ext.getCmp('MyGrid').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
+        Ext.getCmp('GridHistory').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
         rec.forEach((brigade) => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
@@ -145,7 +146,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     createHistoryTable: async function (records) {
-        const grid = Ext.getCmp('MyGrid'),
+        const grid = Ext.getCmp('GridHistory'),
             arr = [],
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
         grid.on({

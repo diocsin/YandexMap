@@ -2,7 +2,7 @@ Ext.define('Isidamaps.view.routeHistoryView.routeHistory.RouteHistory', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.routeHistoryView-routeHistory',
     border: false,
-    title: 'Table Layout',
+    id: 'GridAssignHistory',
     store: 'Isidamaps.store.RouteForTableStore',
 
     viewConfig: {

@@ -2,7 +2,7 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
     extend: 'Ext.grid.Panel',
     alias: 'widget.routeHistoryTableView-routeHistoryTable',
     border: false,
-    id: 'MyGrid',
+    id: 'GridHistory',
     title: 'Table Layout',
     store: 'Isidamaps.store.RouteHistoryTableStore',
     loadMask: true,
@@ -72,7 +72,7 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
                 text: 'Печать',
                 listeners: {
                     click: function () {
-                        const myGrid = Ext.getCmp('MyGrid');
+                        const myGrid = Ext.getCmp('GridHistory');
                         Ext.ux.grid.Printer.print(myGrid);
                     }
                 }

@@ -64,12 +64,11 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         searchControl.events.add('resultselect', (e) => {
             // Получает массив результатов.
             const results = searchControl.getResultsArray();
-            console.dir(results);
             // Индекс выбранного объекта.
             const selected = e.get('index');
             // Получает координаты выбранного объекта.
             const point = results[selected].geometry.getCoordinates();
-            console.dir(point);
+
             const balloonContent = results[selected].properties.getAll().name;
             this.map.balloon.open(point, balloonContent, {});
         });
