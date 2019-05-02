@@ -4,8 +4,8 @@
  * Sencha Cmd when upgrading.
  */
 Ext.ariaWarn = Ext.emptyFn;
-ASOV = (function () {
-    var opener = window.opener;
+ASOV = (() => {
+    const opener = window.opener;
     return !!opener ? opener.ACPS.MapControl.forExport() : {
         setRoutes: Ext.emptyFn,
         setBrigade: Ext.emptyFn,
@@ -14,16 +14,16 @@ ASOV = (function () {
 })();
 
 function readPropertyFile() {
-    var rawFile = new XMLHttpRequest();
+    const rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType("application/json");
     rawFile.open("GET", 'resources/settings/property.json', true);
-    rawFile.onreadystatechange = function () {
+    rawFile.onreadystatechange = () => {
         if (rawFile.readyState === 4 && rawFile.status === 200) {
-            var data = Ext.decode(rawFile.responseText);
+            const data = Ext.decode(rawFile.responseText);
             startApp(data.urlYandex);
         }
-        else if(rawFile.status!==200){
-            Ext.log({indent:1, level:'error'}, 'Ошибка чтения файла property, status ' +rawFile.status);
+        else if (rawFile.status !== 200) {
+            Ext.log({indent: 1, level: 'error'}, `Ошибка чтения файла property, status ${rawFile.status}`);
         }
     };
 
@@ -35,7 +35,7 @@ readPropertyFile();
 function startApp(urlYandex) {
     Ext.Loader.loadScript({
         url: [urlYandex, 'resources/lib/heatmap.min.js'],
-        onError: function () {
+        onError: () => {
             Ext.log({indent: 1, level: 'error'}, 'Нет доступа к yandexApi');
         }
     });

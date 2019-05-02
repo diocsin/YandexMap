@@ -16,8 +16,8 @@
     // filters in your manifest or by platformConfig expressions in your app.
     //
     Ext.beforeLoad = function(tags) {
-      var s = location.search, // the query string (ex "?foo=1&bar")
-        profile;
+      const s = location.search; // the query string (ex "?foo=1&bar")
+      let profile;
 
       // For testing look for "?classic" or "?modern" in the URL to override
       // device detection default.
