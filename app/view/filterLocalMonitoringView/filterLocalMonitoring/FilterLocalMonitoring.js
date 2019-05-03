@@ -17,7 +17,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             inputValue: 'ALL',
             margin: '5px 10px 0px 10px',
             listeners: {
-                change: (checkbox, checked) => {
+                change: function (checkbox, checked) {
                     const stationGroup = Ext.getCmp('stationGroupId');
                     if (checked) {
                         stationGroup.items.each((item) => {
@@ -40,10 +40,10 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             id: 'stationGroupId',
             reference: 'stationFilter',
             columns: 4,
-            getState: () => {
+            getState: function () {
                 return {"checked": this.getValue()};
             },
-            applyState: (state) => {
+            applyState: function (state) {
                 Ext.fireEvent('setStateStation', state);
             },
             stateEvents: [
@@ -65,7 +65,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             inputValue: 'ALL',
             margin: '5px 10px 0px 10px',
             listeners: {
-                change: (checkbox, checked) => {
+                change: function (checkbox, checked) {
                     const statusGroup = Ext.getCmp('statusGroupId');
                     if (checked) {
                         statusGroup.items.each((item) => {
@@ -88,10 +88,10 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
             reference: 'statusBrigadeFilter',
             columns: 1,
             vertical: true,
-            getState: () => {
+            getState: function () {
                 return {"checked": this.getValue()};
             },
-            applyState: (state) => {
+            applyState: function (state) {
                 Ext.fireEvent('setStateStatusBrigades', state);
             },
             stateEvents: [
@@ -107,7 +107,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 inputValue: 'FREE',
                 listeners: {
                     change: {
-                        fn: (checkbox, checked) => {
+                        fn: function (checkbox, checked) {
                             Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                         }
                     }
@@ -119,7 +119,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'PASSED_BRIGADE',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -131,7 +131,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'AT_CALL',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -143,7 +143,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'GO_HOSPITAL',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -155,7 +155,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'ON_EVENT',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -167,7 +167,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'WITHOUT_SHIFT',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -179,7 +179,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'CRASH_CAR',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -191,7 +191,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'RELAXON',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -203,7 +203,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'HIJACKING',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
                             }
                         }
@@ -223,7 +223,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 inputValue: 'ALL',
                 margin: '5px 10px 0px 10px',
                 listeners: {
-                    change: (checkbox, checked) => {
+                    change: function (checkbox, checked) {
                         const profileGroup = Ext.getCmp('profileGroupId');
                         if (checked) {
                             profileGroup.items.each((item) => {
@@ -247,10 +247,10 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 id: 'profileGroupId',
                 reference: 'profileBrigadeFilter',
                 columns: 3,
-                getState: () => {
+                getState: function () {
                     return {"checked": this.getValue()};
                 },
-                applyState: (state) => {
+                applyState: function (state) {
                     Ext.fireEvent('setStateProfileBrigades', state);
                 },
                 stateEvents: [
@@ -266,7 +266,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     inputValue: 'ВБ',
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                             }
                         }
@@ -279,7 +279,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         width: 100,
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -291,7 +291,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         inputValue: 'РХБ',
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -304,7 +304,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         width: 100,
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -316,7 +316,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         inputValue: 'СКБ',
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -328,7 +328,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         inputValue: 'ПБ',
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -341,7 +341,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         width: 70,
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
                                 }
                             }
@@ -362,7 +362,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 inputValue: 'ALL',
                 margin: '5px 10px 0px 10px',
                 listeners: {
-                    change: (checkbox, checked) => {
+                    change: function (checkbox, checked) {
                         const callGroup = Ext.getCmp('callGroupId');
                         if (checked) {
                             callGroup.items.each((item) => {
@@ -384,10 +384,10 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                 id: 'callGroupId',
                 reference: 'callStatusFilter',
                 columns: 2,
-                getState: () => {
+                getState: function () {
                     return {"checked": this.getValue()};
                 },
-                applyState: (state) => {
+                applyState: function (state) {
 
                     Ext.fireEvent('setStateStatusCalls', state);
                 },
@@ -405,7 +405,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     width: 100,
                     listeners: {
                         change: {
-                            fn: (checkbox, checked) => {
+                            fn: function (checkbox, checked) {
                                 Ext.fireEvent('checkedCallStatus', checkbox, checked);
                             }
                         }
@@ -417,7 +417,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         inputValue: 'ASSIGNED',
                         listeners: {
                             change: {
-                                fn: (checkbox, checked) => {
+                                fn: function (checkbox, checked) {
                                     Ext.fireEvent('checkedCallStatus', checkbox, checked);
                                 }
                             }
@@ -438,7 +438,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             margin: '5px 10px 5px 10px',
                             enableKeyEvents: true,
                             listeners: {
-                                keypress: (textfield, eventObject) => {
+                                keypress: function (textfield, eventObject) {
                                     if (eventObject.getCharCode() === Ext.EventObject.ENTER) {
                                         Ext.fireEvent('buttonSearch');
                                     }
@@ -451,7 +451,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             margin: '5px 10px 5px 10px',
                             listeners: {
                                 click: {
-                                    fn: () => {
+                                    fn: function () {
                                         Ext.fireEvent('buttonSearch');
 
                                     }
