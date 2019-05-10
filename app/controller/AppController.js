@@ -142,13 +142,11 @@ Ext.define('Isidamaps.controller.AppController', {
 
     readMarkers: function (call, brigades) {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-            callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
-        this.callId = call;
-        this.brigadeId = brigades[0];
-        const params = {
-            callcardid: this.callId,
-            brigades: this.brigadeId
-        };
+            callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            params = {
+                callcardid: call,
+                brigades: brigades[0]
+            };
         Ext.log({outdent: 1}, `callId= ${call} , brigadeId= ${brigades}`);
 
         Ext.Ajax.request({
