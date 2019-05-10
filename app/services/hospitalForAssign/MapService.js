@@ -41,13 +41,14 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
     },
 
     setMarkers: function (points) {
+        console.dir(points);
         points.forEach((point) => {
             if (point.point1[0] !== '' && point.point2[0] !== '' && point.point1[1] !== '' && point.point2[1] !== '') {
-                this.hospitalMarkers.push(point);
+                this.HospitalForAssign.hospitalMarkers.push(point);
             }
         });
-        this.hospitalMarkers.forEach((point) => {
-            this.createRoute(point.point1, point.point2, point.id);
+        this.HospitalForAssign.hospitalMarkers.forEach((point) => {
+            this.HospitalForAssign.createRoute(point.point1, point.point2, point.id);
         });
 
     }
