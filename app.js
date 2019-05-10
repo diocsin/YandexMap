@@ -9,6 +9,7 @@ ASOV = (() => {
     return !!opener ? opener.ACPS.MapControl.forExport() : {
         setRoutes: Ext.emptyFn,
         setBrigade: Ext.emptyFn,
+        setHospital: Ext.emptyFn,
         setMapManager: Ext.emptyFn
     }
 })();
