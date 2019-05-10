@@ -12,7 +12,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         let routeList = null;
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true
-        }).then(function (route) {
+        }).then((route) => {
             route.getWayPoints().options.set({
                 iconLayout: 'default#image',
                 iconImageHref: false,
