@@ -8,7 +8,6 @@ Ext.define('Isidamaps.services.hospitalForAssign.HospitalForAssignController', {
         ASOV.setMapManager({
             setMarkers: this.HospitalForAssign.setMarkers.bind(this)
         }, Ext.History.currentToken);
-        this.HospitalForAssign.setMarkers();
         const ymapWrapper = this.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', () => {
             this.HospitalForAssign.resizeMap();

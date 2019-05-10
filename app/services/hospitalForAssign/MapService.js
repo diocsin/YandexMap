@@ -12,7 +12,7 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
     callback: function () {
         if (this.arrRoute.length === this.hospitalMarkers.length) {
             console.dir(this.arrRoute);
-            //ASOV.setRoutes(this.arrRoute);
+            ASOV.setHospital(this.arrRoute);
         }
     },
 
@@ -31,7 +31,7 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
                 opacity: 0.9,
                 strokeWidth: 4
             });
-                this.map.geoObjects.add(route);
+            this.map.geoObjects.add(route);
             this.arrRoute.push({
                 hospitalId: id,
                 distance: (route.getLength() / 1000).toFixed(1),
@@ -40,15 +40,16 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
         })
     },
 
-    setMarkers: function (call, hospital) {
-        call = ['59.90', '30.29'];
-        hospital = [['10', '59.9', '30.9'], ['2', '59.1', '30.1'], ['3', '59.6', '30.5']];
+    setMarkers: function (points) {
+        points.forEach((point) => {
+            if (point.point1[0] !== '' && point.point2[0] !== '' && point.point1[1] !== '' && point.point2[1] !== '') {
+                this.hospitalMarkers.push(point);
+            }
+        });
+        this.hospitalMarkers.forEach((point) => {
+            this.createRoute(point.point1, point.point2, point.id);
+        });
 
-        this.hospitalMarkers = hospital;
-
-        this.hospitalMarkers.forEach((hos) => {
-            this.createRoute(call, [hos[1], hos[2]], hos[0])
-        })
     }
 
 });
