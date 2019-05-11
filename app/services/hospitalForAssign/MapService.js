@@ -11,7 +11,6 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
 
     callback: function () {
         if (this.arrRoute.length === this.hospitalMarkers.length) {
-            this.myMask.hide();
             ASOV.setHospital(this.arrRoute);
         }
     },

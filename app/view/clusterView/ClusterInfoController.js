@@ -68,7 +68,6 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                                         this.errorMessage('Данные о бригаде временно недоступны');
                                         return;
                                     }
-                                    // FIXME formula?
                                     const record = records[0];
                                     record.set({
                                         'status': Isidamaps.app.getController('AppController').getBrigadeStatuses(records[0].get('status')),
