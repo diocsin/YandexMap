@@ -1,6 +1,7 @@
 Ext.define('Isidamaps.services.hospitalForAssign.HospitalForAssign', {
     extend: 'Ext.panel.Panel',
     xtype: 'hospitalforassign',
+    id: 'hospitalforassignPanel',
 
     requires: ['Isidamaps.services.hospitalForAssign.HospitalForAssignController',
         'Isidamaps.services.hospitalForAssign.MapService'
