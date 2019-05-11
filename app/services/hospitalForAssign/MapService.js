@@ -11,7 +11,6 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
 
     callback: function () {
         if (this.arrRoute.length === this.hospitalMarkers.length) {
-            console.dir(this.arrRoute);
             this.myMask.hide();
             ASOV.setHospital(this.arrRoute);
         }
@@ -47,8 +46,8 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
         });
         this.myMask.show();
         if (points.length === 0) {
-            console.dir(this.arrRoute);
             ASOV.setHospital(this.arrRoute);
+            return;
         }
         points.forEach((point) => {
             if (!isNaN(parseFloat(point.point1[0])) && !isNaN(parseFloat(point.point1[1])) && !isNaN(parseFloat(point.point2[0])) && !isNaN(parseFloat(point.point2[1]))) {
