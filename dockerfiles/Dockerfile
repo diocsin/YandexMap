@@ -8,6 +8,9 @@ RUN curl -sS http://cdn.sencha.com/cmd/6.6.0.13/no-jre/SenchaCmd-6.6.0.13-linux-
     && unzip /tmp/sencha.zip -d /tmp \
     && /tmp/SenchaCmd*.sh -q -dir /opt/Sencha/Cmd/6.6.0.13 -Dall=true
 
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+
 ENTRYPOINT ["/opt/Sencha/Cmd/6.6.0.13/sencha"]
 
 WORKDIR /code
