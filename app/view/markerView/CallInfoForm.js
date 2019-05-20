@@ -105,7 +105,7 @@ Ext.define('Isidamaps.view.markerView.CallInfoForm', {
             title: 'Бригада',
             iconCls: 'fa fa-ambulance',
             id: 'mapTabCall',
-            height: 400,
+            height: 430,
             listeners: {
                 activate: function () {
                     Ext.fireEvent('activateTab', this, 'mapTabCall');
