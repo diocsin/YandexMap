@@ -41,7 +41,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     addMarkers: function () {
         if (this.callMarkers.length === 0) {
-            this.createCallAlert();
+            Isidamaps.util.Util.errorMessage('Внимание', 'Нет координат вызова');
         }
         // this.circle = new ymaps.Circle([this.callMarkers[0].geometry.coordinates, 100], null, {draggable: false * /, visible: false*/});
         this.createBouns();
@@ -56,15 +56,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             });
         }
         this.listenerStore();
-    },
-
-    createCallAlert: function () {
-        Ext.create('Ext.window.MessageBox').show({
-            title: 'Ошибка',
-            message: 'Нет координат вызова',
-            icon: Ext.Msg.ERROR,
-            buttons: Ext.Msg.OK
-        })
     },
 
     addMarkersSocket: function (marker) {

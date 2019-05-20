@@ -38,7 +38,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                                 params: params,
                                 callback: (records, operation, success) => {
                                     if ((success === true && records.length === 0) || success === false) {
-                                        this.errorMessage('Данные о вызове временно недоступны');
+                                        Isidamaps.util.Util.errorMessage('Внимание', 'Данные о вызове временно недоступны');
                                         return;
                                     }
                                     const callInfoForm = Ext.widget('callInfoForm'),
@@ -65,7 +65,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                                 params: params,
                                 callback: (records, operation, success) => {
                                     if ((success === true && records.length === 0) || success === false) {
-                                        this.errorMessage('Данные о бригаде временно недоступны');
+                                        Isidamaps.util.Util.errorMessage('Внимание', 'Данные о бригаде временно недоступны');
                                         return;
                                     }
                                     const record = records[0];
@@ -84,14 +84,5 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                 }))
             }
         })
-    },
-
-    errorMessage: function (msg) {
-        Ext.Msg.show({
-            title: 'Ошибка',
-            message: msg,
-            icon: Ext.Msg.ERROR,
-            buttons: Ext.Msg.OK
-        });
-    },
+    }
 });

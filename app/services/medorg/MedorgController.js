@@ -301,15 +301,6 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
    },*/
 
     markerClick: function (object) {
-        function errorMessage() {
-            Ext.create('Ext.window.MessageBox').show({
-                title: 'Ошибка',
-                message: 'Данные об организации временно не доступны',
-                icon: Ext.Msg.ERROR,
-                buttons: Ext.Msg.OK
-            })
-        }
-
         const win = Ext.WindowManager.getActive();
         if (win) {
             win.close();

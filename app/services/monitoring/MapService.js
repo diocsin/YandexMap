@@ -75,9 +75,10 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     optionsObjectManager: function () {
+        const markerController = Ext.create('controller.markercontroller');
         this.objectManager.objects.events.add(['click'], (e) => {
             let object = this.objectManager.objects.getById(e.get('objectId'));
-            Ext.widget('callInfo').getController().markerClick(object);
+            markerController.markerClick(object, this.objectManager.objects);
         });
         /*this.objectManager.clusters.events.add(['click'], (e) => {
              let object = this.objectManager.clusters.getById(e.get('objectId'));
@@ -220,7 +221,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             this.addMarkers();
             this.listenerWebSockedStore();
         }
-
     },
 
     createCallOfSocked: function (calls) {
@@ -303,5 +303,4 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         ];
         this.map.setBounds(bounds);
     },
-})
-;
+});

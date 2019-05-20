@@ -39,6 +39,7 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
     },
 
     setMarkers: function (points) {
+        console.dir(points);
         this.myMask = new Ext.LoadMask({
             msg: 'Подождите пожалуйста. Загрузка...',
             target: Ext.getCmp('hospitalforassignPanel')
@@ -49,7 +50,8 @@ Ext.define('Isidamaps.services.hospitalForAssign.MapService', {
             return;
         }
         points.forEach((point) => {
-            if (!isNaN(parseFloat(point.point1[0])) && !isNaN(parseFloat(point.point1[1])) && !isNaN(parseFloat(point.point2[0])) && !isNaN(parseFloat(point.point2[1]))) {
+            if (!isNaN(parseFloat(point.point1[0])) && !isNaN(parseFloat(point.point1[1])) && !isNaN(parseFloat(point.point2[0])) && !isNaN(parseFloat(point.point2[1])) &&
+                parseFloat(point.point1[0]) !== 0 && parseFloat(point.point1[1]) !== 0 && parseFloat(point.point2[0]) !== 0 && parseFloat(point.point2[1]) !== 0) {
                 this.HospitalForAssign.hospitalMarkers.push(point);
             }
         });

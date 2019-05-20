@@ -2,12 +2,13 @@
     right: 0 !important;
     left: auto !important;
 }
+
 .x-panel-header-default-horizontal .x-tool-after-title {
     right: 0 !important;
     left: auto !important;
 }
 
-.panel-history .x-tool-after-title, .panel-brigade .x-tool-after-title{
+.panel-history .x-tool-after-title, .panel-brigade .x-tool-after-title {
     left: 0 !important;
     right: auto !important;
 }
@@ -20,4 +21,22 @@
 
 .x-grid-group-hd {
     white-space: normal !important;
+}
+
+.icon-textfield:before {
+    position: absolute;
+    height: 100%;
+    z-index: 9999;
+    left: 5px;
+    font-size: 15px;
+    top: 15%;
+}
+
+.icon-textfield .x-form-text {
+    padding-left: 20px;
+}
+
+.hr-all {
+    margin-bottom: 5px;
+    margin-top: 5px;
 }

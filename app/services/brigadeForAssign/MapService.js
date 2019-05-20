@@ -44,7 +44,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
             }
         });
         if (this.callMarkers.length === 0) {
-            this.createCallAlert();
+            Isidamaps.util.Util.errorMessage('Внимание', 'Нет координат вызова');
         }
         this.checkArrayFeatureComplete(this.callMarkers);
     },
@@ -64,21 +64,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
             brigadeId = store.query('checkBox', 'true').getValues('brigadeId', 'data');
         if (brigadeId.length === 1) {
             ASOV.setBrigade(brigadeId[0]);
-        } else (Ext.create('Ext.window.MessageBox').show({
-            title: 'Ошибка',
-            message: 'Не назначена бригада на вызов',
-            icon: Ext.Msg.ERROR,
-            buttons: Ext.Msg.OK
-        }))
-    },
-
-    createCallAlert: function () {
-        Ext.create('Ext.window.MessageBox').show({
-            title: 'Ошибка',
-            message: 'Нет координат вызова',
-            icon: Ext.Msg.ERROR,
-            buttons: Ext.Msg.OK
-        })
+        } else (Isidamaps.util.Util.errorMessage('Ошибка', 'Не назначена бригада на вызов'))
     },
 
     createRoute: function (call, brigade) {

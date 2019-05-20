@@ -189,13 +189,42 @@ Ext.define('Isidamaps.controller.AppController', {
                 success: (response, opts) => {
                     let obj = Ext.decode(response.responseText);
                     medOrgStore.add(obj);
-                    Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
+                    Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
                 },
 
                 failure: (response, opts) => {
                     Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
                 }
             });
+        });
+    },
+
+    readMarkersForFactRoute: function (brigadId) {
+        const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
+            brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+            factRouteHistoryStore = this.getStore('Isidamaps.store.FactRouteHistoryStore'),
+        dt = new Date(),
+            params = {
+                brigadId: brigadId,
+                timeStart:dt,
+                timeEnd:dt
+            };
+        Ext.Ajax.request({
+            url: `${this.urlGeodata}/route/facts?`,
+            params: params,
+            method: 'GET',
+
+            success: (response, opts) => {
+                let obj = Ext.decode(response.responseText);
+                brigadeStore.add([obj.endPoint, obj.startPoint]);
+                factRouteHistoryStore.add(obj.points);
+                callStore.add(obj.call);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
+            },
+
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
+            }
         });
     },
 
@@ -207,7 +236,6 @@ Ext.define('Isidamaps.controller.AppController', {
             params = {
                 callcardid: call
             };
-
         Ext.Ajax.request({
             url: `${this.urlGeodata}/route?`,
             params: params,
@@ -217,14 +245,14 @@ Ext.define('Isidamaps.controller.AppController', {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);
                 routeHistoryStore.add(obj.brigadeRoute);
-                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
             },
 
             failure: (response, opts) => {
                 Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
-        })
-        ;
+        });
+
         Ext.Ajax.request({
             url: `${this.urlGeodata}/route/fact?`,
             params: params,
@@ -235,7 +263,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 brigadeStore.add([obj.endPoint, obj.startPoint]);
                 factRouteHistoryStore.add(obj.points);
                 callStore.add(obj.call);
-                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}/brigade?`);
+                Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
             },
 
             failure: (response, opts) => {

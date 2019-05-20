@@ -35,25 +35,31 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
 
                 }
             }
-        }, {
-            xtype: 'checkboxgroup',
-            id: 'stationGroupId',
-            reference: 'stationFilter',
-            columns: 4,
-            getState: function () {
-                return {"checked": this.getValue()};
+        },
+            {
+                xtype: 'component',
+                autoEl: 'hr',
+                cls: 'hr-all'
             },
-            applyState: function (state) {
-                Ext.fireEvent('setStateStation', state);
-            },
-            stateEvents: [
-                'customerchange'
-            ],
-            stateId: 'checkBoxStation',
-            stateful: true,
-            vertical: true,
-            margin: '0px 5px 5px 5px'
-        }]
+            {
+                xtype: 'checkboxgroup',
+                id: 'stationGroupId',
+                reference: 'stationFilter',
+                columns: 4,
+                getState: function () {
+                    return {"checked": this.getValue()};
+                },
+                applyState: function (state) {
+                    Ext.fireEvent('setStateStation', state);
+                },
+                stateEvents: [
+                    'customerchange'
+                ],
+                stateId: 'checkBoxStation',
+                stateful: true,
+                vertical: true,
+                margin: '0px 5px 5px 5px'
+            }]
     }, {
         xtype: 'panel',
         title: 'Состояние',
@@ -82,41 +88,35 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     Ext.fireEvent('deselectAll', checkbox);
                 }
             }
-        }, {
-            xtype: 'checkboxgroup',
-            id: 'statusGroupId',
-            reference: 'statusBrigadeFilter',
-            columns: 1,
-            vertical: true,
-            getState: function () {
-                return {"checked": this.getValue()};
+        },
+            {
+                xtype: 'component',
+                autoEl: 'hr',
+                cls: 'hr-all'
             },
-            applyState: function (state) {
-                Ext.fireEvent('setStateStatusBrigades', state);
-            },
-            stateEvents: [
-                'customerchange'
-            ],
-            stateId: 'checkBoxStatusBrigades',
-            stateful: true,
-            margin: '0px 5px 5px 5px',
+            {
+                xtype: 'checkboxgroup',
+                id: 'statusGroupId',
+                reference: 'statusBrigadeFilter',
+                columns: 1,
+                vertical: true,
+                getState: function () {
+                    return {"checked": this.getValue()};
+                },
+                applyState: function (state) {
+                    Ext.fireEvent('setStateStatusBrigades', state);
+                },
+                stateEvents: [
+                    'customerchange'
+                ],
+                stateId: 'checkBoxStatusBrigades',
+                stateful: true,
+                margin: '0px 5px 5px 5px',
 
-            items: [{
-                boxLabel: 'Свободна',
-                checked: false,
-                inputValue: 'FREE',
-                listeners: {
-                    change: {
-                        fn: function (checkbox, checked) {
-                            Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                        }
-                    }
-                }
-            },
-                {
-                    boxLabel: 'Принял вызов',
+                items: [{
+                    boxLabel: '<img src="resources/icon/free.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Свободна</span>',
                     checked: false,
-                    inputValue: 'PASSED_BRIGADE',
+                    inputValue: 'FREE',
                     listeners: {
                         change: {
                             fn: function (checkbox, checked) {
@@ -125,92 +125,104 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         }
                     }
                 },
-                {
-                    boxLabel: 'На вызове',
-                    checked: false,
-                    inputValue: 'AT_CALL',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                    {
+                        boxLabel: '<img src="resources/icon/passed_brigade.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Принял вызов</span>',
+                        checked: false,
+                        inputValue: 'PASSED_BRIGADE',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/at_call.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">На вызове</span>',
+                        checked: false,
+                        inputValue: 'AT_CALL',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/go_hospital.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Транспортировка в стационар</span>',
+                        checked: false,
+                        inputValue: 'GO_HOSPITAL',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/on_event.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Дежурство на мероприятии</span>',
+                        checked: false,
+                        inputValue: 'ON_EVENT',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/without_shift.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Вне графика</span>',
+                        checked: false,
+                        inputValue: 'WITHOUT_SHIFT',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/crash_car.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Ремонт</span>',
+                        checked: false,
+                        inputValue: 'CRASH_CAR',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/relaxon.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Обед</span>',
+                        checked: false,
+                        inputValue: 'RELAXON',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
+                            }
+                        }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/hijacking.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Нападение на бригаду</span>',
+                        checked: false,
+                        inputValue: 'HIJACKING',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
+                                }
                             }
                         }
                     }
-                },
-                {
-                    boxLabel: 'Транспортировка в стационар',
-                    checked: false,
-                    inputValue: 'GO_HOSPITAL',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                {
-                    boxLabel: 'Дежурство на мероприятии',
-                    checked: false,
-                    inputValue: 'ON_EVENT',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                {
-                    boxLabel: 'Вне графика',
-                    checked: false,
-                    inputValue: 'WITHOUT_SHIFT',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                {
-                    boxLabel: 'Ремонт',
-                    checked: false,
-                    inputValue: 'CRASH_CAR',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                {
-                    boxLabel: 'Обед',
-                    checked: false,
-                    inputValue: 'RELAXON',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                {
-                    boxLabel: 'Нападение на бригаду',
-                    checked: false,
-                    inputValue: 'HIJACKING',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedStatusBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                }
-            ]
-        }]
+                ]
+            }]
     },
         {
             xtype: 'panel',
@@ -242,41 +254,34 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
-            }, {
-                xtype: 'checkboxgroup',
-                id: 'profileGroupId',
-                reference: 'profileBrigadeFilter',
-                columns: 3,
-                getState: function () {
-                    return {"checked": this.getValue()};
+            },
+                {
+                    xtype: 'component',
+                    autoEl: 'hr',
+                    cls: 'hr-all'
                 },
-                applyState: function (state) {
-                    Ext.fireEvent('setStateProfileBrigades', state);
-                },
-                stateEvents: [
-                    'customerchange'
-                ],
-                stateId: 'checkBoxProfileBrigades',
-                stateful: true,
-                vertical: true,
-                margin: '0px 5px 5px 5px',
-                items: [{
-                    boxLabel: 'ВБ',
-                    checked: false,
-                    inputValue: 'ВБ',
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                    {
-                        boxLabel: 'ФБ',
+                {
+                    xtype: 'checkboxgroup',
+                    id: 'profileGroupId',
+                    reference: 'profileBrigadeFilter',
+                    columns: 3,
+                    getState: function () {
+                        return {"checked": this.getValue()};
+                    },
+                    applyState: function (state) {
+                        Ext.fireEvent('setStateProfileBrigades', state);
+                    },
+                    stateEvents: [
+                        'customerchange'
+                    ],
+                    stateId: 'checkBoxProfileBrigades',
+                    stateful: true,
+                    vertical: true,
+                    margin: '0px 5px 5px 5px',
+                    items: [{
+                        boxLabel: 'ВБ',
                         checked: false,
-                        inputValue: 'ФБ',
-                        width: 100,
+                        inputValue: 'ВБ',
                         listeners: {
                             change: {
                                 fn: function (checkbox, checked) {
@@ -285,70 +290,83 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                             }
                         }
                     },
-                    {
-                        boxLabel: 'РХБ',
-                        checked: false,
-                        inputValue: 'РХБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                        {
+                            boxLabel: 'ФБ',
+                            checked: false,
+                            inputValue: 'ФБ',
+                            width: 100,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'РХБ',
+                            checked: false,
+                            inputValue: 'РХБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'ПсихБ',
+                            checked: false,
+                            inputValue: 'ПсихБ',
+                            width: 100,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'СКБ',
+                            checked: false,
+                            inputValue: 'СКБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'ПБ',
+                            checked: false,
+                            inputValue: 'ПБ',
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            boxLabel: 'Б/перс',
+                            checked: false,
+                            inputValue: 'Б/перс',
+                            width: 70,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
+                                    }
                                 }
                             }
                         }
-                    },
-                    {
-                        boxLabel: 'ПсихБ',
-                        checked: false,
-                        inputValue: 'ПсихБ',
-                        width: 100,
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'СКБ',
-                        checked: false,
-                        inputValue: 'СКБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'ПБ',
-                        checked: false,
-                        inputValue: 'ПБ',
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    },
-                    {
-                        boxLabel: 'Б/перс',
-                        checked: false,
-                        inputValue: 'Б/перс',
-                        width: 70,
-                        listeners: {
-                            change: {
-                                fn: function (checkbox, checked) {
-                                    Ext.fireEvent('checkedProfileBrigade', checkbox, checked);
-                                }
-                            }
-                        }
-                    }
-                ]
-            }]
+                    ]
+                }]
 
         },
         {
@@ -379,42 +397,36 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         Ext.fireEvent('deselectAll', checkbox);
                     }
                 }
-            }, {
-                xtype: 'checkboxgroup',
-                id: 'callGroupId',
-                reference: 'callStatusFilter',
-                columns: 2,
-                getState: function () {
-                    return {"checked": this.getValue()};
+            },
+                {
+                    xtype: 'component',
+                    autoEl: 'hr',
+                    cls: 'hr-all'
                 },
-                applyState: function (state) {
+                {
+                    xtype: 'checkboxgroup',
+                    id: 'callGroupId',
+                    reference: 'callStatusFilter',
+                    columns: 2,
+                    getState: function () {
+                        return {"checked": this.getValue()};
+                    },
+                    applyState: function (state) {
 
-                    Ext.fireEvent('setStateStatusCalls', state);
-                },
-                stateEvents: [
-                    'customerchange'
-                ],
-                stateId: 'checkBoxStatusCalls',
-                stateful: true,
-                vertical: true,
-                margin: '0px 5px 5px 5px',
-                items: [{
-                    boxLabel: 'Новые',
-                    checked: false,
-                    inputValue: 'NEW',
-                    width: 100,
-                    listeners: {
-                        change: {
-                            fn: function (checkbox, checked) {
-                                Ext.fireEvent('checkedCallStatus', checkbox, checked);
-                            }
-                        }
-                    }
-                },
-                    {
-                        boxLabel: 'Исполнение',
+                        Ext.fireEvent('setStateStatusCalls', state);
+                    },
+                    stateEvents: [
+                        'customerchange'
+                    ],
+                    stateId: 'checkBoxStatusCalls',
+                    stateful: true,
+                    vertical: true,
+                    margin: '0px 5px 5px 5px',
+                    items: [{
+                        boxLabel: '<img src="resources/icon/new.png" width="18" height="21" vertical-align: sub;/><span style="vertical-align: top; margin-left: 5px">Новые</span>',
                         checked: false,
-                        inputValue: 'ASSIGNED',
+                        inputValue: 'NEW',
+                        width: 100,
                         listeners: {
                             change: {
                                 fn: function (checkbox, checked) {
@@ -422,10 +434,23 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                                 }
                             }
                         }
-                    }
+                    },
+                        {
+                            boxLabel: '<img src="resources/icon/assigned.png" width="18" height="21" vertical-align: sub;/><span style="vertical-align: top; margin-left: 5px">Исполнение</span>',
+                            checked: false,
+                            inputValue: 'ASSIGNED',
+                            width: 150,
+                            listeners: {
+                                change: {
+                                    fn: function (checkbox, checked) {
+                                        Ext.fireEvent('checkedCallStatus', checkbox, checked);
+                                    }
+                                }
+                            }
+                        }
 
-                ]
-            },
+                    ]
+                },
                 {
                     xtype: 'panel',
                     title: 'Поиск по номеру бригады',
@@ -433,6 +458,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     items: [
                         {
                             xtype: 'textfield',
+                            cls: 'icon-textfield fa fa-search',
                             id: 'searchTextField',
                             name: 'searchBrigade',
                             margin: '5px 10px 5px 10px',
