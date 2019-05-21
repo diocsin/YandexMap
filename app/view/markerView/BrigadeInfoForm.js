@@ -67,7 +67,7 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
             xtype: 'container',
             region: 'center',
             layout: 'container',
-            title: 'Вызов',
+            title: 'Вызов на карте',
             iconCls: 'fa fa-phone',
             id: 'mapTab',
             height: 292,
