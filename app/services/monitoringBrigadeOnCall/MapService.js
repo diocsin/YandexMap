@@ -10,6 +10,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     createRoute: function (call, brigade) {
         let routeList = null;
+        this.arrRouteForTable = [];
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true
         }).then((route) => {
@@ -93,7 +94,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     setMarkers: function (call, brigades) {
         const readMarkers = () => {
-            Isidamaps.app.getController('AppController').readMarkers(call, brigades)
+            Isidamaps.app.getController('AppController').readMarkers(call, ...brigades)
         };
         Isidamaps.app.getController('AppController').initial(readMarkers);
     },
@@ -140,8 +141,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         }
     },
 
-    createBrigadeOfSocked: function (brigades) {
-        const brigade = brigades[0];
+    createBrigadeOfSocked: function (brigade) {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = this.createBrigadeFeature(brigade);
             this.addMarkersSocket(marker);

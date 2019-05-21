@@ -140,14 +140,15 @@ Ext.define('Isidamaps.controller.AppController', {
         });
     },
 
-    readMarkers: function (call, brigades) {
+    readMarkers: function (call, brigade) {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
             params = {
                 callcardid: call,
-                brigades: brigades[0]
+                brigades: brigade
             };
-        Ext.log({outdent: 1}, `callId= ${call} , brigadeId= ${brigades}`);
+        this.brigadeId = brigade;
+        Ext.log({outdent: 1}, `callId= ${call} , brigadeId= ${brigade}`);
 
         Ext.Ajax.request({
             url: `${this.urlGeodata}/brigade?`,

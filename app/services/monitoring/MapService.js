@@ -98,10 +98,10 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     listenerWebSockedStore: function () {
         Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', (store, records, index) => {
-            this.createBrigadeOfSocked(records)
+            this.createBrigadeOfSocked(...records)
         }, this);
         Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', (store, records, index) => {
-            this.createCallOfSocked(records)
+            this.createCallOfSocked(...records)
         }, this);
     },
 
@@ -223,8 +223,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         }
     },
 
-    createCallOfSocked: function (calls) {
-        const call = calls[0];
+    createCallOfSocked: function (call) {
         if (call.get('latitude') && call.get('longitude')) {
             let marker = this.createCallFeature(call);
             this.addMarkersSocket(marker);

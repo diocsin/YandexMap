@@ -464,7 +464,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     clickButton: function (brigade) {
         const marker = this.Monitoring.objectManager.objects.getById(brigade.id);
         if (marker) {
-            this.Monitoring.map.setCenter([marker.geometry.coordinates[0], marker.geometry.coordinates[1]], 14);
+            this.Monitoring.map.setCenter(marker.geometry.coordinates, 14);
         }
     },
 
