@@ -455,12 +455,17 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                     xtype: 'panel',
                     title: 'Поиск по номеру бригады',
                     layout: 'hbox',
+                    fullscreen: true,
                     items: [
                         {
-                            xtype: 'textfield',
-                            cls: 'icon-textfield fa fa-search',
+                            xtype: 'combobox',
                             id: 'searchTextField',
                             name: 'searchBrigade',
+                            queryMode: 'local',
+                            displayField: 'brigadeNum',
+                            valueField: 'id',
+                            renderTo: Ext.getBody(),
+                            store: 'Isidamaps.store.BrigadeSearchStore',
                             margin: '5px 10px 5px 10px',
                             enableKeyEvents: true,
                             listeners: {
@@ -468,6 +473,9 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                                     if (eventObject.getCharCode() === Ext.EventObject.ENTER) {
                                         Ext.fireEvent('buttonSearch');
                                     }
+                                },
+                                select: function () {
+                                    Ext.fireEvent('buttonSearch');
                                 }
                             }
                         },
