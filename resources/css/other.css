@@ -40,3 +40,7 @@
     margin-bottom: 5px;
     margin-top: 5px;
 }
+
+.x-form-cb-label, .x-form-cb-input  {
+    cursor: pointer;
+}
