@@ -57,7 +57,7 @@ Ext.define('Isidamaps.controller.AppController', {
     addMarkerInStoreFromWSForMonitoringBrigade: function (message) {
         const {deviceId, objectType} = message;
         if (objectType === 'BRIGADE' && this.brigadeId === '' + deviceId) {
-            let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWebSockedStore');
+            let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWSStore');
             storeBrigades.add(message);
         }
         if (objectType === 'CALL' && this.callId === '' + deviceId) {
@@ -71,7 +71,7 @@ Ext.define('Isidamaps.controller.AppController', {
         if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }
-        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWSStore');
+        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWSStore' : 'Isidamaps.store.CallFromWSStore');
         store.add(message);
     },
 

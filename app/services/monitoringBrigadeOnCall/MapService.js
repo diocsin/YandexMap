@@ -142,7 +142,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = this.createBrigadeFeature(brigade);
             this.addMarkerInObjectManager(marker);
-            Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
+            Ext.getStore('Isidamaps.store.BrigadeFromWSStore').clearData();
         }
     },
 

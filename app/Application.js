@@ -24,7 +24,7 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.SettingsStore',
         'Isidamaps.store.BrigadesFirstLoadStore',
         'Isidamaps.store.CallsFirstLoadStore',
-        'Isidamaps.store.BrigadeFromWebSockedStore',
+        'Isidamaps.store.BrigadeFromWSStore',
         'Isidamaps.store.CallFromWSStore',
         'Isidamaps.store.CallInfoStore',
         'Isidamaps.store.BrigadeInfoStore',

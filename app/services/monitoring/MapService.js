@@ -95,7 +95,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     listenerWebSockedStore: function () {
-        Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', (store, records, index) => {
+        Ext.getStore('Isidamaps.store.BrigadeFromWSStore').on('add', (store, records, index) => {
             this.getBrigadeFromWS(...records)
         }, this);
         Ext.getStore('Isidamaps.store.CallFromWSStore').on('add', (store, records, index) => {
@@ -250,7 +250,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 this.destroyButtonOnPanel(marker);
             }
             this.addMarkerInObjectManager(marker);
-            Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
+            Ext.getStore('Isidamaps.store.BrigadeFromWSStore').clearData();
         }
     },
 
