@@ -2,7 +2,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.monitoring',
     Monitoring: null,
-    filterBrigadeArray: [],
+    filterMarkerArray: [],
     allStatusBrigade: [],
     allProfileBrigade: [],
     allStatusCall: [],
@@ -15,10 +15,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     myMask: null,
     listen: {
         global: {
-            checkedProfileBrigade: 'checkedProfileBrigade',
-            checkedStatusBrigade: 'checkedStatusBrigade',
-            checkedCallStatus: 'checkedCallStatus',
-            checkedStationBrigade: 'checkedStationBrigade',
+            checkedFilter: 'checkedFilter',
             setStateStatusBrigades: 'setStateStatusBrigades',
             setStateStation: 'setStateStation',
             setStateProfileBrigades: 'setStateProfileBrigades',
@@ -32,40 +29,40 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
 
     selectAll: function (checkbox) {
         switch (checkbox.reference) {
-            case 'allStation':
-                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
+            case Isidamaps.app.globals.ALL_STATIONS:
+                this.filterMarkerArray = Ext.Array.difference(this.filterMarkerArray, Isidamaps.app.getController('AppController').stationArray);
                 break;
-            case 'allStatus':
-                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allStatusBrigade);
+            case Isidamaps.app.globals.ALL_STATUSES:
+                this.filterMarkerArray = Ext.Array.difference(this.filterMarkerArray, this.allStatusBrigade);
                 break;
-            case  'allProfile':
-                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allProfileBrigade);
+            case Isidamaps.app.globals.ALL_PROFILES:
+                this.filterMarkerArray = Ext.Array.difference(this.filterMarkerArray, this.allProfileBrigade);
                 break;
-            case 'allCalls':
-                this.filterBrigadeArray = Ext.Array.difference(this.filterBrigadeArray, this.allStatusCall);
+            case Isidamaps.app.globals.ALL_CALLS:
+                this.filterMarkerArray = Ext.Array.difference(this.filterMarkerArray, this.allStatusCall);
                 break;
         }
         this.setFilterObjectManager();
-        this.showHideButton();
+        this.createArrayShowHideButton();
     },
 
     deselectAll: function (checkbox) {
         switch (checkbox.reference) {
-            case 'allStation':
-                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, Isidamaps.app.getController('AppController').stationArray);
+            case Isidamaps.app.globals.ALL_STATIONS:
+                this.filterMarkerArray = Ext.Array.merge(this.filterMarkerArray, Isidamaps.app.getController('AppController').stationArray);
                 break;
-            case 'allStatus':
-                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allStatusBrigade);
+            case Isidamaps.app.globals.ALL_STATUSES:
+                this.filterMarkerArray = Ext.Array.merge(this.filterMarkerArray, this.allStatusBrigade);
                 break;
-            case  'allProfile':
-                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allProfileBrigade);
+            case Isidamaps.app.globals.ALL_PROFILES:
+                this.filterMarkerArray = Ext.Array.merge(this.filterMarkerArray, this.allProfileBrigade);
                 break;
-            case 'allCalls':
-                this.filterBrigadeArray = Ext.Array.merge(this.filterBrigadeArray, this.allStatusCall);
+            case Isidamaps.app.globals.ALL_CALLS:
+                this.filterMarkerArray = Ext.Array.merge(this.filterMarkerArray, this.allStatusCall);
                 break;
         }
         this.setFilterObjectManager();
-        this.showHideButton();
+        this.createArrayShowHideButton();
     },
 
     setStateStatusBrigades: function (state) {
@@ -91,168 +88,65 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         brigade && brigadeInMap ? this.Monitoring.map.setCenter(brigadeInMap.geometry.coordinates, 14) : Ext.getCmp('searchTextField').setActiveError('Не найдена бригада с данным номером');
     },
 
-    checkedCallStatus: function (checkbox) {
+    checkedFilter: function (checkbox, reference, inputValueAllCheckBox) {
         const {inputValue, checked} = checkbox,
-            callStatusFilterComp = this.lookupReference('callStatusFilter');
+            groupFilterComp = this.lookupReference(reference);
         if (!checked) {
-            this.filterBrigadeArray.push(inputValue);
-            let i = 0;
-            callStatusFilterComp.items.each((checkbox) => {
-                if (checkbox.checked) {
-                    i++
-                }
-            });
-            if (callStatusFilterComp.items.length === i + 1) {
-                this.lookupReference('allCalls').setRawValue(false)
-            }
-            this.setFilterObjectManager();
-            this.showHideButton();
-            callStatusFilterComp.fireEvent('customerchange');
+            this.uncheckCheckBoxInFilter(groupFilterComp, inputValue, inputValueAllCheckBox);
             return;
         }
         let j = 0;
-        Ext.Array.remove(this.filterBrigadeArray, inputValue);
+        Ext.Array.remove(this.filterMarkerArray, inputValue);
         this.setFilterObjectManager();
-        this.showHideButton();
-        callStatusFilterComp.items.each((checkbox) => {
+        this.createArrayShowHideButton();
+        groupFilterComp.items.each(checkbox => {
             if (checkbox.checked) {
                 j++
             }
         });
-        if (callStatusFilterComp.items.length === j) {
-            this.lookupReference('allCalls').setRawValue(true)
+        if (groupFilterComp.items.length === j) {
+            this.lookupReference(inputValueAllCheckBox).setRawValue(true)
         }
-        callStatusFilterComp.fireEvent('customerchange');
+        groupFilterComp.fireEvent('customerchange');
     },
 
-    checkedStationBrigade: function (checkbox) {
-        const {inputValue, checked} = checkbox,
-            stationFilter = this.lookupReference('stationFilter');
-        if (!checked) {
-            this.filterBrigadeArray.push(inputValue);
-            let i = 0;
-            stationFilter.items.each((checkbox) => {
-                if (checkbox.checked) {
-                    i++
-                }
-            });
-            if (stationFilter.items.length === i + 1) {
-                this.lookupReference('allStation').setRawValue(false)
-            }
-            this.setFilterObjectManager();
-            this.showHideButton();
-            stationFilter.fireEvent('customerchange');
-            return;
-        }
-        let j = 0;
-        Ext.Array.remove(this.filterBrigadeArray, inputValue);
-        this.setFilterObjectManager();
-        this.showHideButton();
-        stationFilter.items.each((checkbox) => {
+    uncheckCheckBoxInFilter: function (componentFilter, inputValue, inputValueAllCheckBox) {
+        this.filterMarkerArray.push(inputValue);
+        let i = 0;
+        componentFilter.items.each(checkbox => {
             if (checkbox.checked) {
-                j++
+                i++
             }
         });
-        if (stationFilter.items.length === j) {
-            this.lookupReference('allStation').setRawValue(true)
+        if (componentFilter.items.length === i + 1) {
+            this.lookupReference(inputValueAllCheckBox).setRawValue(false)
         }
-        stationFilter.fireEvent('customerchange');
-
-    },
-
-    checkedProfileBrigade: function (checkbox) {
-        const {inputValue, checked} = checkbox,
-            profileBrigadeFilter = this.lookupReference('profileBrigadeFilter');
-        if (!checked) {
-            this.filterBrigadeArray.push(inputValue);
-            let i = 0;
-            profileBrigadeFilter.items.each((checkbox) => {
-                if (checkbox.checked) {
-                    i++
-                }
-            });
-            if (profileBrigadeFilter.items.length === i + 1) {
-                this.lookupReference('allProfile').setRawValue(false)
-            }
-            this.setFilterObjectManager();
-            this.showHideButton();
-            profileBrigadeFilter.fireEvent('customerchange');
-            return;
-        }
-
-        let j = 0;
-        Ext.Array.remove(this.filterBrigadeArray, inputValue);
         this.setFilterObjectManager();
-        this.showHideButton();
-        profileBrigadeFilter.items.each((checkbox) => {
-            if (checkbox.checked) {
-                j++
-            }
-        });
-        if (profileBrigadeFilter.items.length === j) {
-            this.lookupReference('allProfile').setRawValue(true)
-        }
-        profileBrigadeFilter.fireEvent('customerchange');
-    },
-
-    checkedStatusBrigade: function (checkbox) {
-        const {inputValue, checked} = checkbox,
-            statusBrigadeFilter = this.lookupReference('statusBrigadeFilter');
-        if (!checked) {
-            this.filterBrigadeArray.push(inputValue);
-            let i = 0;
-            statusBrigadeFilter.items.each((checkbox) => {
-                if (checkbox.checked) {
-                    i++
-                }
-            });
-            if (statusBrigadeFilter.items.length === i + 1) {
-                this.lookupReference('allStatus').setRawValue(false)
-            }
-            this.setFilterObjectManager();
-            this.showHideButton();
-            statusBrigadeFilter.fireEvent('customerchange');
-            return;
-        }
-        let j = 0;
-        Ext.Array.remove(this.filterBrigadeArray, inputValue);
-        this.setFilterObjectManager();
-        this.showHideButton();
-        statusBrigadeFilter.items.each((checkbox) => {
-            if (checkbox.checked) {
-                j++
-            }
-        });
-        if (statusBrigadeFilter.items.length === j) {
-            this.lookupReference('allStatus').setRawValue(true)
-        }
-        statusBrigadeFilter.fireEvent('customerchange');
-
+        this.createArrayShowHideButton();
+        componentFilter.fireEvent('customerchange');
     },
 
     setFilterObjectManager: function () {
-        this.Monitoring.objectManager.setFilter((object) => {
-            const {customOptions: {objectType, status, profile, station}} = object;
-            if (objectType === 'BRIGADE' && !Ext.Array.contains(this.filterBrigadeArray, station) &&
-                !Ext.Array.contains(this.filterBrigadeArray, status) &&
-                !Ext.Array.contains(this.filterBrigadeArray, profile)) {
+        this.Monitoring.objectManager.setFilter(object => {
+            const {customOptions: {objectType, status, profile, station}} = object,
+                found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
+            if (objectType === 'BRIGADE' && !found) {
                 return true;
             }
-            return objectType === 'CALL' && !Ext.Array.contains(this.filterBrigadeArray, station) &&
-                !Ext.Array.contains(this.filterBrigadeArray, status);
+            return objectType === 'CALL' && !Ext.Array.contains(this.filterMarkerArray, station) &&
+                !Ext.Array.contains(this.filterMarkerArray, status);
         });
     },
 
-    showHideButton: function () {
+    createArrayShowHideButton: function () {
         const arrayForHideButton = [],
             arrayForShowButton = [];
         const states = Ext.getStore('Isidamaps.store.BrigadeSearchStore');
         states.removeAll();
-        this.Monitoring.objectManager.objects.each((object) => {
-            const {id, customOptions: {brigadeNum, objectType, status, profile, station}, geometry: {coordinates}} = object;
-            if (objectType === 'BRIGADE' && !Ext.Array.contains(this.filterBrigadeArray, station) &&
-                !Ext.Array.contains(this.filterBrigadeArray, status) &&
-                !Ext.Array.contains(this.filterBrigadeArray, profile)) {
+        this.Monitoring.objectManager.objects.each(object => {
+            const {id, customOptions: {brigadeNum, objectType, status, profile, station}} = object,
+                found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
+            if (objectType === 'BRIGADE' && !found) {
                 arrayForShowButton.push(object);
                 let user = Ext.create('Isidamaps.model.Brigade', {
                     brigadeNum: brigadeNum,
@@ -266,8 +160,8 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
                 }
             }
         });
-        this.showButtonInPanel(arrayForShowButton);
-        this.hideButtonInPanel(arrayForHideButton);
+        this.showOrHideButtonInPanel(arrayForShowButton, true);
+        this.showOrHideButtonInPanel(arrayForHideButton, false);
     },
 
     mainBoxReady: function () {
@@ -286,7 +180,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             addButtonsBrigadeOnPanel: this.addButtonsBrigadeOnPanel.bind(this),
             addStationFilter: this.addStationFilter.bind(this),
             getButtonBrigadeForChangeButton: this.getButtonBrigadeForChangeButton,
-            setCheckbox: this.setCheckbox.bind(this),
+            setCheckboxAfterFirstLoad: this.setCheckboxAfterFirstLoad.bind(this),
             addNewButtonOnPanel: this.addNewButtonOnPanel.bind(this),
             destroyButtonOnPanel: this.destroyButtonOnPanel.bind(this),
         });
@@ -303,24 +197,22 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     },
 
     setFilterBrigadeAndCall: function () {
-        this.lookupReference('profileBrigadeFilter').eachBox((item) => {
+        this.lookupReference('profileBrigadeFilter').eachBox(item => {
             this.allProfileBrigade.push(item.inputValue);
         });
-        this.lookupReference('statusBrigadeFilter').eachBox((item) => {
+        this.lookupReference('statusBrigadeFilter').eachBox(item => {
             this.allStatusBrigade.push(item.inputValue);
         });
-        this.lookupReference('callStatusFilter').eachBox((item) => {
+        this.lookupReference('callStatusFilter').eachBox(item => {
             this.allStatusCall.push(item.inputValue);
         });
-
-        this.lookupReference('stationFilter').eachBox((item) => {
+        this.lookupReference('stationFilter').eachBox(item => {
             this.allStation.push(item.inputValue);
         });
-
-        this.filterBrigadeArray = Ext.Array.merge(this.allProfileBrigade, this.allStatusBrigade, this.allStatusCall, this.allStation);
+        this.filterMarkerArray = Ext.Array.merge(this.allProfileBrigade, this.allStatusBrigade, this.allStatusCall, this.allStation);
     },
 
-    setCheckbox: function () {
+    setCheckboxAfterFirstLoad: function () {
         try {
             this.lookupReference('stationFilter').setValue(this.stateStation.checked);
             this.lookupReference('profileBrigadeFilter').setValue(this.stateProfileBrigades.checked);
@@ -334,25 +226,25 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     },
 
     addStationFilter: function () {
-        const checkboxStation = this.lookupReference('stationFilter'),
+        const groupFilterStation = this.lookupReference('stationFilter'),
             buttonBrigade = this.lookupReference('BrigadePanel'),
-            records = Isidamaps.app.getController('AppController').stationArray;
-        Ext.Array.each(records, (rec) => {
-            checkboxStation.add(Ext.create('Ext.form.field.Checkbox', {
-                boxLabel: rec,
-                inputValue: rec,
+            stations = Isidamaps.app.getController('AppController').stationArray;
+        Ext.Array.each(stations, stationName => {
+            groupFilterStation.add(Ext.create('Ext.form.field.Checkbox', {
+                boxLabel: stationName,
+                inputValue: stationName,
                 checked: false,
                 listeners: {
                     change: {
                         fn: (checkbox, checked) => {
-                            Ext.fireEvent('checkedStationBrigade', checkbox, checked);
+                            Ext.fireEvent('checkedFilter', checkbox, 'stationFilter', Isidamaps.app.globals.ALL_STATIONS);
                         }
                     }
                 }
             }));
             buttonBrigade.add(Ext.create('Ext.panel.Panel', {
-                itemId: `panel_${rec}`,
-                title: rec,
+                itemId: `panel_${stationName}`,
+                title: stationName,
                 width: 260,
                 renderTo: Ext.getBody(),
                 floatable: true,
@@ -371,37 +263,27 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
 
     getButtonBrigadeForChangeButton: function (brigade, oldStatus) {
         const {id, customOptions: {status, station, profile}} = brigade,
-            brigadePanel = this.buttonBrigade.getComponent(`panel_${station}`),
-            brigadeHave = brigadePanel.getComponent(`id${id}`);
-        brigadeHave.removeCls(`button_${oldStatus}`);
-        brigadeHave.addCls(`button_${status}`);
-        if (Ext.Array.contains(this.filterBrigadeArray, status) && !brigadeHave.isHidden()) {
-            brigadeHave.hide();
-        }
-        if (!Ext.Array.contains(this.filterBrigadeArray, station) &&
-            !Ext.Array.contains(this.filterBrigadeArray, status) &&
-            !Ext.Array.contains(this.filterBrigadeArray, profile) &&
-            brigadeHave.isHidden()) {
-            brigadeHave.show();
-        }
+            brigadesPanel = this.buttonBrigade.getComponent(`panel_${station}`),
+            brigadeButton = brigadesPanel.getComponent(`id${id}`),
+            found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
 
-        brigadePanel.updateLayout();
+        brigadeButton.removeCls(`button_${oldStatus}`);
+        brigadeButton.addCls(`button_${status}`);
+
+        if (Ext.Array.contains(this.filterMarkerArray, status) && !brigadeButton.isHidden()) {
+            brigadeButton.hide();
+        }
+        if (!found && brigadeButton.isHidden()) {
+            brigadeButton.show();
+        }
+        brigadesPanel.updateLayout();
     },
 
-    hideButtonInPanel: function (brigades) {
+    showOrHideButtonInPanel: function (brigades, show) {
         Ext.suspendLayouts();
-        Ext.Array.each(brigades, (brigade) => {
+        Ext.Array.each(brigades, brigade => {
             let brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
-            brigadePanel.getComponent(`id${brigade.id}`).hide();
-        });
-        Ext.resumeLayouts(true);
-    },
-
-    showButtonInPanel: function (brigades) {
-        Ext.suspendLayouts();
-        Ext.Array.each(brigades, (brigade) => {
-            let brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
-            brigadePanel.getComponent(`id${brigade.id}`).show();
+            show ? brigadePanel.getComponent(`id${brigade.id}`).show() : brigadePanel.getComponent(`id${brigade.id}`).hide();
         });
         Ext.resumeLayouts(true);
     },
@@ -418,15 +300,15 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
 
     addNewButtonOnPanel: function (brigade) {
         const brigadePanel = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`),
-            button = this.createButton(brigade);
+            button = this.createButtonBrigade(brigade);
         brigadePanel.add(button);
-        this.showHideButton();
+        this.createArrayShowHideButton();
     },
 
     addButtonsBrigadeOnPanel: function () {
         const brigadeSort = [];
         this.buttonBrigade = this.lookupReference('BrigadePanel');
-        Ext.Array.each(this.Monitoring.brigadesMarkers, (brigade) => {
+        Ext.Array.each(this.Monitoring.brigadesMarkers, brigade => {
             brigadeSort.push(brigade);
         });
         brigadeSort.sort(function (a, b) {
@@ -435,14 +317,14 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         brigadeSort.sort(function (a, b) {
             return a.customOptions.status === b.customOptions.status ? -1 : 1
         });
-        Ext.Array.each(brigadeSort, (brigade) => {
-            const button = this.createButton(brigade),
+        Ext.Array.each(brigadeSort, brigade => {
+            const button = this.createButtonBrigade(brigade),
                 stationPanelBrigades = this.buttonBrigade.getComponent(`panel_${brigade.customOptions.station}`);
             stationPanelBrigades.add(button);
         });
     },
 
-    createButton: function (brigade) {
+    createButtonBrigade: function (brigade) {
         const {id, customOptions: {brigadeNum, profile, status}} = brigade;
         return Ext.create('Ext.Button', {
             itemId: `id${id}`,
@@ -455,17 +337,21 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             cls: `button_${status}`,
             listeners: {
                 click: () => {
-                    this.clickButton(brigade);
+                    this.clickButtonBrigade(brigade);
                 }
             }
         });
     },
 
-    clickButton: function (brigade) {
+    clickButtonBrigade: function (brigade) {
         const marker = this.Monitoring.objectManager.objects.getById(brigade.id);
         if (marker) {
             this.Monitoring.map.setCenter(marker.geometry.coordinates, 14);
         }
+    },
+
+    returnArray: function (...args) {
+        return args
     },
 
     layoutReady: function () {

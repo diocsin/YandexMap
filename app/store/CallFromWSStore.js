@@ -1,4 +1,4 @@
-Ext.define('Isidamaps.store.CallFromWebSockedStore', {
+Ext.define('Isidamaps.store.CallFromWSStore', {
     extend: 'Ext.data.Store',
     alias: 'CallFromWebSocked',
     model: 'Isidamaps.model.Call',

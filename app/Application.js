@@ -25,7 +25,7 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.BrigadesFirstLoadStore',
         'Isidamaps.store.CallsFirstLoadStore',
         'Isidamaps.store.BrigadeFromWebSockedStore',
-        'Isidamaps.store.CallFromWebSockedStore',
+        'Isidamaps.store.CallFromWSStore',
         'Isidamaps.store.CallInfoStore',
         'Isidamaps.store.BrigadeInfoStore',
         'Isidamaps.store.RouteForTableStore',
@@ -38,6 +38,13 @@ Ext.define('Isidamaps.Application', {
 
     routes: {
         ':id': 'changeRoute'
+    },
+
+    globals:{
+        ALL_PROFILES: 'allProfiles',
+        ALL_STATUSES: 'allStatuses',
+        ALL_STATIONS: 'allStations',
+        ALL_CALLS: 'allCalls',
     },
 
     launch: function () {

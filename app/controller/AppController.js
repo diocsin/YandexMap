@@ -46,7 +46,7 @@ Ext.define('Isidamaps.controller.AppController', {
             conn = (frame) => {
                 Ext.log({indent: 1, level: 'info'}, `Connected: ${frame}`);
                 this.stompClient.subscribe('/geo-queue/geodata-updates', (msg) => {
-                    service === 'monitoring' ? this.loadSocketData(JSON.parse(msg.body)) : this.loadSocketDataForMonitoringBrigade(JSON.parse(msg.body));
+                    service === 'monitoring' ? this.addMarkerInStoreFromWS(JSON.parse(msg.body)) : this.addMarkerInStoreFromWSForMonitoringBrigade(JSON.parse(msg.body));
 
                 });
             };
@@ -54,29 +54,28 @@ Ext.define('Isidamaps.controller.AppController', {
         this.stompClient.connect({}, conn, reconn);
     },
 
-    loadSocketDataForMonitoringBrigade: function (message) {
+    addMarkerInStoreFromWSForMonitoringBrigade: function (message) {
         const {deviceId, objectType} = message;
         if (objectType === 'BRIGADE' && this.brigadeId === '' + deviceId) {
             let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWebSockedStore');
             storeBrigades.add(message);
         }
-
         if (objectType === 'CALL' && this.callId === '' + deviceId) {
-            let storeCalls = this.getStore('Isidamaps.store.CallFromWebSockedStore');
+            let storeCalls = this.getStore('Isidamaps.store.CallFromWSStore');
             storeCalls.add(message);
         }
     },
 
-    loadSocketData: function (message) {
+    addMarkerInStoreFromWS: function (message) {
         const {station, objectType} = message;
         if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }
-        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWebSockedStore');
+        const store = this.getStore(objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeFromWebSockedStore' : 'Isidamaps.store.CallFromWSStore');
         store.add(message);
     },
 
-    getStoreMarkerInfo: function (object) {
+    getStoreAboutMarker: function (object) {
         const urlInfoMarker = `${this.urlGeodata}/info`,
             store = this.getStore(object.customOptions.objectType === 'BRIGADE' ? 'Isidamaps.store.BrigadeInfoStore' : 'Isidamaps.store.CallInfoStore');
         store.getProxy().setUrl(urlInfoMarker);
@@ -95,7 +94,7 @@ Ext.define('Isidamaps.controller.AppController', {
             },
             callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
         Ext.log({outdent: 1}, `Подстанции ${station}`);
-        station.forEach((st) => {
+        station.forEach(st => {
             if (Ext.String.trim(st) !== '20') {
                 this.stationArray.push(Ext.String.trim(st));
             }
@@ -131,7 +130,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 stations: this.stationArray,
                 statuses: ['COMPLETED']
             };
-        station.forEach((st) => {
+        station.forEach(st => {
             this.stationArray.push(Ext.String.trim(st));
         });
         callStore.load({
@@ -204,11 +203,11 @@ Ext.define('Isidamaps.controller.AppController', {
         const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
             brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             factRouteHistoryStore = this.getStore('Isidamaps.store.FactRouteHistoryStore'),
-        dt = new Date(),
+            dt = new Date(),
             params = {
                 brigadId: brigadId,
-                timeStart:dt,
-                timeEnd:dt
+                timeStart: dt,
+                timeEnd: dt
             };
         Ext.Ajax.request({
             url: `${this.urlGeodata}/route/facts?`,

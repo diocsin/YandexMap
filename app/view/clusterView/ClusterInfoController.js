@@ -32,7 +32,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                     margin: 5,
                     listeners: {
                         click: () => {
-                            const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(marker);
+                            const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(marker);
                             infoHolder.removeAll();
                             storeMarker.load({
                                 params: params,
@@ -59,7 +59,7 @@ Ext.define('Isidamaps.view.clusterView.ClusterInfoController', {
                     margin: 5,
                     listeners: {
                         click: () => {
-                            const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(marker);
+                            const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(marker);
                             infoHolder.removeAll();
                             storeMarker.load({
                                 params: params,

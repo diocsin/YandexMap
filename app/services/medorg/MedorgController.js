@@ -89,7 +89,7 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
                 margin: 5,
                 listeners: {
                     click: function () {
-                        var storeMarker = me.getStoreMarkerInfo(marker);
+                        var storeMarker = me.getStoreAboutMarker(marker);
                         infoMarker.removeAll();
                         storeMarker.load({
                             callback: function (records, operation, success) {

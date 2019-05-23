@@ -14,12 +14,12 @@ Ext.define('Isidamaps.services.heatMapForCall.MapService', {
 
     listenerStore: function () {
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', (store, records, options) => {
-            this.storeCall(records)
+            this.getCallsFromStore(records)
         }, this);
 
     },
 
-    storeCall: function (records) {
+    getCallsFromStore: function (records) {
         Ext.log({ outdent: 1},`${records.length} loadRecords`);
         this.myMask.hide();
         Ext.Array.clean(this.callMarkers);

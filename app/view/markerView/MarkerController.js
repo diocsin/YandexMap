@@ -16,7 +16,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
         if (win) {
             win.close();
         }
-        const storeMarker = Isidamaps.app.getController('AppController').getStoreMarkerInfo(object),
+        const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(object),
             params = {
                 objecttype: objectType,
                 objectid: id
@@ -57,7 +57,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 brigadeInfoViewModel.set('record', record);
                 brigadeInfoWidget.show()/*At(coord)*/;
                 if (object.customOptions.status === 'AT_CALL' || object.customOptions.status === 'PASSED_BRIGADE') {
-                    objects.each((call) => {
+                    objects.each(call => {
                         if (call.customOptions.objectType === 'CALL' && call.customOptions.callCardNum === record.get('callCardNum')) {
                             this.call = call;
                             this.brigade = object;
@@ -104,11 +104,11 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             objectManager.add(this.brigade);
             objectManager.add(this.call);
             map.geoObjects.add(objectManager);
-            this.createBouns(map, this.call, this.brigade);
+            this.createMapBounds(map, this.call, this.brigade);
         }
     },
 
-    createBouns: function (map, call, brigade) {
+    createMapBounds: function (map, call, brigade) {
         const arrayLatitude = [],
             arrayLongitude = [];
         arrayLatitude.push(call.geometry.coordinates[0]);
@@ -146,7 +146,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 callInfoViewModel.set('record', records[0]);
                 callInfoWidget.show()/*At(coord)*/;
                 if (object.customOptions.status === 'ASSIGNED') {
-                    objects.each((brigade) => {
+                    objects.each(brigade => {
                         if (brigade.customOptions.objectType === 'BRIGADE' && brigade.customOptions.brigadeNum === records[0].get('brigadeNum')) {
                             this.brigade = brigade;
                             this.call = object;

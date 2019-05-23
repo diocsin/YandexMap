@@ -21,31 +21,31 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     listenerStore: function () {
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
-            this.storeFactHistoryCall(records)
+            this.getCallsFromFactRoute(records)
         }, this);
         Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', (store, records, options) => {
-            this.storeFactHistoryBrigade(records)
+            this.getBrigadesFromFactRoute(records)
         }, this);
         Ext.getStore('Isidamaps.store.RouteHistoryStore').on('add', (store, records, options) => {
-            this.storeRouteHistory(records)
+            this.getRoutesFromExpectedRoute(records)
         }, this);
         Ext.getStore('Isidamaps.store.FactRouteHistoryStore').on('add', (store, records, options) => {
-            this.storeFactRouteHistory(records)
+            this.getRouteFromFactRoute(records)
         }, this);
     },
 
-    storeFactHistoryCall: function (rec) {
+    getCallsFromFactRoute: function (rec) {
         rec.forEach((call) => {
             Ext.getCmp('GridAssignHistory').setTitle(`Параметры доезда к вызову №${call.get('callCardNum')}`);
             if (call.get('latitude') && call.get('longitude')) {
                 const feature = this.createCallFeature(call);
                 this.callMarkers.push(feature);
-                this.callMarkers.length === 1 ? this.objectManager.add(feature) : this.createBouns();
+                this.callMarkers.length === 1 ? this.objectManager.add(feature) : this.createMapBounds();
             }
         });
     },
 
-    storeFactHistoryBrigade: function (rec) {
+    getBrigadesFromFactRoute: function (rec) {
         let i = 1;
         Ext.getCmp('GridHistory').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
         rec.forEach((brigade) => {
@@ -58,7 +58,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         });
     },
 
-    storeRouteHistory: function (records) {
+    getRoutesFromExpectedRoute: function (records) {
         let routeList = null;
         records.forEach((b) => {
             b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
@@ -109,7 +109,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         this.createTableRoute();
     },
 
-    storeFactRouteHistory: function (records) {
+    getRouteFromFactRoute: function (records) {
         const arrayLine = [];
         records.forEach((b) => {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
@@ -150,8 +150,8 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             arr = [],
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
         grid.on({
-            cellclick: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
-                this.cellClick(record);
+            clickCellOnHistoryTable: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
+                this.clickCellOnHistoryTable(record);
             }
         });
         let i = 0,
@@ -207,7 +207,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         });
     },
 
-    cellClick: function (rec) {
+    clickCellOnHistoryTable: function (rec) {
         if (!this.placemarkForRouteHistory) {
             this.placemarkForRouteHistory = new ymaps.Placemark(Ext.String.splitWords(rec.get('point')));
             this.map.geoObjects.add(this.placemarkForRouteHistory);

@@ -5,14 +5,14 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     listen: {
         global: {
             jsonAnswerReady: 'buttonChecked',
-            checkedBrigadeForAssign: 'checkedBrigadeForAssign',
+            uncheckCheckboxes: 'uncheckCheckboxes',
             changeColorRoute: 'changeColorRoute',
             returnColorRoute: 'returnColorRoute'
         }
     },
 
     changeColorRoute: function (checkbox) {
-        this.BrigadeForAssign.map.geoObjects.each((route) => {
+        this.BrigadeForAssign.map.geoObjects.each(route => {
             if (route.id === checkbox.id) {
                 route.options.set({
                     routeActiveStrokeColor: "#ff0019",
@@ -27,14 +27,14 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     },
 
     returnColorRoute: function (checkbox) {
-        this.BrigadeForAssign.map.geoObjects.each((route) => {
+        this.BrigadeForAssign.map.geoObjects.each(route => {
             if (route.id === checkbox.id) {
                 route.options.unset('routeActiveStrokeColor');
             }
         });
     },
 
-    checkedBrigadeForAssign: function () {
+    uncheckCheckboxes: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         store.each((rec) => {
             rec.set('checkBox', false);
@@ -55,6 +55,6 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
     },
 
     buttonChecked: function () {
-        this.BrigadeForAssign.createAnswer();
+        this.BrigadeForAssign.sendAnswerInASOV();
     }
 });

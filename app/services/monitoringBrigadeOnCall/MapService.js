@@ -13,7 +13,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         this.arrRouteForTable = [];
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true
-        }).then((route) => {
+        }).then(route => {
             route.getWayPoints().options.set({
                 iconLayout: 'default#image',
                 iconImageHref: false,
@@ -31,7 +31,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             };
             this.arrRouteForTable.push(routeList);
             this.createTableRoute();
-
         })
     },
 
@@ -39,13 +38,12 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         this.createMap();
     },
 
-
-    addMarkers: function () {
+    addMarkersInObjManager: function () {
         if (this.callMarkers.length === 0) {
             Isidamaps.util.Util.errorMessage('Внимание', 'Нет координат вызова');
         }
         // this.circle = new ymaps.Circle([this.callMarkers[0].geometry.coordinates, 100], null, {draggable: false * /, visible: false*/});
-        this.createBouns();
+        this.createMapBounds();
         this.objectManager.add(this.brigadesMarkers);
         this.objectManager.add(this.callMarkers);
         this.map.geoObjects.add(this.objectManager);
@@ -59,7 +57,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         this.listenerStore();
     },
 
-    addMarkersSocket: function (marker) {
+    addMarkerInObjectManager: function (marker) {
         const object = this.objectManager.objects.getById(marker.id),
             addFeatureCall = () => {
                 //  this.getGeoQueryObject(marker);
@@ -101,22 +99,21 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     listenerStore: function () {
         Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', (store, records, options) => {
-            this.storeBrigade(records)
+            this.getBrigadesFromStore(records)
         }, this);
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
-            this.storeCall(records)
+            this.getCallsFromStore(records)
         }, this);
-
     },
 
-    storeBrigade: function (records) {
+    getBrigadesFromStore: function (records) {
         Ext.Array.clean(this.brigadesMarkers);
         records.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 this.brigadesMarkers.push(this.createBrigadeFeature(brigade));
             }
         });
-        this.checkArrayFeatureComplete(this.callMarkers);
+        this.checkArrayIsEmpty(this.callMarkers);
     },
 
     getGeoQueryObject: function (brigade) {
@@ -141,17 +138,17 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         }
     },
 
-    createBrigadeOfSocked: function (brigade) {
+    getBrigadeFromWS: function (brigade) {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = this.createBrigadeFeature(brigade);
-            this.addMarkersSocket(marker);
+            this.addMarkerInObjectManager(marker);
             Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
         }
     },
 
-    checkArrayFeatureComplete: function (array) {
+    checkArrayIsEmpty: function (array) {
         if (array.length !== 0) {
-            this.addMarkers();
+            this.addMarkersInObjManager();
             this.listenerWebSockedStore();
         }
     }

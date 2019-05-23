@@ -3,11 +3,11 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     objectManager: null,
     brigadesMarkers: [],
     callMarkers: [],
-    filterBrigadeArray: [],
+    filterMarkerArray: [],
     MyIconContentLayout: null,
     // ====
-    getStoreMarkerInfo: Ext.emptyFn,
-    setCheckbox: Ext.emptyFn,
+    getStoreAboutMarker: Ext.emptyFn,
+    setCheckboxAfterFirstLoad: Ext.emptyFn,
     addNewButtonOnPanel: Ext.emptyFn,
     destroyButtonOnPanel: Ext.emptyFn,
     addButtonsBrigadeOnPanel: Ext.emptyFn,
@@ -16,7 +16,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     constructor: function (options) {
         this.createMap();
-        this.setCheckbox = options.setCheckbox;
+        this.setCheckboxAfterFirstLoad = options.setCheckboxAfterFirstLoad;
         this.addNewButtonOnPanel = options.addNewButtonOnPanel;
         this.destroyButtonOnPanel = options.destroyButtonOnPanel;
         this.addButtonsBrigadeOnPanel = options.addButtonsBrigadeOnPanel;
@@ -57,11 +57,10 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 noSelect: false,
                 maxWidth: [90, 172, 590],
                 fitMaxWidth: true
-
             }
         });
         this.map.controls.add(searchControl);
-        searchControl.events.add('resultselect', (e) => {
+        searchControl.events.add('resultselect', e => {
             // Получает массив результатов.
             const results = searchControl.getResultsArray();
             // Индекс выбранного объекта.
@@ -76,7 +75,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     optionsObjectManager: function () {
         const markerController = Ext.create('controller.markercontroller');
-        this.objectManager.objects.events.add(['click'], (e) => {
+        this.objectManager.objects.events.add(['click'], e => {
             let object = this.objectManager.objects.getById(e.get('objectId'));
             markerController.markerClick(object, this.objectManager.objects);
         });
@@ -87,35 +86,33 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
          */
     },
 
-    addMarkers: function () {
+    addMarkersInObjManager: function () {
         this.objectManager.add(this.brigadesMarkers);
         this.objectManager.add(this.callMarkers);
         this.map.geoObjects.add(this.objectManager);
         this.addButtonsBrigadeOnPanel();
-        this.setCheckbox();
-
+        this.setCheckboxAfterFirstLoad();
     },
 
     listenerWebSockedStore: function () {
         Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').on('add', (store, records, index) => {
-            this.createBrigadeOfSocked(...records)
+            this.getBrigadeFromWS(...records)
         }, this);
-        Ext.getStore('Isidamaps.store.CallFromWebSockedStore').on('add', (store, records, index) => {
+        Ext.getStore('Isidamaps.store.CallFromWSStore').on('add', (store, records, index) => {
             this.createCallOfSocked(...records)
         }, this);
     },
 
     listenerStore: function () {
         Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('load', (store, records, options) => {
-            this.storeBrigade(records)
+            this.getBrigadesFromStore(records)
         }, this);
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('load', (store, records, options) => {
-            this.storeCall(records)
+            this.getCallsFromStore(records)
         }, this);
-
     },
 
-    addMarkersSocket: function (marker) {
+    addMarkerInObjectManager: function (marker) {
         const object = this.objectManager.objects.getById(marker.id),
             addFeature = () => {
                 this.objectManager.objects.add(marker);
@@ -193,7 +190,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         }
     },
 
-    storeBrigade: function (records) {
+    getBrigadesFromStore: function (records) {
         Ext.Array.clean(this.brigadesMarkers);
         records.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
@@ -201,10 +198,10 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 this.brigadesMarkers.push(feature);
             }
         });
-        this.checkArrayFeatureComplete(this.callMarkers);
+        this.checkArrayIsEmpty(this.callMarkers);
     },
 
-    storeCall: function (records) {
+    getCallsFromStore: function (records) {
         Ext.Array.clean(this.callMarkers);
         records.forEach(call => {
             if (call.get('latitude') && call.get('longitude')) {
@@ -212,13 +209,13 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 this.callMarkers.push(feature);
             }
         });
-        this.checkArrayFeatureComplete(this.brigadesMarkers);
+        this.checkArrayIsEmpty(this.brigadesMarkers);
     },
 
-    checkArrayFeatureComplete: function (array) {
+    checkArrayIsEmpty: function (array) {
         if (array.length !== 0) {
             this.addStationFilter();
-            this.addMarkers();
+            this.addMarkersInObjManager();
             this.listenerWebSockedStore();
         }
     },
@@ -226,16 +223,14 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     createCallOfSocked: function (call) {
         if (call.get('latitude') && call.get('longitude')) {
             let marker = this.createCallFeature(call);
-            this.addMarkersSocket(marker);
-            Ext.getStore('Isidamaps.store.CallFromWebSockedStore').clearData();
+            this.addMarkerInObjectManager(marker);
+            Ext.getStore('Isidamaps.store.CallFromWSStore').clearData();
         }
     },
 
-    createBrigadeOfSocked: function (brigades) {
-        const brigade = brigades[0];
+    getBrigadeFromWS: function (brigade) {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
             let marker = this.createBrigadeFeature(brigade);
-
             let brigadeHas = Ext.Array.findBy(this.brigadesMarkers, (brigadeInArray, index) => {
                 if (brigadeInArray.id === brigade.get('deviceId')) {
                     return brigadeInArray;
@@ -254,7 +249,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             else {
                 this.destroyButtonOnPanel(marker);
             }
-            this.addMarkersSocket(marker);
+            this.addMarkerInObjectManager(marker);
             Ext.getStore('Isidamaps.store.BrigadeFromWebSockedStore').clearData();
         }
     },
@@ -279,7 +274,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         }
     },
 
-    createBouns: function () {
+    createMapBounds: function () {
         const arrayLatitude = [],
             arrayLongitude = [],
             call = this.callMarkers[0];

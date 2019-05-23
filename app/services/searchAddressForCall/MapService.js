@@ -6,7 +6,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
     constructor: function (options) {
         this.createMap();
         this.createButtonOnControlPanel();
-        this.map.events.add('click', (e) => {
+        this.map.events.add('click', e => {
             const coords = e.get('coords');
             this.checkFeature(coords);
         });
@@ -28,7 +28,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
                 maxWidth: [28, 150, 178]
             }
         });
-        firstButton.events.add('click', (e) => {
+        firstButton.events.add('click', e => {
             if (this.feature) {
                 const {properties, geometry} = this.feature;
                 Ext.create('Ext.window.MessageBox').show({
@@ -36,7 +36,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
                     message: properties.getAll().balloonContent ? properties.getAll().balloonContent : geometry.getCoordinates(),
                     icon: Ext.Msg.QUESTION,
                     buttons: Ext.Msg.YESNOCANCEL,
-                    fn: (btn) => {
+                    fn: btn => {
                         if (btn === 'yes') {
                             console.dir(geometry.getCoordinates());
                             Isidamaps.app.getController('AppController').windowClose();
@@ -69,7 +69,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
             }
         });
         this.map.controls.add(searchControl);
-        searchControl.events.add('resultselect', (e) => {
+        searchControl.events.add('resultselect', e => {
             // Получает массив результатов.
             const results = searchControl.getResultsArray();
             // Индекс выбранного объекта.
@@ -112,7 +112,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
 
     getAddress: function (coords) {
         this.feature.properties.set('iconCaption', 'поиск...');
-        ymaps.geocode(coords).then((res) => {
+        ymaps.geocode(coords).then(res => {
             const firstGeoObject = res.geoObjects.get(0);
             this.feature.properties
                 .set({

@@ -21,23 +21,22 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
 
     listenerStore: function () {
         Ext.getStore('Isidamaps.store.BrigadesFirstLoadStore').on('add', (store, records, options) => {
-            this.storeBrigade(records)
+            this.getBrigadesFromStore(records)
         }, this);
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
-            this.storeCall(records)
+            this.getCallsFromStore(records)
         }, this);
-
     },
 
-    checkArrayFeatureComplete: function (array) {
+    checkArrayIsEmpty: function (array) {
         if (array.length !== 0) {
-            this.addMarkers();
+            this.addMarkersInObjManager();
         }
     },
 
-    storeBrigade: function (records) {
+    getBrigadesFromStore: function (records) {
         Ext.Array.clean(this.brigadesMarkers);
-        records.forEach((brigade) => {
+        records.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 const feature = this.createBrigadeFeature(brigade);
                 this.brigadesMarkers.push(feature);
@@ -46,11 +45,11 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
         if (this.callMarkers.length === 0) {
             Isidamaps.util.Util.errorMessage('Внимание', 'Нет координат вызова');
         }
-        this.checkArrayFeatureComplete(this.callMarkers);
+        this.checkArrayIsEmpty(this.callMarkers);
     },
 
-    addMarkers: function () {
-        this.createBouns();
+    addMarkersInObjManager: function () {
+        this.createMapBounds();
         this.brigadesMarkers.forEach((brigadeMarker) => {
             this.createRoute(this.callMarkers[0], brigadeMarker);
         });
@@ -59,12 +58,13 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
         this.map.geoObjects.add(this.objectManager);
     },
 
-    createAnswer: function () {
+    sendAnswerInASOV: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore'),
             brigadeId = store.query('checkBox', 'true').getValues('brigadeId', 'data');
         if (brigadeId.length === 1) {
             ASOV.setBrigade(brigadeId[0]);
-        } else (Isidamaps.util.Util.errorMessage('Ошибка', 'Не назначена бригада на вызов'))
+        }
+        else (Isidamaps.util.Util.errorMessage('Ошибка', 'Не назначена бригада на вызов'))
     },
 
     createRoute: function (call, brigade) {
@@ -72,7 +72,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
         let routeList = null;
         ymaps.route([coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true,
-        }).then((route) => {
+        }).then(route => {
             route.getWayPoints().options.set({
                 iconLayout: 'default#image',
                 iconImageHref: false,

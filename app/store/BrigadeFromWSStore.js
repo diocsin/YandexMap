@@ -1,4 +1,4 @@
-Ext.define('Isidamaps.store.BrigadeFromWebSockedStore', {
+Ext.define('Isidamaps.store.BrigadeFromWSStore', {
     extend: 'Ext.data.Store',
     alias: 'BrigadeFromWebSocked',
     model: 'Isidamaps.model.Brigade',

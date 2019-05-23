@@ -19,7 +19,7 @@ Ext.define('Isidamaps.view.routeView.route.Route', {
             reference: 'brigadeAssign',
             listeners: {
                 beforecheckchange: function () {
-                    Ext.fireEvent('checkedBrigadeForAssign');
+                    Ext.fireEvent('uncheckCheckboxes');
                 },
                 checkchange: function (me, rowIndex, checked, record, e, eOpts) {
                     if (checked) {
