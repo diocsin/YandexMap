@@ -29,7 +29,7 @@ Ext.define('Isidamaps.model.InfoBrigade', {
             mapping: 'brigade.station'
         },
         {
-            name: 'station',
+            name: 'stationary',
             mapping: 'brigade.stationary'
         },
         {

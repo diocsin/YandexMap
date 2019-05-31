@@ -61,13 +61,12 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
                 bind: '{record.stationary}',
                 fieldLabel: 'Стационар',
                 labelWidth: 150
-            },
-                {
-                    xtype: 'displayfield',
-                    bind: '{record.speed}',
-                    fieldLabel: 'Скорость',
-                    labelWidth: 150
-                }]
+            }, {
+                xtype: 'displayfield',
+                bind: '{record.speed}',
+                fieldLabel: 'Скорость',
+                labelWidth: 150
+            }]
         },
         {
             xtype: 'container',

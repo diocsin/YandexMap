@@ -92,7 +92,11 @@ Ext.define('Isidamaps.model.InfoCall', {
         {
             name: 'streetType',
             mapping: 'call.streetType'
-        }
+        },
+        {
+            name: 'hospital',
+            mapping: 'call.hospital'
+        },
 
     ],
     storeId: 'infoCallId'
