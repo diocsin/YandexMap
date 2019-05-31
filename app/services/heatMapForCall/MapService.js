@@ -23,7 +23,7 @@ Ext.define('Isidamaps.services.heatMapForCall.MapService', {
         Ext.log({ outdent: 1},`${records.length} loadRecords`);
         this.myMask.hide();
         Ext.Array.clean(this.callMarkers);
-        records.forEach((call) => {
+        records.forEach(call => {
             if (call.get('latitude') && call.get('longitude')) {
                 const feature = this.createCallFeature(call);
                 this.callMarkers.push(feature);

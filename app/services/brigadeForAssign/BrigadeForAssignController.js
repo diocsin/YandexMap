@@ -36,7 +36,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.BrigadeForAssignController', {
 
     uncheckCheckboxes: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-        store.each((rec) => {
+        store.each(rec => {
             rec.set('checkBox', false);
         })
     },

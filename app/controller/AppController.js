@@ -27,6 +27,7 @@ Ext.define('Isidamaps.controller.AppController', {
 
     initial: function (getGeoInform) {
         const settingsStore = this.getStore('Isidamaps.store.SettingsStore');
+
         settingsStore.load({
             callback: (records) => {
                 const settings = records[0];
@@ -50,12 +51,14 @@ Ext.define('Isidamaps.controller.AppController', {
 
                 });
             };
+
         this.stompClient = Stomp.over(socket);
         this.stompClient.connect({}, conn, reconn);
     },
 
     addMarkerInStoreFromWSForMonitoringBrigade: function (message) {
         const {deviceId, objectType} = message;
+
         if (objectType === 'BRIGADE' && this.brigadeId === '' + deviceId) {
             let storeBrigades = this.getStore('Isidamaps.store.BrigadeFromWSStore');
             storeBrigades.add(message);
@@ -68,6 +71,7 @@ Ext.define('Isidamaps.controller.AppController', {
 
     addMarkerInStoreFromWS: function (message) {
         const {station, objectType} = message;
+
         if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }
@@ -93,6 +97,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 statuses: ['NEW', 'ASSIGNED']
             },
             callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
+
         Ext.log({outdent: 1}, `Подстанции ${station}`);
         station.forEach(st => {
             if (Ext.String.trim(st) !== '20') {
@@ -130,6 +135,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 stations: this.stationArray,
                 statuses: ['COMPLETED']
             };
+
         station.forEach(st => {
             this.stationArray.push(Ext.String.trim(st));
         });
@@ -146,6 +152,8 @@ Ext.define('Isidamaps.controller.AppController', {
                 callcardid: call,
                 brigades: brigade
             };
+
+        this.callId = call;
         this.brigadeId = brigade;
         Ext.log({outdent: 1}, `callId= ${call} , brigadeId= ${brigade}`);
 
@@ -180,12 +188,11 @@ Ext.define('Isidamaps.controller.AppController', {
             },
             paramsArray = [paramsHOSPITAL, paramsPOLYCLINIC, paramsEMERGENCY_ROOM];
 
-        paramsArray.forEach((params) => {
+        paramsArray.forEach(params => {
             Ext.Ajax.request({
                 url: `${this.urlGeodata}/organization`,
                 params: params,
                 method: 'GET',
-
                 success: (response, opts) => {
                     let obj = Ext.decode(response.responseText);
                     medOrgStore.add(obj);
@@ -209,11 +216,11 @@ Ext.define('Isidamaps.controller.AppController', {
                 timeStart: dt,
                 timeEnd: dt
             };
+
         Ext.Ajax.request({
             url: `${this.urlGeodata}/route/facts?`,
             params: params,
             method: 'GET',
-
             success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 brigadeStore.add([obj.endPoint, obj.startPoint]);
@@ -236,11 +243,11 @@ Ext.define('Isidamaps.controller.AppController', {
             params = {
                 callcardid: call
             };
+
         Ext.Ajax.request({
             url: `${this.urlGeodata}/route?`,
             params: params,
             method: 'GET',
-
             success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);
@@ -257,7 +264,6 @@ Ext.define('Isidamaps.controller.AppController', {
             url: `${this.urlGeodata}/route/fact?`,
             params: params,
             method: 'GET',
-
             success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 brigadeStore.add([obj.endPoint, obj.startPoint]);
@@ -276,7 +282,6 @@ Ext.define('Isidamaps.controller.AppController', {
     readMarkersBrigadeForAssign: function (call, brigades) {
         const callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore'),
             brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-
             params = {
                 callcardid: call,
                 brigades: brigades
@@ -286,7 +291,6 @@ Ext.define('Isidamaps.controller.AppController', {
             url: `${this.urlGeodata}/brigade?`,
             params: params,
             method: 'GET',
-
             success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 callStore.add(obj.call);

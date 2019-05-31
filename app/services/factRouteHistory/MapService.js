@@ -29,7 +29,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
     },
 
     getCallsFromFactRoute: function (rec) {
-        rec.forEach((call) => {
+        rec.forEach(call => {
             // Ext.getCmp('GridAssignHistory').setTitle(`Параметры доезда к вызову №${call.get('callCardNum')}`);
             if (call.get('latitude') && call.get('longitude')) {
                 const feature = this.createCallFeature(call);
@@ -42,7 +42,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
     getBrigadesFromFactRoute: function (rec) {
         let i = 1;
         Ext.getCmp('GridHistory').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
-        rec.forEach((brigade) => {
+        rec.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
                 const feature = this.createBrigadeFeature(brigade);
@@ -54,7 +54,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
 
     createPolylineRoute: function (routeList) {
         this.arrRouteForTable = routeList;
-        routeList.forEach((routes) => {
+        routeList.forEach(routes => {
             let polyline = new ymaps.Polyline(routes.route, {}, {
                 draggable: false,
                 strokeColor: '#000000',
@@ -66,7 +66,8 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
 
     getRouteFromFactRoute: function (records) {
         const arrayLine = [];
-        records.forEach((b) => {
+
+        records.forEach(b => {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
         });
         let polyline = new ymaps.Polyline(arrayLine, {}, {
@@ -90,6 +91,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
         const grid = Ext.getCmp('GridHistory'),
             arr = [],
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
+
         grid.on({
             clickCellOnHistoryTable: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
                 this.clickCellOnHistoryTable(record);
@@ -117,7 +119,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
                 place: `#${g} ${place2}`,
                 point: `${object.get('latitude')} ${object.get('longitude')}`,
                 time: object.get('lastUpdateTime'),
-                speed: '60'
+                speed: object.get('speed')
             };
             arr.push(row);
             i++;
@@ -155,8 +157,8 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
             this.map.setCenter(Ext.String.splitWords(rec.get('point')), 14);
         }
         else {
-            const index = this.map.geoObjects.indexOf(this.placemarkForRouteHistory);
-            let object = this.map.geoObjects.get(index);
+            const index = this.map.geoObjects.indexOf(this.placemarkForRouteHistory),
+                object = this.map.geoObjects.get(index);
             object.geometry.setCoordinates(Ext.String.splitWords(rec.get('point')));
             this.map.setCenter(Ext.String.splitWords(rec.get('point')), 14);
         }

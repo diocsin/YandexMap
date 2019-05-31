@@ -61,7 +61,13 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
                 bind: '{record.stationary}',
                 fieldLabel: 'Стационар',
                 labelWidth: 150
-            }]
+            },
+                {
+                    xtype: 'displayfield',
+                    bind: '{record.speed}',
+                    fieldLabel: 'Скорость',
+                    labelWidth: 150
+                }]
         },
         {
             xtype: 'container',
@@ -70,7 +76,7 @@ Ext.define('Isidamaps.view.markerView.BrigadeInfoForm', {
             title: 'Вызов на карте',
             iconCls: 'fa fa-phone',
             id: 'mapTab',
-            height: 292,
+            height: 322,
             listeners: {
                 activate: function () {
                     Ext.fireEvent('activateTab', this, 'mapTab');

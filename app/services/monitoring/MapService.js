@@ -99,7 +99,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             this.getBrigadeFromWS(...records)
         }, this);
         Ext.getStore('Isidamaps.store.CallFromWSStore').on('add', (store, records, index) => {
-            this.createCallOfSocked(...records)
+            this.getCallFromWS(...records)
         }, this);
     },
 
@@ -170,7 +170,9 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 profile: brigade.get('profile'),
                 status: brigade.get('status'),
                 station: brigade.get('station').toString(),
-                brigadeNum: brigade.get('brigadeNum')
+                brigadeNum: brigade.get('brigadeNum'),
+                speed: brigade.get('speed'),
+                vector: brigade.get('vector')
             },
             geometry: {
                 type: 'Point',
@@ -220,7 +222,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         }
     },
 
-    createCallOfSocked: function (call) {
+    getCallFromWS: function (call) {
         if (call.get('latitude') && call.get('longitude')) {
             let marker = this.createCallFeature(call);
             this.addMarkerInObjectManager(marker);

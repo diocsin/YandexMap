@@ -20,11 +20,11 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             params = {
                 objecttype: objectType,
                 objectid: id
+            },
+            options = {
+                params: params,
+                store: storeMarker
             };
-        const options = {
-            params: params,
-            store: storeMarker
-        };
         this.call = null;
         this.brigade = null;
         if (objectType === 'BRIGADE') {
@@ -50,7 +50,8 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                     status = Isidamaps.app.getController('AppController').getBrigadeStatuses(record.get('status'));
                 record.set({
                     'status': status,
-                    'profile': object.customOptions.profile
+                    'profile': object.customOptions.profile,
+                    'speed': object.customOptions.speed ? `${object.customOptions.speed} км/ч` : 'Неизвестно'
                 });
                 const brigadeInfoWidget = Ext.widget('brigadeInfo'),
                     brigadeInfoViewModel = brigadeInfoWidget.getViewModel();

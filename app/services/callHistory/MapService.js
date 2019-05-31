@@ -35,7 +35,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     },
 
     getCallsFromFactRoute: function (rec) {
-        rec.forEach((call) => {
+        rec.forEach(call => {
             Ext.getCmp('GridAssignHistory').setTitle(`Параметры доезда к вызову №${call.get('callCardNum')}`);
             if (call.get('latitude') && call.get('longitude')) {
                 const feature = this.createCallFeature(call);
@@ -48,7 +48,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     getBrigadesFromFactRoute: function (rec) {
         let i = 1;
         Ext.getCmp('GridHistory').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
-        rec.forEach((brigade) => {
+        rec.forEach(brigade => {
             if (brigade.get('latitude') && brigade.get('longitude')) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
                 const feature = this.createBrigadeFeature(brigade);
@@ -60,10 +60,10 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     getRoutesFromExpectedRoute: function (records) {
         let routeList = null;
-        records.forEach((b) => {
+        records.forEach(b => {
             b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
             this.createPolylineRoute(routeList);
-            routeList.forEach((brigade) => {
+            routeList.forEach(brigade => {
                 const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, deviceId} = brigade;
                 if (latitude && longitude) {
                     const feature = {
@@ -98,7 +98,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     createPolylineRoute: function (routeList) {
         this.arrRouteForTable = routeList;
-        routeList.forEach((routes) => {
+        routeList.forEach(routes => {
             let polyline = new ymaps.Polyline(routes.route, {}, {
                 draggable: false,
                 strokeColor: '#000000',
@@ -111,7 +111,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     getRouteFromFactRoute: function (records) {
         const arrayLine = [];
-        records.forEach((b) => {
+        records.forEach(b => {
             arrayLine.push([b.get('latitude'), b.get('longitude')]);
         });
         let polyline = new ymaps.Polyline(arrayLine, {}, {
@@ -133,9 +133,9 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
 
     createTableRoute: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
-        this.arrRouteForTable.forEach((object) => {
-            const {brigadeId, brigadeNum, profile, distance, time, deviceId} = object;
-            const x = Ext.create('Isidamaps.model.Route');
+        this.arrRouteForTable.forEach(object => {
+            const {brigadeId, brigadeNum, profile, distance, time, deviceId} = object,
+            x = Ext.create('Isidamaps.model.Route');
             brigadeId ? x.set('brigadeId', brigadeId) : x.set('brigadeId', deviceId);
             x.set('brigadeNum', brigadeNum);
             x.set('profile', profile);
@@ -149,6 +149,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         const grid = Ext.getCmp('GridHistory'),
             arr = [],
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
+
         grid.on({
             clickCellOnHistoryTable: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
                 this.clickCellOnHistoryTable(record);
@@ -176,12 +177,12 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                 place: `#${g} ${place2}`,
                 point: `${object.get('latitude')} ${object.get('longitude')}`,
                 time: object.get('lastUpdateTime'),
-                speed: '60'
+                speed: object.get('speed')
             };
             arr.push(row);
             i++;
         }
-        arr.forEach((row) => {
+        arr.forEach(row => {
             const x = Ext.create('Isidamaps.model.RouteHistoryTable');
             x.set('place', row.place);
             x.set('point', row.point);

@@ -95,6 +95,10 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             this.uncheckCheckBoxInFilter(groupFilterComp, inputValue, inputValueAllCheckBox);
             return;
         }
+        this.checkCheckBoxInFilter(groupFilterComp, inputValue, inputValueAllCheckBox)
+    },
+
+    checkCheckBoxInFilter: function (groupFilterComp, inputValue, inputValueAllCheckBox) {
         let j = 0;
         Ext.Array.remove(this.filterMarkerArray, inputValue);
         this.setFilterObjectManager();
@@ -110,20 +114,20 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         groupFilterComp.fireEvent('customerchange');
     },
 
-    uncheckCheckBoxInFilter: function (componentFilter, inputValue, inputValueAllCheckBox) {
-        this.filterMarkerArray.push(inputValue);
+    uncheckCheckBoxInFilter: function (groupFilterComp, inputValue, inputValueAllCheckBox) {
         let i = 0;
-        componentFilter.items.each(checkbox => {
+        this.filterMarkerArray.push(inputValue);
+        this.setFilterObjectManager();
+        this.createArrayShowHideButton();
+        groupFilterComp.items.each(checkbox => {
             if (checkbox.checked) {
                 i++
             }
         });
-        if (componentFilter.items.length === i + 1) {
+        if (groupFilterComp.items.length === i + 1) {
             this.lookupReference(inputValueAllCheckBox).setRawValue(false)
         }
-        this.setFilterObjectManager();
-        this.createArrayShowHideButton();
-        componentFilter.fireEvent('customerchange');
+        groupFilterComp.fireEvent('customerchange');
     },
 
     setFilterObjectManager: function () {
@@ -140,8 +144,8 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
 
     createArrayShowHideButton: function () {
         const arrayForHideButton = [],
-            arrayForShowButton = [];
-        const states = Ext.getStore('Isidamaps.store.BrigadeSearchStore');
+            arrayForShowButton = [],
+            states = Ext.getStore('Isidamaps.store.BrigadeSearchStore');
         states.removeAll();
         this.Monitoring.objectManager.objects.each(object => {
             const {id, customOptions: {brigadeNum, objectType, status, profile, station}} = object,
@@ -258,7 +262,6 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             }));
         });
         this.setFilterBrigadeAndCall();
-
     },
 
     getButtonBrigadeForChangeButton: function (brigade, oldStatus) {

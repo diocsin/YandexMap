@@ -11,7 +11,7 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     },
 
     optionsObjectManager: function () {
-        this.objectManager.objects.events.add(['click'], (e) => {
+        this.objectManager.objects.events.add(['click'], e => {
             let object = this.objectManager.objects.getById(e.get('objectId'));
             this.markerClick(object);
         });
@@ -26,7 +26,7 @@ Ext.define('Isidamaps.services.medorg.MapService', {
 
     storeMedOrg: function (records) {
         const medorgMarkers = [];
-        records.forEach((medorg) => {
+        records.forEach(medorg => {
             if (medorg.get('latitude') && medorg.get('longitude')) {
                 medorgMarkers.push({
                     type: 'Feature',

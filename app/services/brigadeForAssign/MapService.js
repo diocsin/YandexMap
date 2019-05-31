@@ -50,7 +50,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
 
     addMarkersInObjManager: function () {
         this.createMapBounds();
-        this.brigadesMarkers.forEach((brigadeMarker) => {
+        this.brigadesMarkers.forEach(brigadeMarker => {
             this.createRoute(this.callMarkers[0], brigadeMarker);
         });
         this.objectManager.add(this.brigadesMarkers);
@@ -61,6 +61,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     sendAnswerInASOV: function () {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore'),
             brigadeId = store.query('checkBox', 'true').getValues('brigadeId', 'data');
+
         if (brigadeId.length === 1) {
             ASOV.setBrigade(brigadeId[0]);
         }
@@ -70,6 +71,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     createRoute: function (call, brigade) {
         const {id, geometry: {coordinates}, customOptions: {brigadeNum, objectType, profile}} = brigade;
         let routeList = null;
+
         ymaps.route([coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true,
         }).then(route => {
