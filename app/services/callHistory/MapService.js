@@ -151,7 +151,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
 
         grid.on({
-            clickCellOnHistoryTable: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
+            cellclick: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
                 this.clickCellOnHistoryTable(record);
             }
         });
