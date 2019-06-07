@@ -8,7 +8,6 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
     brigadesEndPoint: null,
     arrRouteForTable: [],
     callMarkersFactRoute: [],
-    MyIconContentLayout: null,
     placemarkForRouteHistory: null,
 
     constructor: function (options) {
@@ -93,7 +92,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
             store = Ext.getStore('Isidamaps.store.RouteHistoryTableStore');
 
         grid.on({
-            clickCellOnHistoryTable: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
+            cellclick: (me, td, cellIndex, record, tr, rowIndex, e, eOpts) => {
                 this.clickCellOnHistoryTable(record);
             }
         });
@@ -124,14 +123,8 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
             arr.push(row);
             i++;
         }
-        arr.forEach((row) => {
-            const x = Ext.create('Isidamaps.model.RouteHistoryTable');
-            x.set('place', row.place);
-            x.set('point', row.point);
-            x.set('time', row.time);
-            x.set('speed', row.speed);
-            store.add(x);
-        });
+        console.dir(arr);
+        store.add(arr);
         grid.el.unmask();
     },
 

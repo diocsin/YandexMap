@@ -4,7 +4,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     brigadesMarkers: [],
     callMarkers: [],
     arrRouteForTable: [],
-    MyIconContentLayout: null,
     circle: null,
     brigadeInsideCircle: false,
 

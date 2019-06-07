@@ -1,0 +1,41 @@
+{
+    "framework": "jasmine",
+    "libs": [
+        {
+            "disabled": true,
+            "path": "new/library.js",
+            "type": "file"
+        },
+        {
+            "disabled": true,
+            "path": "new/library.js",
+            "type": "file"
+        }
+    ],
+    "coverageFilters": [
+        {
+            "disabled": true,
+            "path": "^/new/Filter\\.js$"
+        }
+    ],
+    "scenarios": [
+        {
+            "libs": [
+                {
+                    "disabled": false,
+                    "path": "/test/New_Scenario/lib",
+                    "type": "directory"
+                }
+            ],
+            "coverageFilters": [],
+            "sandbox": false,
+            "profile": "classic",
+            "framework": "jasmine",
+            "globals": "*",
+            "directory": "New_Scenario",
+            "name": "New Scenario"
+        }
+    ],
+    "pageObjects": [],
+    "subjectUrl": "http://localhost:1841"
+}

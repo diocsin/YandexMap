@@ -1,7 +1,6 @@
 Ext.define('Isidamaps.view.markerView.MarkerController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.markercontroller',
-    MyIconContentLayout: null,
     call: null,
     brigade: null,
     listen: {
@@ -16,7 +15,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
         if (win) {
             win.close();
         }
-        const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(object),
+        const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(object.customOptions.objectType),
             params = {
                 objecttype: objectType,
                 objectid: id
@@ -99,9 +98,6 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 iconImageSize: [40, 40]
 
             });
-            this.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-                '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
-            );
             objectManager.add(this.brigade);
             objectManager.add(this.call);
             map.geoObjects.add(objectManager);

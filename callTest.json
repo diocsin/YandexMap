@@ -1,0 +1,15 @@
+[
+  {
+    "callCardId": 123,
+    "callCardNum": "123",
+    "station": 9,
+    "longitude": 27.596753099933267,
+    "latitude": 53.91698559746146,
+    "statusAsov": 780,
+    "status": "NEW",
+    "createTime": "2019-06-05T12:11:45.885",
+    "lastUpdateTime": "2019-06-05T12:12:34.165",
+    "objectType": "CALL",
+    "iconName": "new.png"
+  }
+]

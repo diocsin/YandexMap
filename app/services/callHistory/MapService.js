@@ -10,7 +10,8 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     brigadesEndPoint: null,
     arrRouteForTable: [],
     callMarkersFactRoute: [],
-    MyIconContentLayout: null,
+    lowSpeedIconContentLayout: null,
+    heightSpeedIconContentLayout: null,
     placemarkForRouteHistory: null,
 
 
@@ -64,7 +65,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             b.get('routeList') === '' ? routeList = Ext.decode(b.get('brigadeList')).brigades : routeList = Ext.decode(b.get('routeList'));
             this.createPolylineRoute(routeList);
             routeList.forEach(brigade => {
-                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, deviceId} = brigade;
+                const {latitude, longitude, objectType, brigadeNum, profile, brigadeId, deviceId, speed} = brigade;
                 if (latitude && longitude) {
                     const feature = {
                         type: 'Feature',
@@ -81,7 +82,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                         options: {
                             iconLayout: 'default#imageWithContent',
                             iconImageHref: 'resources/icon/free.png',
-                            iconContentLayout: this.MyIconContentLayout,
+                            iconContentLayout: speed > 0 ? this.heightSpeedIconContentLayout : this.lowSpeedIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
@@ -182,14 +183,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             arr.push(row);
             i++;
         }
-        arr.forEach(row => {
-            const x = Ext.create('Isidamaps.model.RouteHistoryTable');
-            x.set('place', row.place);
-            x.set('point', row.point);
-            x.set('time', row.time);
-            x.set('speed', row.speed);
-            store.add(x);
-        });
+        store.add(arr);
         grid.el.unmask();
     },
 

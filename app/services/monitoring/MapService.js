@@ -4,9 +4,9 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     brigadesMarkers: [],
     callMarkers: [],
     filterMarkerArray: [],
-    MyIconContentLayout: null,
+    lowSpeedIconContentLayout: null,
+    heightSpeedIconContentLayout: null,
     // ====
-    getStoreAboutMarker: Ext.emptyFn,
     setCheckboxAfterFirstLoad: Ext.emptyFn,
     addNewButtonOnPanel: Ext.emptyFn,
     destroyButtonOnPanel: Ext.emptyFn,
@@ -15,7 +15,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     // ====
 
     constructor: function (options) {
-        this.createMap();
         this.setCheckboxAfterFirstLoad = options.setCheckboxAfterFirstLoad;
         this.addNewButtonOnPanel = options.addNewButtonOnPanel;
         this.destroyButtonOnPanel = options.destroyButtonOnPanel;
@@ -43,8 +42,11 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             iconImageSize: [40, 40]
 
         });
-        this.MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-            '<div style="color: #000000;  border: 1px solid; display: inline-block; background-color: #faf8ff; text-align: center; border-radius: 6px; z-index: 2;font-size: 12pt">$[properties.iconContent]</div>'
+        this.lowSpeedIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div id="lowSpeedIcon" >$[properties.iconContent]</div>'
+        );
+        this.heightSpeedIconContentLayout = ymaps.templateLayoutFactory.createClass(
+            '<div id="heightSpeedIcon" >$[properties.iconContent]</div>'
         );
     },
 
@@ -181,13 +183,14 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             options: {
                 iconLayout: 'default#imageWithContent',
                 iconImageHref: `resources/icon/${brigade.get('iconName')}`,
-                iconContentLayout: this.MyIconContentLayout,
+                iconContentLayout: brigade.get('speed') > 0 ? this.heightSpeedIconContentLayout : this.lowSpeedIconContentLayout,
                 iconImageOffset: [-24, -24],
                 iconContentOffset: [30, -10],
             },
             properties: {
                 hintContent: `Бригада ${brigade.get('brigadeNum')}`,
-                iconContent: `${brigade.get('brigadeNum')}(${brigade.get('profile')})`
+                iconContent: `${brigade.get('brigadeNum')}(${brigade.get('profile')})`,
+                speedContent: brigade.get('speed') ? brigade.get('speed') : ''
             }
         }
     },

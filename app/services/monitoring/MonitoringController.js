@@ -188,6 +188,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
             addNewButtonOnPanel: this.addNewButtonOnPanel.bind(this),
             destroyButtonOnPanel: this.destroyButtonOnPanel.bind(this),
         });
+        this.Monitoring.createMap();
         this.Monitoring.searchControl();
         this.Monitoring.listenerStore();
         this.Monitoring.optionsObjectManager();
