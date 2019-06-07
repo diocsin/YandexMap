@@ -7,7 +7,6 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     arrRoute: [],
     arrpoints: [],
     arrRouteForTable: [],
-    MyIconContentLayout: null,
 
     constructor: function (options) {
         this.createMap();
