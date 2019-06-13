@@ -23,7 +23,7 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
     columns: [
         {
             xtype: 'rownumberer',
-            width: 40,
+            width: 60,
             sortable: false
         },
         {
@@ -32,14 +32,14 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
             hidden: true,
             sortable: false
         },
-        {
+       /* {
             text: 'Координаты',
             dataIndex: 'point',
             groupable: false,
             sortable: false,
-            flex: 2,
+            flex: 1,
             fixed: true
-        },
+        },*/
         {
             text: 'Время',
             dataIndex: 'time',
@@ -51,11 +51,19 @@ Ext.define('Isidamaps.view.routeHistoryTableView.routeHistoryTable.RouteHistoryT
 
         },
         {
-            text: 'Скорость',
+            text: 'Скорость<br>(км/ч)',
             dataIndex: 'speed',
             groupable: false,
             sortable: false,
             flex: 1,
+            fixed: true
+        },
+        {
+            text: 'Расстояние(км)',
+            dataIndex: 'distance',
+            groupable: false,
+            sortable: false,
+            flex: 2,
             fixed: true
         },
     ],

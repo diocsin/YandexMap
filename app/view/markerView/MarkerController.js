@@ -15,7 +15,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
         if (win) {
             win.close();
         }
-        const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(object.customOptions.objectType),
+        const storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(objectType),
             params = {
                 objecttype: objectType,
                 objectid: id

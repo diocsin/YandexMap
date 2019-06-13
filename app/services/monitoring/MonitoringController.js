@@ -146,6 +146,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         const arrayForHideButton = [],
             arrayForShowButton = [],
             states = Ext.getStore('Isidamaps.store.BrigadeSearchStore');
+
         states.removeAll();
         this.Monitoring.objectManager.objects.each(object => {
             const {id, customOptions: {brigadeNum, objectType, status, profile, station}} = object,
@@ -234,6 +235,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         const groupFilterStation = this.lookupReference('stationFilter'),
             buttonBrigade = this.lookupReference('BrigadePanel'),
             stations = Isidamaps.app.getController('AppController').stationArray;
+
         Ext.Array.each(stations, stationName => {
             groupFilterStation.add(Ext.create('Ext.form.field.Checkbox', {
                 boxLabel: stationName,

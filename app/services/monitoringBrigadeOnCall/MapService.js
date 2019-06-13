@@ -8,7 +8,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     brigadeInsideCircle: false,
 
     createRoute: function (call, brigade) {
-        let routeList = null;
         this.arrRouteForTable = [];
         ymaps.route([brigade.geometry.coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true
@@ -24,7 +23,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 strokeWidth: 4
             });
             this.map.geoObjects.add(route);
-            routeList = {
+            let routeList = {
                 brigade: brigade,
                 route: route
             };
@@ -62,7 +61,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 //  this.getGeoQueryObject(marker);
                 this.objectManager.objects.add(marker);
                 this.map.geoObjects.each(route => {
-                    if (route.requestPoints !== undefined) {
+                    if (route.requestPoints) {
                         this.map.geoObjects.remove(route);
                         return
                     }
@@ -72,7 +71,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             addFeatureBrigade = () => {
                 this.objectManager.objects.add(marker);
                 this.map.geoObjects.each(route => {
-                    if (route.requestPoints !== undefined) {
+                    if (route.requestPoints) {
                         this.map.geoObjects.remove(route);
                         return
                     }

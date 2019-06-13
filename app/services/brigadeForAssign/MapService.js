@@ -69,7 +69,6 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
 
     createRoute: function (call, brigade) {
         const {id, geometry: {coordinates}, customOptions: {brigadeNum, objectType, profile}} = brigade;
-        let routeList = null;
 
         ymaps.route([coordinates, call.geometry.coordinates], {
             avoidTrafficJams: true,
@@ -87,7 +86,7 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
                 strokeWidth: 4
             });
             this.map.geoObjects.add(route);
-            routeList = {
+            let routeList = {
                 brigade: brigade,
                 route: route
             };
@@ -95,8 +94,8 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
             for (let i = 0; i < route.getPaths().getLength(); i++) {
                 let way = route.getPaths().get(i),
                     segments = way.getSegments();
-                for (let j = 0; j < segments.length; j++) {
-                    let point = segments[j].getCoordinates();
+                for (const object of segments) {
+                    let point = object.getCoordinates();
                     this.arrpoints.push(
                         [point[0][0], point[0][1]]
                     );

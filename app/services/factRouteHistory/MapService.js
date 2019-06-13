@@ -100,7 +100,9 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
             h = 0,
             g = 0,
             place = '',
-            place2 = '';
+            place2 = '',
+            coord1 = [records[0].get('latitude'), records[0].get('longitude')],
+            distance = 0;
         for (const object of records) {
             if (i <= records.length - 3) {
                 let y = i;
@@ -114,20 +116,26 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
                     place = address;
                 }
             }
+            distance += this.getLength(coord1, [object.get('latitude'), object.get('longitude')]);
             let row = {
                 place: `#${g} ${place2}`,
                 point: `${object.get('latitude')} ${object.get('longitude')}`,
                 time: object.get('lastUpdateTime'),
-                speed: object.get('speed')
+                speed: object.get('speed'),
+                distance: await (distance/1000).toFixed(1)
             };
+            coord1 = [object.get('latitude'), object.get('longitude')];
             arr.push(row);
             i++;
         }
-        console.dir(arr);
         store.add(arr);
         grid.el.unmask();
     },
 
+    getLength: function (coord1, coord2) {
+        return ymaps.coordSystem.geo.getDistance(
+            coord1, coord2);
+    },
 
     angleOfRotation: function (A, B, C) {
         const AB = Math.sqrt(Math.pow(parseFloat(B.get('longitude')) - parseFloat(A.get('longitude')), 2) + Math.pow(parseFloat(B.get('latitude')) - parseFloat(A.get('latitude')), 2)),
@@ -137,7 +145,7 @@ Ext.define('Isidamaps.services.factRouteHistory.MapService', {
     },
 
     getAddress: function (coords) {
-        return ymaps.geocode(coords).then((res) => {
+        return ymaps.geocode(coords).then(res => {
             const firstGeoObject = res.geoObjects.get(0);
             return `${(firstGeoObject.getThoroughfare()) ? firstGeoObject.getThoroughfare() : ''} ${(firstGeoObject.getPremiseNumber()) ? firstGeoObject.getPremiseNumber() : ''}`;
         });
