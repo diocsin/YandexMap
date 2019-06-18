@@ -74,6 +74,7 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
         params.alcointoxication = alcointoxication;
 
         const doAjax = () => {
+            this.myMask.show();
             Ext.Ajax.request({
                 url: Ext.String.format(`${Isidamaps.app.getController('AppController').urlGeodata}/point`),
                 params: params,
@@ -81,6 +82,7 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
                 success: (response, opts) => {
                     let obj = Ext.decode(response.responseText);
                     this.HeatMapForCall.getPointsFromStore(obj);
+                    this.myMask.hide();
                     Ext.log({indent: 1}, `Load success from ${ Isidamaps.app.getController('AppController').urlGeodata}/point`);
                 },
                 failure: (response, opts) => {
