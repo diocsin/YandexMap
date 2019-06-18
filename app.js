@@ -40,12 +40,10 @@ function startApp(urlYandex) {
             Ext.log({indent: 1, level: 'error'}, 'Нет доступа к yandexApi');
         }
     });
-
     Ext.application({
         name: 'Isidamaps',
 
         extend: 'Isidamaps.Application',
-
         requires: [
             'Ext.layout.container.Border',
             'Ext.layout.container.Table',
@@ -53,7 +51,9 @@ function startApp(urlYandex) {
             'Ext.container.Viewport',
             'Isidamaps.Viewport',
             'Ext.container.Container',
-            'Ext.ux.grid.Printer'
+            'Ext.ux.grid.Printer',
+            'Ext.ux.DateTimePicker',
+            'Ext.ux.DateTimeField'
 
         ],
         // The name of the initial view to create. With the classic toolkit this class

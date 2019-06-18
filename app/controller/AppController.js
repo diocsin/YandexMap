@@ -8,6 +8,9 @@ Ext.define('Isidamaps.controller.AppController', {
     brigadeId: null,
     urlOpenStreetServerTiles: null,
     urlOpenStreetServerRoute: null,
+    timerId: null,
+    lengthStore: 30,
+    shortNamePrevious: null,
     brigadeStatuses: [
         {eng: 'FREE', rus: 'Свободна'},
         {eng: 'ON_EVENT', rus: 'black_widow'},
@@ -19,6 +22,68 @@ Ext.define('Isidamaps.controller.AppController', {
         {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
         {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
     ],
+    autoCompleteStore: [
+        {shortName: 'STREET', store: 'Isidamaps.store.StreetAutoCompleteStore'},
+        {shortName: 'REASON', store: 'Isidamaps.store.ReasonAutoCompleteStore'},
+        {shortName: 'DIAGNOSIS', store: 'Isidamaps.store.DiagnosisAutoCompleteStore'},
+        {shortName: 'DISTRICT', store: 'Isidamaps.store.DistrictAutoCompleteStore'},
+    ],
+    listen: {
+        global: {
+            doAjaxAutoComplete: 'doAjaxAutoComplete'
+        }
+    },
+
+    doAjaxAutoComplete: function (me, newValue, oldValue, shortName) {
+        const args = this.autoCompleteStore.find(autoComplete => autoComplete.shortName === shortName),
+            storeForComboBox = this.getStore(args.store);
+        let lengthRow = newValue ? newValue.length : 0,
+            lengthPreviousRow = oldValue ? oldValue.length : 0;
+        if (this.shortNamePrevious !== shortName) {
+            this.lengthStore = 30;
+        }
+        if (lengthRow < 3) {
+            this.lengthStore = 30;
+            storeForComboBox.removeAll();
+        }
+        this.shortNamePrevious = shortName;
+        clearTimeout(this.timerId);
+        this.timerId = setTimeout(() => {
+            if (lengthRow >= 3 && this.lengthStore === 30 && lengthPreviousRow < lengthRow) {
+                doAjax();
+            }
+            if (lengthRow >= 3 && lengthPreviousRow > lengthRow) {
+                doAjax();
+            }
+        }, 1000);
+
+        const doAjax = () => {
+            Ext.Ajax.request({
+                url: `${this.urlGeodata}/autocomplite`,
+                params: {
+                    field: shortName,
+                    value: newValue
+                },
+                method: 'GET',
+                success: (response, opts) => {
+                    let obj = Ext.decode(response.responseText);
+                    storeForComboBox.removeAll();
+                    storeForComboBox.add(obj);
+                    if (lengthPreviousRow > lengthRow) {
+                        this.lengthStore = 30;
+                    }
+                    else {
+                        this.lengthStore = obj.length;
+                    }
+                    me.expand();
+                    Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
+                },
+                failure: (response, opts) => {
+                    Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
+                }
+            });
+        }
+    },
 
     getBrigadeStatuses: function (eng) {
         const args = this.brigadeStatuses.find(status => status.eng === eng);

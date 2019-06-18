@@ -5,7 +5,8 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCall', {
 
     requires: [
         'Isidamaps.services.heatMapForCall.HeatMapForCallController',
-        'Isidamaps.services.heatMapForCall.MapService'
+        'Isidamaps.services.heatMapForCall.MapService',
+        'Isidamaps.view.filterHeatMapView.FilterHeatMapView'
     ],
 
     controller: 'heatMapForCall',
@@ -19,7 +20,25 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCall', {
         listeners: {
             'boxready': 'mainBoxReady'
         }
-    }],
+    },
+        {
+            xtype: 'panel',
+            region: 'south',
+            title: 'Фильтр',
+            reference: 'navigationPanel',
+            publishes: 'size',
+            height: 580,
+            floatable: true,
+            collapsible: true,
+            titleCollapse: true,
+            titleAlign: 'center',
+            collapseToolText: 'Скрыть панель',
+            expandToolText: 'Открыть панель',
+            items: [{
+                xtype: 'filterHeatMapView-filterHeatMap',
+                reference: 'filterHeat'
+            }]
+        }],
     listeners: {
         'boxready': 'layoutReady'
     }

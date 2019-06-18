@@ -33,14 +33,19 @@ Ext.define('Isidamaps.Application', {
         'Isidamaps.store.RouteHistoryTableStore',
         'Isidamaps.store.FactRouteHistoryStore',
         'Isidamaps.store.MedOrgStore',
-        'Isidamaps.store.BrigadeSearchStore'
+        'Isidamaps.store.BrigadeSearchStore',
+        'Isidamaps.store.DiagnosisGridStore',
+        'Isidamaps.store.StreetAutoCompleteStore',
+        'Isidamaps.store.ReasonAutoCompleteStore',
+        'Isidamaps.store.DiagnosisAutoCompleteStore',
+        'Isidamaps.store.DistrictAutoCompleteStore',
     ],
 
     routes: {
         ':id': 'changeRoute'
     },
 
-    globals:{
+    globals: {
         ALL_PROFILES: 'allProfiles',
         ALL_STATUSES: 'allStatuses',
         ALL_STATIONS: 'allStations',
