@@ -250,7 +250,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                                 todayText: 'Текущая дата',
                                 hourText: 'Часы',
                                 minuteText: 'Минуты',
-                                fieldLabel: 'С',
+                                fieldLabel: 'с',
                                 labelWidth: 25,
                                 renderTo: Ext.getBody(),
                                 margin: '5px 10px 5px 10px',
@@ -276,7 +276,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                     },
                     {
                         xtype: 'fieldset',
-                        title: 'Возрат',
+                        title: 'Возраcт',
                         items: [
                             {
                                 xtype: 'numberfield',
@@ -423,6 +423,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                             {
                                 xtype: 'combobox',
                                 queryMode: 'local',
+                                name: 'DISTRICT',
                                 id: 'district_auto_complete',
                                 //minChars: 3,
                                 displayField: 'value',
@@ -436,7 +437,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                                 width: 350,
                                 listeners: {
                                     change: function (me, newValue, oldValue, eOpts) {
-                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue, 'DISTRICT');
+                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue);
                                     }
                                 }
 
@@ -450,6 +451,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                                 xtype: 'combobox',
                                 //minChars: 3,
                                 id: 'street_auto_complete',
+                                name: 'STREET',
                                 queryMode: 'local',
                                 displayField: 'value',
                                 valueField: 'id',
@@ -462,7 +464,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                                 width: 350,
                                 listeners: {
                                     change: function (me, newValue, oldValue, eOpts) {
-                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue, 'STREET');
+                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue);
                                     }
                                 }
                             }]
@@ -474,6 +476,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                             {
                                 xtype: 'combobox',
                                 id: 'reason_auto_complete',
+                                name: 'REASON',
                                 queryMode: 'local',
                                 displayField: 'value',
                                 valueField: 'id',
@@ -484,7 +487,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                                 width: 350,
                                 listeners: {
                                     change: function (me, newValue, oldValue, eOpts) {
-                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue, 'REASON');
+                                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue);
                                     }
                                 }
 
@@ -508,6 +511,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                 xtype: 'combobox',
                 id: 'diagnosis_auto_complete',
                 queryMode: 'local',
+                name: 'DIAGNOSIS',
                 displayField: 'value',
                 valueField: 'id',
                 renderTo: Ext.getBody(),
@@ -519,7 +523,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                 width: 350,
                 listeners: {
                     change: function (me, newValue, oldValue, eOpts) {
-                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue, 'DIAGNOSIS');
+                        Ext.fireEvent('doAjaxAutoComplete', me, newValue, oldValue);
                     }
                 }
             },

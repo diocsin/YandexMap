@@ -22,31 +22,24 @@ Ext.define('Isidamaps.controller.AppController', {
         {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
         {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
     ],
-    autoCompleteStore: [
-        {shortName: 'STREET', store: 'Isidamaps.store.StreetAutoCompleteStore'},
-        {shortName: 'REASON', store: 'Isidamaps.store.ReasonAutoCompleteStore'},
-        {shortName: 'DIAGNOSIS', store: 'Isidamaps.store.DiagnosisAutoCompleteStore'},
-        {shortName: 'DISTRICT', store: 'Isidamaps.store.DistrictAutoCompleteStore'},
-    ],
     listen: {
         global: {
             doAjaxAutoComplete: 'doAjaxAutoComplete'
         }
     },
 
-    doAjaxAutoComplete: function (me, newValue, oldValue, shortName) {
-        const args = this.autoCompleteStore.find(autoComplete => autoComplete.shortName === shortName),
-            storeForComboBox = this.getStore(args.store);
+    doAjaxAutoComplete: function (me, newValue, oldValue) {
         let lengthRow = newValue ? newValue.length : 0,
-            lengthPreviousRow = oldValue ? oldValue.length : 0;
-        if (this.shortNamePrevious !== shortName) {
+            lengthPreviousRow = oldValue ? oldValue.length : 0,
+            storeForComboBox = me.getStore();
+        if (this.shortNamePrevious !== me.name) {
             this.lengthStore = 30;
         }
         if (lengthRow < 3) {
             this.lengthStore = 30;
             storeForComboBox.removeAll();
         }
-        this.shortNamePrevious = shortName;
+        this.shortNamePrevious = me.name;
         clearTimeout(this.timerId);
         this.timerId = setTimeout(() => {
             if (lengthRow >= 3 && this.lengthStore === 30 && lengthPreviousRow < lengthRow) {
@@ -61,7 +54,7 @@ Ext.define('Isidamaps.controller.AppController', {
             Ext.Ajax.request({
                 url: `${this.urlGeodata}/autocomplite`,
                 params: {
-                    field: shortName,
+                    field: me.name,
                     value: newValue
                 },
                 method: 'GET',
