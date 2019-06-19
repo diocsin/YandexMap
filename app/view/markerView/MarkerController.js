@@ -50,7 +50,7 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 record.set({
                     'status': status,
                     'profile': object.customOptions.profile,
-                    'speed': object.customOptions.speed ? `${object.customOptions.speed} км/ч` : 'Неизвестно'
+                    'speed': object.customOptions.speed !== undefined ? `${object.customOptions.speed} км/ч` : 'Неизвестно'
                 });
                 const brigadeInfoWidget = Ext.widget('brigadeInfo'),
                     brigadeInfoViewModel = brigadeInfoWidget.getViewModel();
