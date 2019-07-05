@@ -361,6 +361,10 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     },
 
     layoutReady: function () {
+        setTimeout(function(){
+            Ext.get('loading').remove();
+            Ext.get('loading-mask').fadeOut({remove:true});
+        }, 250);
         this.fireTabEvent(this.lookupReference('navigationPanel'));
     },
 

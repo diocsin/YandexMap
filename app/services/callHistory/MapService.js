@@ -82,7 +82,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
                         options: {
                             iconLayout: 'default#imageWithContent',
                             iconImageHref: 'resources/icon/free.png',
-                            iconContentLayout: speed > 0 ? this.heightSpeedIconContentLayout : this.lowSpeedIconContentLayout,
+                            iconContentLayout: this.MyIconContentLayout,
                             iconImageOffset: [-24, -24],
                             iconContentOffset: [30, -10],
                         },
@@ -136,7 +136,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         const store = Ext.getStore('Isidamaps.store.RouteForTableStore');
         this.arrRouteForTable.forEach(object => {
             const {brigadeId, brigadeNum, profile, distance, time, deviceId} = object,
-            x = Ext.create('Isidamaps.model.Route');
+                x = Ext.create('Isidamaps.model.Route');
             brigadeId ? x.set('brigadeId', brigadeId) : x.set('brigadeId', deviceId);
             x.set('brigadeNum', brigadeNum);
             x.set('profile', profile);
@@ -144,6 +144,7 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
             x.set('time', time);
             store.add(x);
         });
+
     },
 
     createHistoryTable: async function (records) {

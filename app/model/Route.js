@@ -7,7 +7,7 @@ Ext.define('Isidamaps.model.Route', {
     },
         {
             name: 'time',
-            type: 'number'
+            type: 'auto'
         },
         {
             name: 'brigadeNum',
@@ -17,7 +17,7 @@ Ext.define('Isidamaps.model.Route', {
         },
         {
             name: 'distance',
-            type: 'number'
+            type: 'auto'
         },
         'profile',]
 });

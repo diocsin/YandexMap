@@ -56,11 +56,6 @@ Ext.define('Isidamaps.model.InfoCall', {
                   Возраст: ${und(record.get('age'))}, Пол: ${und(record.get('sex'))}`
             }
         },
-
-        {
-            name: 'hospital',
-            mapping: 'call.hospital'
-        },
         {
             name: 'address',
             type: 'string',

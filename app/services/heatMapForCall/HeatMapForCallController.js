@@ -174,6 +174,10 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
     },
 
     layoutReady: function () {
+        setTimeout(function(){
+            Ext.get('loading').remove();
+            Ext.get('loading-mask').fadeOut({remove:true});
+        }, 250);
     },
 
     tabChange: function (panel, newTab, oldTab) {

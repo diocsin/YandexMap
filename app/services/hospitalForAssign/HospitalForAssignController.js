@@ -15,5 +15,9 @@ Ext.define('Isidamaps.services.hospitalForAssign.HospitalForAssignController', {
     },
 
     layoutReady: function () {
+        setTimeout(function(){
+            Ext.get('loading').remove();
+            Ext.get('loading-mask').fadeOut({remove:true});
+        }, 250);
     },
 });

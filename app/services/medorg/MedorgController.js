@@ -21,6 +21,10 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
     },
 
     layoutReady: function () {
+        setTimeout(function(){
+            Ext.get('loading').remove();
+            Ext.get('loading-mask').fadeOut({remove:true});
+        }, 250);
     },
 
     tabChange: function (panel, newTab, oldTab) {

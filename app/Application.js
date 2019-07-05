@@ -63,7 +63,7 @@ Ext.define('Isidamaps.Application', {
 
     onAppUpdate: function () {
         Ext.Msg.confirm('Обновление приложения', 'Это приложение нуждается в обновлении, обновить?',
-            function (choice) {
+             (choice) => {
                 if (choice === 'yes') {
                     window.location.reload();
                 }
