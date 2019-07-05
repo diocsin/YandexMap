@@ -21,6 +21,7 @@ Ext.define('Isidamaps.controller.AppController', {
         {eng: 'RELAXON', rus: 'Обед'},
         {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
         {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
+        {eng: 'ALARM', rus: 'Тревога'},
     ],
     listen: {
         global: {
@@ -144,7 +145,7 @@ Ext.define('Isidamaps.controller.AppController', {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             paramsBrigades = {
                 stations: this.stationArray,
-                statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE']
+                statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE', 'ALARM']
             },
             paramsCalls = {
                 stations: this.stationArray,

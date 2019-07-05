@@ -219,6 +219,18 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                                 }
                             }
                         }
+                    },
+                    {
+                        boxLabel: '<img src="resources/icon/alarm.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Тревога</span>',
+                        checked: false,
+                        inputValue: 'ALARM',
+                        listeners: {
+                            change: {
+                                fn: function (checkbox, checked) {
+                                    Ext.fireEvent('checkedFilter', checkbox,  'statusBrigadeFilter', Isidamaps.app.globals.ALL_STATUSES);
+                                }
+                            }
+                        }
                     }
                 ]
             }]

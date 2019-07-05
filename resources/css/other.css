@@ -44,7 +44,9 @@
 .x-form-cb-label, .x-form-cb-input {
     cursor: pointer;
 }
-
+.x-btn-inner-default-small {
+    color: black;
+}
 #circleSpeed {
     width: 22px;
     height: 22px;
