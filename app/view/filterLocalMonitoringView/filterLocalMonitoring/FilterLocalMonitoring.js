@@ -209,7 +209,7 @@ Ext.define('Isidamaps.view.filterLocalMonitoringView.filterLocalMonitoring.Filte
                         }
                     },
                     {
-                        boxLabel: '<img src="resources/icon/hijacking.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Нападение на бригаду</span>',
+                        boxLabel: '<img src="resources/icon/hijacking.png" width="22" height="22" vertical-align: sub;/><span style="vertical-align: top">Вызов спецслужб</span>',
                         checked: false,
                         inputValue: 'HIJACKING',
                         listeners: {

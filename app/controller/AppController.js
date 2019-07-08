@@ -20,7 +20,7 @@ Ext.define('Isidamaps.controller.AppController', {
         {eng: 'AT_CALL', rus: 'На вызове'},
         {eng: 'RELAXON', rus: 'Обед'},
         {eng: 'GO_HOSPITAL', rus: 'Транспортировка в стационар'},
-        {eng: 'HIJACKING', rus: 'Нападение на бригаду'},
+        {eng: 'HIJACKING', rus: 'Вызов спецслужб'},
         {eng: 'ALARM', rus: 'Тревога'},
     ],
     listen: {
