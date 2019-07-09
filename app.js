@@ -53,7 +53,8 @@ function startApp(urlYandex) {
             'Ext.container.Container',
             'Ext.ux.grid.Printer',
             'Ext.ux.DateTimePicker',
-            'Ext.ux.DateTimeField'
+            'Ext.ux.DateTimeField',
+            'Ext.form.FieldSet'
 
         ],
         // The name of the initial view to create. With the classic toolkit this class

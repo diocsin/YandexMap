@@ -124,6 +124,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 this.hospitalMarkers.push(this.createMedOrg(hospital));
             }
         });
+        this.checkArrayIsEmpty(this.callMarkers);
     },
 
     createMedOrg: function (medorg) {
@@ -200,9 +201,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             success: (response, opts) => {
                 let obj = Ext.decode(response.responseText);
                 hospitalStore.add(obj.hospital);
-                this.checkArrayIsEmpty(this.callMarkers);
             },
-
             failure: (response, opts) => {
                 Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
             }
