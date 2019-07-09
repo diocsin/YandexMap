@@ -3,6 +3,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     map: null,
     brigadesMarkers: [],
     callMarkers: [],
+    hospitalMarkers: [],
     arrRouteForTable: [],
     circle: null,
     brigadeInsideCircle: false,
@@ -44,15 +45,21 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         this.createMapBounds();
         this.objectManager.add(this.brigadesMarkers);
         this.objectManager.add(this.callMarkers);
+        this.objectManager.add(this.hospitalMarkers);
         this.map.geoObjects.add(this.objectManager);
         //this.map.geoObjects.add(this.circle);
         // this.getGeoQueryObject(this.brigadesMarkers[0]);  ////Будет отправлять ответ(смену статуса) каждый раз когда будет открываться окно когда бригада уже в круге
-        if (this.callMarkers.length > 0 && this.brigadesMarkers.length > 0) {
+
+        if (this.callMarkers.length > 0 && this.brigadesMarkers.length > 0 && this.hospitalMarkers.length == 0) {
             this.brigadesMarkers.forEach(brigadeMarker => {
                 this.createRoute(this.callMarkers[0], brigadeMarker);
             });
         }
-        this.listenerStore();
+        if (this.brigadesMarkers.length > 0 && this.hospitalMarkers.length > 0) {
+            this.brigadesMarkers.forEach(brigadeMarker => {
+                this.createRoute(this.hospitalMarkers[0], brigadeMarker);
+            });
+        }
     },
 
     addMarkerInObjectManager: function (marker) {
@@ -66,7 +73,11 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                         return
                     }
                 });
-                this.createRoute(this.callMarkers[0], marker);
+                if (this.hospitalMarkers.length == 0) {
+                    this.createRoute(this.callMarkers[0], marker);
+                    return
+                }
+                this.createRoute(this.hospitalMarkers[0], marker);
             },
             addFeatureBrigade = () => {
                 this.objectManager.objects.add(marker);
@@ -102,6 +113,38 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         Ext.getStore('Isidamaps.store.CallsFirstLoadStore').on('add', (store, records, options) => {
             this.getCallsFromStore(records)
         }, this);
+        Ext.getStore('Isidamaps.store.MedOrgStore').on('add', (store, records, options) => {
+            this.getHospitalFromStore(records)
+        }, this);
+    },
+
+    getHospitalFromStore: function (records) {
+        records.forEach(hospital => {
+            if (hospital.get('latitude') && hospital.get('longitude')) {
+                this.hospitalMarkers.push(this.createMedOrg(hospital));
+            }
+        });
+    },
+
+    createMedOrg: function (medorg) {
+        return {
+            type: 'Feature',
+            id: medorg.get('organizationId'),
+            customOptions: {
+                objectType: medorg.get('objectType'),
+                organizationName: medorg.get('organizationName')
+            },
+            geometry: {
+                type: 'Point',
+                coordinates: [medorg.get('latitude'), medorg.get('longitude')]
+            },
+            options: {
+                iconImageHref: `resources/icon/${medorg.get('iconName')}`
+            },
+            properties: {
+                hintContent: medorg.get('organizationName')
+            }
+        }
     },
 
     getBrigadesFromStore: function (records) {
@@ -111,7 +154,59 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                 this.brigadesMarkers.push(this.createBrigadeFeature(brigade));
             }
         });
-        this.checkArrayIsEmpty(this.callMarkers);
+        this.checkHaveStationary(...this.brigadesMarkers);
+    },
+
+    checkHaveStationary: function (brigade) {
+        const {id, customOptions: {objectType}} = brigade,
+            storeMarker = Isidamaps.app.getController('AppController').getStoreAboutMarker(objectType),
+            params = {
+                objecttype: objectType,
+                objectid: id
+            },
+            options = {
+                params: params,
+                store: storeMarker
+            };
+        options.store.load({
+            params: options.params,
+            callback: (records, operation, success) => {
+                if ((success === true && records.length === 0) || success === false) {
+                    this.checkArrayIsEmpty(this.callMarkers);
+                    return;
+                }
+                if (records[0].get('stationaryId')) {
+                    let hospitalid = records[0].get('stationaryId');
+                    this.getHospital(hospitalid, id);
+                }
+                else {
+                    this.checkArrayIsEmpty(this.callMarkers);
+                }
+            }
+        })
+    },
+
+    getHospital: function (hospitalid, brigade) {
+        const hospitalStore = Ext.getStore('Isidamaps.store.MedOrgStore'),
+            params = {
+                hospitalid: hospitalid,
+                brigade: brigade
+            };
+        hospitalStore.removeAll();
+        Ext.Ajax.request({
+            url: `${Isidamaps.app.getController('AppController').urlGeodata}/hospital?`,
+            params: params,
+            method: 'GET',
+            success: (response, opts) => {
+                let obj = Ext.decode(response.responseText);
+                hospitalStore.add(obj.hospital);
+                this.checkArrayIsEmpty(this.callMarkers);
+            },
+
+            failure: (response, opts) => {
+                Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
+            }
+        });
     },
 
     getGeoQueryObject: function (brigade) {

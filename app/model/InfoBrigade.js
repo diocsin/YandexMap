@@ -33,6 +33,10 @@ Ext.define('Isidamaps.model.InfoBrigade', {
             mapping: 'brigade.stationary'
         },
         {
+            name: 'stationaryId',
+            mapping: 'brigade.stationaryId'
+        },
+        {
             name: 'profile'
         }
     ]
