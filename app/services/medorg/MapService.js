@@ -11,11 +11,11 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     },
 
     optionsObjectManager: function () {
+        const markerController = Ext.create('controller.markercontroller');
         this.objectManager.objects.events.add(['click'], e => {
             let object = this.objectManager.objects.getById(e.get('objectId'));
-            this.markerClick(object);
+            markerController.markerClick(object, this.objectManager.objects);
         });
-
     },
 
     listenerStore: function () {

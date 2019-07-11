@@ -30,6 +30,10 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
             this.brigadeMarkerClick(options, object, objects);
             return;
         }
+        if (objectType === "MEDORG") {
+            this.medOrgMarkerClick(object);
+            return;
+        }
         this.callMarkerClick(options, object, objects);
     }
     ,
@@ -158,5 +162,33 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 }
             }
         })
+    },
+    medOrgMarkerClick: function (object) {
+        const win = Ext.WindowManager.getActive();
+        if (win) {
+            win.close();
+        }
+
+        Ext.create('Ext.window.Window', {
+            title: 'Мед. учереждение',
+            layout: 'form',
+            border: 'fit',
+            resizable: false,
+            width: 450,
+            iconCls: 'fa fa-plus',
+            constrain: true,
+            items: [{
+                xtype: 'form',
+                bodyStyle: 'padding: 0 5px 0',
+                border: false,
+                items: [{
+                        xtype: 'displayfield',
+                        value: object.customOptions.organizationName,
+                        labelWidth: '100%',
+                        margin: 0
+                }]
+            }]
+
+        }).show();
     }
 });

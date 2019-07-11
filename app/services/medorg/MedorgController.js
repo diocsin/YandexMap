@@ -304,36 +304,4 @@ Ext.define('Isidamaps.services.medorg.MedorgController', {
        })
    },*/
 
-    markerClick: function (object) {
-        const win = Ext.WindowManager.getActive();
-        if (win) {
-            win.close();
-        }
-
-        Ext.create('Ext.window.Window', {
-            title: 'Мед. учереждение',
-            layout: 'form',
-            border: 'fit',
-            resizable: false,
-            width: 400,
-            items: [{
-                xtype: 'form',
-                height: '100%',
-                width: '100%',
-                items: [{
-                    xtype: 'form',
-                    height: '100%',
-                    width: '100%',
-                    margin: 0,
-                    items: [{
-                        xtype: 'displayfield',
-                        value: object.customOptions.organizationName,
-                        labelWidth: '100%',
-                        margin: 0
-                    }]
-                }]
-            }]
-
-        }).show();
-    }
 });
