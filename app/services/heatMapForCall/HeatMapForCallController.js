@@ -28,6 +28,16 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
                 Ext.getCmp('endTime').setActiveError('Введи дату окончания отсчета');
                 check = false;
             }
+
+            if ((Ext.getCmp('ageStart').rawValue !== '' && Ext.getCmp('ageEnd').rawValue == '')) {
+                Ext.getCmp('ageEnd').setActiveError('Введи возраст');
+                check = false;
+            }
+
+            if ((Ext.getCmp('ageStart').rawValue == '' && Ext.getCmp('ageEnd').rawValue !== '')) {
+                Ext.getCmp('ageStart').setActiveError('Введи возраст');
+                check = false;
+            }
             return check;
         };
         if (!checkFields()) {
@@ -64,7 +74,8 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
         if (Ext.getCmp('endTime').rawValue !== '') {
             params.timeend = new Date(Ext.getCmp('endTime').value).toISOString();
         }
-        Ext.getCmp('age').rawValue != '' ? params.patientage = Ext.getCmp('age').rawValue : undefined;
+        Ext.getCmp('ageStart').rawValue != '' ? params.patientagestart = Ext.getCmp('ageStart').rawValue : undefined;
+        Ext.getCmp('ageEnd').rawValue != '' ? params.patientageend = Ext.getCmp('ageEnd').rawValue : undefined;
         Ext.getCmp('district_auto_complete').rawValue != '' ? params.district = Ext.getCmp('district_auto_complete').rawValue : undefined;
         Ext.getCmp('street_auto_complete').rawValue != '' ? params.street = Ext.getCmp('street_auto_complete').rawValue : undefined;
         Ext.getCmp('reason_auto_complete').rawValue != '' ? params.reason = Ext.getCmp('reason_auto_complete').rawValue : undefined;
@@ -174,9 +185,9 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
     },
 
     layoutReady: function () {
-        setTimeout(function(){
+        setTimeout(function () {
             Ext.get('loading').remove();
-            Ext.get('loading-mask').fadeOut({remove:true});
+            Ext.get('loading-mask').fadeOut({remove: true});
         }, 250);
     },
 
