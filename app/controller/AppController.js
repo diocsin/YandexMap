@@ -126,7 +126,7 @@ Ext.define('Isidamaps.controller.AppController', {
 
     addMarkerInStoreFromWS: function (message) {
         const {station, objectType} = message;
-
+        console.dir(message);
         if (!Ext.Array.contains(this.stationArray, '' + station)) {
             return;
         }

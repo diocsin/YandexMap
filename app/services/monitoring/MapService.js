@@ -128,12 +128,12 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         }
         if (objectType === 'BRIGADE') {
             if (status !== 'WITHOUT_SHIFT') {
-                Ext.defer(addFeature, 1, this);
+                Ext.defer(addFeature, 10, this);
             }
             return;
         }
         if (status !== 'COMPLETED') {
-            Ext.defer(addFeature, 1, this);
+            Ext.defer(addFeature, 10, this);
         }
     },
 

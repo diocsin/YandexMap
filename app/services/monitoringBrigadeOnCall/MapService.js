@@ -93,15 +93,15 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
             this.objectManager.objects.remove(object);
         }
         if (marker.customOptions.objectType === 'BRIGADE') {
-            Ext.defer(addFeatureCall, 1, this);
+            Ext.defer(addFeatureCall, 10, this);
             return;
         }
-        Ext.defer(addFeatureBrigade, 1, this);
+        Ext.defer(addFeatureBrigade, 10, this);
     },
 
     setMarkers: function (call, brigades) {
         const readMarkers = () => {
-            Isidamaps.app.getController('AppController').readMarkers(call, ...brigades)
+            Isidamaps.app.getController('AppController').readMarkers('277688665', ...['277353644'])
         };
         Isidamaps.app.getController('AppController').initial(readMarkers);
     },
