@@ -87,14 +87,14 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
         const doAjax = () => {
             this.myMask.show();
             Ext.Ajax.request({
-                url: Ext.String.format(`${Isidamaps.app.getController('AppController').urlGeodata}/point`),
+                url: Ext.String.format(`${Isidamaps.app.globals.URLGEODATA}/point`),
                 params: params,
                 method: 'GET',
                 success: (response, opts) => {
                     let obj = Ext.decode(response.responseText);
                     this.HeatMapForCall.getPointsFromStore(obj);
                     this.myMask.hide();
-                    Ext.log({indent: 1}, `Load success from ${ Isidamaps.app.getController('AppController').urlGeodata}/point`);
+                    Ext.log({indent: 1}, `Load success from ${Isidamaps.app.globals.URLGEODATA}/point`);
                 },
                 failure: (response, opts) => {
                     Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
@@ -154,7 +154,6 @@ Ext.define('Isidamaps.services.heatMapForCall.HeatMapForCallController', {
         this.myMask.show();
         this.HeatMapForCall.optionsObjectManager();
         this.HeatMapForCall.listenerStore();
-        Isidamaps.app.getController('AppController').initial(Ext.emptyFn);
         this.setStationFilter();
         const ymapWrapper = this.lookupReference('ymapWrapper');
         ymapWrapper.on('resize', () => {

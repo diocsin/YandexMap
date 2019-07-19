@@ -23,61 +23,6 @@ Ext.define('Isidamaps.controller.AppController', {
         {eng: 'HIJACKING', rus: 'Вызов спецслужб'},
         {eng: 'ALARM', rus: 'Тревога'},
     ],
-    listen: {
-        global: {
-            doAjaxAutoComplete: 'doAjaxAutoComplete'
-        }
-    },
-
-    doAjaxAutoComplete: function (me, newValue, oldValue) {
-        let lengthRow = newValue ? newValue.length : 0,
-            lengthPreviousRow = oldValue ? oldValue.length : 0,
-            storeForComboBox = me.getStore();
-        if (this.shortNamePrevious !== me.name) {
-            this.lengthStore = 30;
-        }
-        if (lengthRow < 3) {
-            this.lengthStore = 30;
-            storeForComboBox.removeAll();
-        }
-        this.shortNamePrevious = me.name;
-        clearTimeout(this.timerId);
-        this.timerId = setTimeout(() => {
-            if (lengthRow >= 3 && this.lengthStore === 30 && lengthPreviousRow < lengthRow) {
-                doAjax();
-            }
-            if (lengthRow >= 3 && lengthPreviousRow > lengthRow) {
-                doAjax();
-            }
-        }, 1000);
-
-        const doAjax = () => {
-            Ext.Ajax.request({
-                url: `${this.urlGeodata}/autocomplite`,
-                params: {
-                    field: me.name,
-                    value: newValue
-                },
-                method: 'GET',
-                success: (response, opts) => {
-                    let obj = Ext.decode(response.responseText);
-                    storeForComboBox.removeAll();
-                    storeForComboBox.add(obj);
-                    if (lengthPreviousRow > lengthRow) {
-                        this.lengthStore = 30;
-                    }
-                    else {
-                        this.lengthStore = obj.length;
-                    }
-                    me.expand();
-                    Ext.log({indent: 1}, `Load success from ${this.urlGeodata}`);
-                },
-                failure: (response, opts) => {
-                    Ext.log({indent: 1, level: 'error'}, `server-side failure with status code ${response.status}`);
-                }
-            });
-        }
-    },
 
     getBrigadeStatuses: function (eng) {
         const args = this.brigadeStatuses.find(status => status.eng === eng);

@@ -50,6 +50,8 @@ Ext.define('Isidamaps.Application', {
         ALL_STATUSES: 'allStatuses',
         ALL_STATIONS: 'allStations',
         ALL_CALLS: 'allCalls',
+        URLGEODATA: '',
+        URLWEBSOCKET: ''
     },
 
     launch: function () {
@@ -59,6 +61,14 @@ Ext.define('Isidamaps.Application', {
         else {
             Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
         }
+        const settingsStore = this.getStore('Isidamaps.store.SettingsStore');
+        settingsStore.load({
+            callback: (records) => {
+                const settings = records[0];
+                Isidamaps.app.globals.URLGEODATA = settings.get('urlGeodata');
+                Isidamaps.app.globals.URLWEBSOCKET = settings.get('urlWebSocket');
+            }
+        });
     },
 
     onAppUpdate: function () {
