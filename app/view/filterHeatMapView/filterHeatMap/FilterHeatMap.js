@@ -431,6 +431,7 @@ Ext.define('Isidamaps.view.filterHeatMapView.filterHeatMap.FilterHeatMap', {
                     {
                         xtype: 'fieldset',
                         title: 'Район',
+                        hidden: true,
                         items: [
                             {
                                 xtype: 'combobox',
