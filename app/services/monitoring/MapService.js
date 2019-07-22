@@ -6,6 +6,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     filterMarkerArray: [],
     lowSpeedIconContentLayout: null,
     heightSpeedIconContentLayout: null,
+    brigadeClickId: null,
     // ====
     setCheckboxAfterFirstLoad: Ext.emptyFn,
     addNewButtonOnPanel: Ext.emptyFn,
@@ -78,10 +79,23 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         });
     },
 
+    updateSpeedInForm: function (speed) {
+        try {
+            const brigadeInfoWidget = Ext.getCmp('tabPanelBrigade'),
+                brigadeInfoViewModel = brigadeInfoWidget.getViewModel();
+            brigadeInfoViewModel.set('record.speed', `${speed} км/ч`);
+        }
+        catch (e) {
+
+        }
+
+    },
+
     optionsObjectManager: function () {
         const markerController = Ext.create('controller.markercontroller');
         this.objectManager.objects.events.add(['click'], e => {
             let object = this.objectManager.objects.getById(e.get('objectId'));
+            this.brigadeClickId = object.id;
             markerController.markerClick(object, this.objectManager.objects);
         });
         /*this.objectManager.clusters.events.add(['click'], (e) => {
@@ -191,7 +205,7 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
                 iconContentOffset: [30, -10],
             },
             properties: {
-                hintContent: `Бригада ${brigade.get('brigadeNum')}`,
+                hintContent: `Бригада ${brigade.get('brigadeNum')}, ${brigade.get('speed')} км/ч`,
                 iconContent: `${brigade.get('brigadeNum')}(${brigade.get('profile')})`,
                // speedContent: brigade.get('speed') ? brigade.get('speed') : ''
             }
@@ -238,6 +252,9 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
 
     getBrigadeFromWS: function (brigade) {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
+            if (brigade.get('deviceId') === this.brigadeClickId) {
+                this.updateSpeedInForm(brigade.get('speed'));
+            }
             let marker = this.createBrigadeFeature(brigade);
             let brigadeHas = Ext.Array.findBy(this.brigadesMarkers, (brigadeInArray, index) => {
                 if (brigadeInArray.id === brigade.get('deviceId')) {

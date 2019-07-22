@@ -232,6 +232,9 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     getBrigadeFromWS: function (brigade) {
         if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
+            if (brigade.get('deviceId') === this.brigadeClickId) {
+                this.updateSpeedInForm(brigade.get('speed'));
+            }
             let marker = this.createBrigadeFeature(brigade);
             this.addMarkerInObjectManager(marker);
             Ext.getStore('Isidamaps.store.BrigadeFromWSStore').clearData();
