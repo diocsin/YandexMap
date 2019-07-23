@@ -101,7 +101,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     setMarkers: function (call, brigades) {
         const readMarkers = () => {
-            Isidamaps.app.getController('AppController').readMarkers('277688665', ...['277353644'])
+            Isidamaps.app.getController('AppController').readMarkers(call, ...brigades)
         };
         Isidamaps.app.getController('AppController').initial(readMarkers);
     },
