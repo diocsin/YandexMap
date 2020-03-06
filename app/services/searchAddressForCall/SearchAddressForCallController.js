@@ -1,15 +1,33 @@
 Ext.define('Isidamaps.services.searchAddressForCall.SearchAddressForCallController', {
     extend: 'Isidamaps.services.monitoring.MonitoringController',
     alias: 'controller.searchAddressForCall',
+    SearchAddressForCall: null,
+    listen: {
+        global: {
+            sendCoordinateToASOV: 'sendCoordinateToASOV'
+        }
+    },
+
+    sendCoordinateToASOV: function () {
+        let win = Ext.WindowManager.getActive();
+        if (win) {
+            win.close();
+        }
+        this.SearchAddressForCall.checkFeature(this.SearchAddressForCall.coordinate);
+    },
 
     createClass: function () {
-        const SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
+        this.SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
         });
-        SearchAddressForCall.searchControl();
-        Isidamaps.app.getController('AppController').initial(Ext.emptyFn);
+        this.SearchAddressForCall.searchControl();
+        ASOV.setMapManager({
+            setStreet: this.SearchAddressForCall.setStreet.bind(this),
+            setCoordinateHouse: this.SearchAddressForCall.setCoordinateHouse.bind(this),
+            clean: this.SearchAddressForCall.cleanMap.bind(this)
+        }, Ext.History.currentToken);
         const ymapWrapper = this.lookupReference('ymapWrapper');
-        ymapWrapper.on('resize', function () {
-            SearchAddressForCall.resizeMap();
+        ymapWrapper.on('resize', () => {
+            this.SearchAddressForCall.resizeMap();
         });
     },
 

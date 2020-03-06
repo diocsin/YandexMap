@@ -4,13 +4,14 @@
  * Sencha Cmd when upgrading.
  */
 Ext.ariaWarn = Ext.emptyFn;
+Ext.ariaWarn = Ext.emptyFn;
 ASOV = (() => {
-    const opener = window.opener;
-    return !!opener ? opener.ACPS.MapControl.forExport() : {
+    const opener = window.opener!==null ? window.opener : window.parent;
+    return !!opener.ACPS ? opener.ACPS.MapControl.forExport() : {
         setRoutes: Ext.emptyFn,
         setBrigade: Ext.emptyFn,
-        setHospital: Ext.emptyFn,
-        setMapManager: Ext.emptyFn
+        setMapManager: Ext.emptyFn,
+        setAddressFromMap: Ext.emptyFn
     }
 })();
 

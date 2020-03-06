@@ -1,130 +1,1 @@
-Ext.define('Isidamaps.services.searchAddressForCall.MapService', {
-    extend: 'Isidamaps.services.monitoring.MapService',
-    map: null,
-    feature: null,
-
-    constructor: function (options) {
-        this.createMap();
-        this.createButtonOnControlPanel();
-        this.map.events.add('click', e => {
-            const coords = e.get('coords');
-            this.checkFeature(coords);
-        });
-    },
-
-    createButtonOnControlPanel: function () {
-        const ButtonLayout = ymaps.templateLayoutFactory.createClass([
-            '<div title="{{ data.title}}" class="button_confirm">',
-            '{{ data.content}}',
-            '</div>'
-        ].join(''));
-        const firstButton = new ymaps.control.Button({
-            data: {
-                content: "Подтвердить",
-                title: "Подтвердить координаты"
-            },
-            options: {
-                layout: ButtonLayout,
-                maxWidth: [28, 150, 178]
-            }
-        });
-        firstButton.events.add('click', e => {
-            if (this.feature) {
-                const {properties, geometry} = this.feature;
-                Ext.create('Ext.window.MessageBox').show({
-                    title: 'Подтвердите действия',
-                    message: properties.getAll().balloonContent ? properties.getAll().balloonContent : geometry.getCoordinates(),
-                    icon: Ext.Msg.QUESTION,
-                    buttons: Ext.Msg.YESNOCANCEL,
-                    fn: btn => {
-                        if (btn === 'yes') {
-                            console.dir(geometry.getCoordinates());
-                            Isidamaps.app.getController('AppController').windowClose();
-                        } else if (btn === 'no') {
-
-                        } else {
-
-                        }
-                    }
-                });
-            }
-            else {
-                Ext.create('Ext.window.MessageBox').show({
-                    title: 'Ошибка',
-                    message: 'Не указан адрес вызова',
-                    icon: Ext.Msg.ERROR,
-                    buttons: Ext.Msg.OK
-                })
-            }
-        });
-        this.map.controls.add(firstButton, {float: 'left'});
-    },
-
-    searchControl: function () {
-        const searchControl = new ymaps.control.SearchControl({
-            options: {
-                provider: 'yandex#map',
-                noPlacemark: true,
-                noSelect: true
-            }
-        });
-        this.map.controls.add(searchControl);
-        searchControl.events.add('resultselect', e => {
-            // Получает массив результатов.
-            const results = searchControl.getResultsArray();
-            // Индекс выбранного объекта.
-            const selected = e.get('index');
-            // Получает координаты выбранного объекта.
-            const point = results[selected].geometry.getCoordinates();
-            const balloonContent = results[selected].properties.getAll().name;
-            //this.map.balloon.open(point, balloonContent, {});
-            this.checkFeature(point);
-
-        });
-    },
-
-    checkFeature: function (coords) {
-        if (this.feature !== null) {
-            this.feature.geometry.setCoordinates(coords);
-            this.feature.properties.set('balloonContent', null);
-        }
-        else {
-            this.feature = this.createPlacemark(coords);
-            this.map.geoObjects.add(this.feature);
-            // Слушаем событие окончания перетаскивания на метке.
-            this.feature.events.add('dragend', () => {
-                this.getAddress(this.feature.geometry.getCoordinates());
-            });
-        }
-        this.getAddress(coords);
-    },
-
-    createPlacemark: function (coords) {
-        return new ymaps.Placemark(coords, {
-            iconCaption: 'поиск...'
-
-        }, {
-            preset: 'islands#violetDotIconWithCaption',
-            draggable: true,
-            iconCaptionMaxWidth: 350
-        });
-    },
-
-    getAddress: function (coords) {
-        this.feature.properties.set('iconCaption', 'поиск...');
-        ymaps.geocode(coords).then(res => {
-            const firstGeoObject = res.geoObjects.get(0);
-            this.feature.properties
-                .set({
-                    iconCaption: [
-                        // Название населенного пункта или вышестоящее административно-территориальное образование.
-                        firstGeoObject.getLocalities().length ? firstGeoObject.getLocalities() : firstGeoObject.getAdministrativeAreas(),
-                        // Получаем путь до топонима, если метод вернул null, запрашиваем наименование здания.
-                        firstGeoObject.getThoroughfare() || firstGeoObject.getPremise()
-                    ].filter(Boolean).join(', '),
-                    // В качестве контента балуна задаем строку с адресом объекта.
-                    balloonContent: firstGeoObject.getAddressLine()
-                });
-        });
-    }
-});
+Ext.define('Isidamaps.services.searchAddressForCall.MapService', {    extend: 'Isidamaps.services.monitoring.MapService',    map: null,    coordinate: null,    firstGeoObject: null,    constructor: function (options) {        this.createMap();        this.map.events.add('click', e => {            const coords = e.get('coords');            this.checkFeature(coords);        });        this.map.events.add('contextmenu', e => {            this.coordinate = e.get('coords');            this.displayWindowAboutAddress(this.coordinate);        });    },    displayWindowAboutAddress: function (coords) {        let win = Ext.WindowManager.getActive();        if (win) {            win.close();        }        let myGeocoder = ymaps.geocode(coords, {});        myGeocoder.then(res => {            this.firstGeoObject = res.geoObjects.get(0);            const brigadeInfoWidget = Ext.widget('addressInfo'),                brigadeInfoViewModel = brigadeInfoWidget.getViewModel();            brigadeInfoViewModel.set('record', this.firstGeoObject.getAddressLine());            brigadeInfoWidget.show();        });    },    setStreet: function (street) {        let myGeocoder = ymaps.geocode(street + ' Санкт-Петербург', {            provider: 'yandex#map',            kind: 'street'        });        myGeocoder.then(res => {            const bounds = res.geoObjects.properties.get('metaDataProperty').GeocoderResponseMetaData.boundedBy,                boundsRevert = [[bounds[0][1], bounds[0][0]], [bounds[1][1], bounds[1][0]]];            this.SearchAddressForCall.map.setBounds(boundsRevert, {checkZoomRange: true});        });    },    sendCoordinateFromMapToASOV: function (callBack) {        ASOV.setAddressFromMap(callBack);    },    setCoordinateHouse: function (latitude, longitude) {        this.SearchAddressForCall.map.geoObjects.removeAll();        if (latitude.indexOf(',') > -1 || longitude.indexOf(',' > -1)) {            latitude = latitude.replace(',', '.');            longitude = longitude.replace(',', '.')        }        if (latitude !== '0.0' && longitude !== "0.0") {            let feature = new ymaps.Placemark([latitude, longitude], {}, {                iconLayout: 'default#imageWithContent',                iconImageHref: 'resources/icon/new.png',                iconImageSize: [25, 31]            });            this.SearchAddressForCall.map.geoObjects.add(feature);            let zoom = this.SearchAddressForCall.map.getZoom();            if (zoom < 16) {                this.SearchAddressForCall.map.setCenter(feature.geometry.getCoordinates(), 16);            }            else {                this.SearchAddressForCall.map.setCenter(feature.geometry.getCoordinates(), zoom);            }        }    },    searchControl: function () {        const searchControl = new ymaps.control.SearchControl({            options: {                provider: 'yandex#map',                noPlacemark: true,                noSelect: true,                fitMaxWidth: true,                maxWidth: [30, 72, 455],            }        });        this.map.controls.add(searchControl);        searchControl.events.add('resultselect', e => {            const results = searchControl.getResultsArray(),                selected = e.get('index'),                point = results[selected].geometry.getCoordinates(),                balloonContent = results[selected].properties.getAll().name;            this.checkFeature(point);        });    },    checkFeature: function (coords) {        const feature = this.createPlacemark(coords);        this.map.geoObjects.removeAll();        this.map.geoObjects.add(feature);        this.getAddress(coords);    },    getAddress: function (coords) {        ymaps.geocode(coords).then(res => {            this.firstGeoObject = res.geoObjects.get(0);            this.formingCallBackForASOV();        });    },    formingCallBackForASOV: function () {        let callBack = {            longitude: this.firstGeoObject.geometry.getCoordinates()[1].toFixed(6),            latitude: this.firstGeoObject.geometry.getCoordinates()[0].toFixed(6),            street: this.firstGeoObject.getThoroughfare() ? this.firstGeoObject.getThoroughfare() : null,            house: this.firstGeoObject.getPremiseNumber() ? this.firstGeoObject.getPremiseNumber() : null,        };        this.sendCoordinateFromMapToASOV(callBack);    },    createPlacemark: function (coords) {        return new ymaps.Placemark(coords, {}, {            iconLayout: 'default#imageWithContent',            iconImageHref: 'resources/icon/new.png',            iconImageSize: [25, 31],            iconImageOffset: [-20, -40],        });    },    cleanMap: function () {        this.SearchAddressForCall.map.geoObjects.removeAll();        this.SearchAddressForCall.map.setBounds([[60.007645, 30.092139],            [59.923862, 30.519157]], {checkZoomRange: true});    }});
