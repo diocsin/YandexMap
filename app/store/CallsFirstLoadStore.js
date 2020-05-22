@@ -3,6 +3,7 @@ Ext.define('Isidamaps.store.CallsFirstLoadStore', {
     model: 'Isidamaps.model.Call',
     proxy: {
         type: 'ajax',
+        timeout: 90000,
         reader: {
             type: 'json'
         }
