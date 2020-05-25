@@ -6,7 +6,7 @@ Ext.define('Isidamaps.view.addressInfoView.AddressInfoWindow', {
     layout: 'form',
     border: 'fit',
     resizable: false,
-    width: 500,
+    width: 350,
     constrain: true,
     items: [{
         xtype: 'addressInfoForm'

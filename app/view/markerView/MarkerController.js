@@ -65,13 +65,11 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                         if (call.customOptions.objectType === 'CALL' && call.customOptions.callCardNum === record.get('callCardNum')) {
                             this.call = call;
                             this.brigade = object;
-                        }
-                        else {
+                        } else {
                             Ext.getCmp('tabPanelBrigade').getComponent(1).setHtml('Вызов не найден');
                         }
                     });
-                }
-                else {
+                } else {
                     Ext.getCmp('tabPanelBrigade').getComponent(1).tab.hide();
                 }
             }
@@ -110,12 +108,8 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
     },
 
     createMapBounds: function (map, call, brigade) {
-        const arrayLatitude = [],
-            arrayLongitude = [];
-        arrayLatitude.push(call.geometry.coordinates[0]);
-        arrayLongitude.push(call.geometry.coordinates[1]);
-        arrayLatitude.push(brigade.geometry.coordinates[0]);
-        arrayLongitude.push(brigade.geometry.coordinates[1]);
+        const arrayLatitude = [call.geometry.coordinates[0], brigade.geometry.coordinates[0]],
+            arrayLongitude = [call.geometry.coordinates[1], brigade.geometry.coordinates[1]];
         arrayLatitude.sort(function (a, b) {
             return a - b
         });
@@ -151,13 +145,11 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                         if (brigade.customOptions.objectType === 'BRIGADE' && brigade.customOptions.brigadeNum === records[0].get('brigadeNum')) {
                             this.brigade = brigade;
                             this.call = object;
-                        }
-                        else {
+                        } else {
                             Ext.getCmp('tabPanelCall').getComponent(1).setHtml('Бригада не найдена');
                         }
                     });
-                }
-                else {
+                } else {
                     Ext.getCmp('tabPanelCall').getComponent(1).tab.hide();
                 }
             }
@@ -182,10 +174,10 @@ Ext.define('Isidamaps.view.markerView.MarkerController', {
                 bodyStyle: 'padding: 0 5px 0',
                 border: false,
                 items: [{
-                        xtype: 'displayfield',
-                        value: object.customOptions.organizationName,
-                        labelWidth: '100%',
-                        margin: 0
+                    xtype: 'displayfield',
+                    value: object.customOptions.organizationName,
+                    labelWidth: '100%',
+                    margin: 0
                 }]
             }]
 
