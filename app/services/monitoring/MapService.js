@@ -88,7 +88,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         catch (e) {
 
         }
-
     },
 
     optionsObjectManager: function () {

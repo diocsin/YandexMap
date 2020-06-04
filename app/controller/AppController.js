@@ -85,7 +85,7 @@ Ext.define('Isidamaps.controller.AppController', {
         return store;
     },
 
-    readStation: function (station) {
+    readStation: function (stations) {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             paramsBrigades = {
                 stations: this.stationArray,
