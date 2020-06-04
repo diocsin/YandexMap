@@ -89,7 +89,7 @@ Ext.define('Isidamaps.controller.AppController', {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             paramsBrigades = {
                 stations: this.stationArray,
-                statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE', 'ALARM']
+                //   statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE', 'ALARM']
             },
             paramsCalls = {
                 stations: this.stationArray,
@@ -97,8 +97,8 @@ Ext.define('Isidamaps.controller.AppController', {
             },
             callStore = this.getStore('Isidamaps.store.CallsFirstLoadStore');
 
-        Ext.log({outdent: 1}, `Подстанции ${station}`);
-        station.forEach(st => {
+        Ext.log({outdent: 1}, `Подстанции ${stations}`);
+        stations.forEach(st => {
             if (Ext.String.trim(st) !== '20') {
                 this.stationArray.push(Ext.String.trim(st));
             }
@@ -126,6 +126,31 @@ Ext.define('Isidamaps.controller.AppController', {
             }
         });
         this.connectWebSocked('monitoring');
+    },
+
+    readStationAndTime: function (stations, time) {
+        const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+            paramsBrigades = {
+                time: time,
+                stations: this.stationArray
+            };
+        Ext.log({outdent: 1}, `Подстанции ${stations}`);
+        stations.forEach(st => {
+            if (Ext.String.trim(st) !== '20') {
+                this.stationArray.push(Ext.String.trim(st));
+            }
+        });
+        brigadeStore.load({
+            url: Ext.String.format(`${this.urlGeodata}/data`),
+            params: paramsBrigades,
+            callback: (records, operation, success) => {
+                if (success) {
+                    Ext.log({outdent: 1}, `Бригад из geoService ${records.length}`);
+                    return
+                }
+                Ext.log({outdent: 1, level: 'error'}, 'Ошибка загрузки данных из geoService');
+            }
+        });
     },
 
     readCallsForHeatMap: function (station) {
