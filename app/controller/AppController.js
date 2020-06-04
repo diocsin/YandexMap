@@ -89,7 +89,7 @@ Ext.define('Isidamaps.controller.AppController', {
         const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
             paramsBrigades = {
                 stations: this.stationArray,
-                //   statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE', 'ALARM']
+                statuses: ['CRASH_CAR', 'RELAXON', 'HIJACKING', 'ON_EVENT', 'GO_HOSPITAL', 'AT_CALL', 'PASSED_BRIGADE', 'FREE', 'ALARM']
             },
             paramsCalls = {
                 stations: this.stationArray,
