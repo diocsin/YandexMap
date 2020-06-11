@@ -34,11 +34,10 @@ Ext.define('Isidamaps.services.brigadeForAssign.MapService', {
     },
 
     getBrigadesFromStore: function (records) {
-        Ext.Array.clean(this.brigadesMarkers);
+        this.brigadesMarkers = [];
         records.forEach(brigade => {
-            if (brigade.get('latitude') && brigade.get('longitude')) {
-                const feature = this.createBrigadeFeature(brigade);
-                this.brigadesMarkers.push(feature);
+            if (brigade.isBrigadeHasCoordinates()) {
+                this.brigadesMarkers.push(brigade.getObjectForMap());
             }
         });
         if (this.callMarkers.length === 0) {

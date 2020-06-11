@@ -128,20 +128,23 @@ Ext.define('Isidamaps.controller.AppController', {
         this.connectWebSocked('monitoring');
     },
 
-    readStationAndTime: function (stations, time) {
-        const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
-            paramsBrigades = {
-                time: time,
-                stations: this.stationArray
-            };
+    readStationForSnapshot: function (stations) {
         Ext.log({outdent: 1}, `Подстанции ${stations}`);
         stations.forEach(st => {
             if (Ext.String.trim(st) !== '20') {
                 this.stationArray.push(Ext.String.trim(st));
             }
         });
+    },
+
+    readBrigadesSnapshot: function(dateTime){
+        const brigadeStore = this.getStore('Isidamaps.store.BrigadesFirstLoadStore'),
+        paramsBrigades = {
+            stations: this.stationArray,
+            timestart: dateTime
+        };
         brigadeStore.load({
-            url: Ext.String.format(`${this.urlGeodata}/data`),
+            url: Ext.String.format(`${this.urlGeodata}/data/snapshot`),
             params: paramsBrigades,
             callback: (records, operation, success) => {
                 if (success) {

@@ -41,7 +41,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             iconLayout: 'default#image',
             zIndex: 2000,
             iconImageSize: [40, 40]
-
         });
         this.lowSpeedIconContentLayout = ymaps.templateLayoutFactory.createClass(
             '<div id="lowSpeedIcon" >$[properties.iconContent]</div>'
@@ -86,7 +85,6 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
             brigadeInfoViewModel.set('record.speed', `${speed} км/ч`);
         }
         catch (e) {
-
         }
     },
 
@@ -157,77 +155,21 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
         Isidamaps.app.getController('AppController').initial(readStation);
     },
 
-
-    createCallFeature: function (call) {
-        return {
-            type: 'Feature',
-            id: call.get('callCardId'),
-            customOptions: {
-                objectType: call.get('objectType'),
-                status: call.get('status'),
-                callCardNum: call.get('callCardNum'),
-                station: call.get('station').toString()
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [call.get('latitude'), call.get('longitude')]
-            },
-            options: {
-                iconImageHref: `resources/icon/${call.get('iconName')}`,
-                iconImageSize: [25, 31]
-            }
-        }
-    },
-
-    createBrigadeFeature: function (brigade) {
-        return {
-            type: 'Feature',
-            id: brigade.get('deviceId'),
-            customOptions: {
-                objectType: brigade.get('objectType'),
-                profile: brigade.get('profile'),
-                status: brigade.get('status'),
-                station: brigade.get('station').toString(),
-                brigadeNum: brigade.get('brigadeNum'),
-                speed: brigade.get('speed'),
-                vector: brigade.get('vector')
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [brigade.get('latitude'), brigade.get('longitude')]
-            },
-            options: {
-                iconLayout: 'default#imageWithContent',
-                iconImageHref: `resources/icon/${brigade.get('iconName')}`,
-                iconContentLayout: this.MyIconContentLayout, //brigade.get('speed') > 0 ? this.heightSpeedIconContentLayout : this.lowSpeedIconContentLayout,
-                iconImageOffset: [-24, -24],
-                iconContentOffset: [30, -10],
-            },
-            properties: {
-                hintContent: `Бригада ${brigade.get('brigadeNum')}, ${brigade.get('speed')} км/ч`,
-                iconContent: `${brigade.get('brigadeNum')}(${brigade.get('profile')})`,
-               // speedContent: brigade.get('speed') ? brigade.get('speed') : ''
-            }
-        }
-    },
-
     getBrigadesFromStore: function (records) {
-        Ext.Array.clean(this.brigadesMarkers);
+        this.brigadesMarkers = [];
         records.forEach(brigade => {
-            if (brigade.get('latitude') && brigade.get('longitude')) {
-                const feature = this.createBrigadeFeature(brigade);
-                this.brigadesMarkers.push(feature);
+            if (brigade.isBrigadeHasCoordinates()) {
+                this.brigadesMarkers.push(brigade.getObjectForMap());
             }
         });
         this.checkArrayIsEmpty(this.callMarkers);
     },
 
     getCallsFromStore: function (records) {
-        Ext.Array.clean(this.callMarkers);
+       this.callMarkers = [];
         records.forEach(call => {
-            if (call.get('latitude') && call.get('longitude')) {
-                const feature = this.createCallFeature(call);
-                this.callMarkers.push(feature);
+            if (call.isCallHasCoordinates()) {
+                this.callMarkers.push(call.getObjectForMap());
             }
         });
         this.checkArrayIsEmpty(this.brigadesMarkers);
@@ -242,19 +184,18 @@ Ext.define('Isidamaps.services.monitoring.MapService', {
     },
 
     getCallFromWS: function (call) {
-        if (call.get('latitude') && call.get('longitude')) {
-            let marker = this.createCallFeature(call);
-            this.addMarkerInObjectManager(marker);
+        if (call.isCallHasCoordinates()) {
+            this.addMarkerInObjectManager(call.getObjectForMap());
             Ext.getStore('Isidamaps.store.CallFromWSStore').clearData();
         }
     },
 
     getBrigadeFromWS: function (brigade) {
-        if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
+        if (brigade.isBrigadeHasCoordinates() && !!brigade.get('status')) {
             if (brigade.get('deviceId') === this.brigadeClickId) {
                 this.updateSpeedInForm(brigade.get('speed'));
             }
-            let marker = this.createBrigadeFeature(brigade);
+            let marker = brigade.getObjectForMap();
             let brigadeHas = Ext.Array.findBy(this.brigadesMarkers, (brigadeInArray, index) => {
                 if (brigadeInArray.id === brigade.get('deviceId')) {
                     return brigadeInArray;

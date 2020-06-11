@@ -133,7 +133,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
     setFilterObjectManager: function () {
         this.Monitoring.objectManager.setFilter(object => {
             const {customOptions: {objectType, status, profile, station}} = object,
-                found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
+                found = this.filterMarkerArray.some(r => [status, station, profile].includes(r));
             if (objectType === 'BRIGADE' && !found) {
                 return true;
             }
@@ -150,7 +150,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         states.removeAll();
         this.Monitoring.objectManager.objects.each(object => {
             const {id, customOptions: {brigadeNum, objectType, status, profile, station}} = object,
-                found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
+                found = this.filterMarkerArray.some(r => [status, station, profile].includes(r));
             if (objectType === 'BRIGADE' && !found) {
                 arrayForShowButton.push(object);
                 let user = Ext.create('Isidamaps.model.Brigade', {
@@ -235,12 +235,12 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         const groupFilterStation = this.lookupReference('stationFilter'),
             buttonBrigade = this.lookupReference('BrigadePanel'),
             stations = Isidamaps.app.getController('AppController').stationArray;
-
         Ext.Array.each(stations, stationName => {
             groupFilterStation.add(Ext.create('Ext.form.field.Checkbox', {
                 boxLabel: stationName,
                 inputValue: stationName,
                 checked: false,
+                width: 70,
                 listeners: {
                     change: {
                         fn: (checkbox, checked) => {
@@ -271,8 +271,7 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         const {id, customOptions: {status, station, profile}} = brigade,
             brigadesPanel = this.buttonBrigade.getComponent(`panel_${station}`),
             brigadeButton = brigadesPanel.getComponent(`id${id}`),
-            found = this.filterMarkerArray.some(r => this.returnArray(status, station, profile).includes(r));
-
+            found = this.filterMarkerArray.some(r => [status, station, profile].includes(r));
         brigadeButton.removeCls(`button_${oldStatus}`);
         brigadeButton.addCls(`button_${status}`);
 
@@ -354,10 +353,6 @@ Ext.define('Isidamaps.services.monitoring.MonitoringController', {
         if (marker) {
             this.Monitoring.map.setCenter(marker.geometry.coordinates, 14);
         }
-    },
-
-    returnArray: function (...args) {
-        return args
     },
 
     layoutReady: function () {

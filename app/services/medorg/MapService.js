@@ -27,25 +27,8 @@ Ext.define('Isidamaps.services.medorg.MapService', {
     storeMedOrg: function (records) {
         const medorgMarkers = [];
         records.forEach(medorg => {
-            if (medorg.get('latitude') && medorg.get('longitude')) {
-                medorgMarkers.push({
-                    type: 'Feature',
-                    id: medorg.get('organizationId'),
-                    customOptions: {
-                        objectType: medorg.get('objectType'),
-                        organizationName: medorg.get('organizationName')
-                    },
-                    geometry: {
-                        type: 'Point',
-                        coordinates: [medorg.get('latitude'), medorg.get('longitude')]
-                    },
-                    options: {
-                        iconImageHref: `resources/icon/${medorg.get('iconName')}`
-                    },
-                    properties: {
-                        hintContent: medorg.get('organizationName')
-                    }
-                })
+            if (medorg.isMedOrgHasCoordinates()) {
+                medorgMarkers.push(medorg.getObjectForMap())
             }
         });
         this.objectManager.add(medorgMarkers);

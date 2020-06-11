@@ -38,8 +38,8 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
     getCallsFromFactRoute: function (rec) {
         rec.forEach(call => {
             Ext.getCmp('GridAssignHistory').setTitle(`Параметры доезда к вызову №${call.get('callCardNum')}`);
-            if (call.get('latitude') && call.get('longitude')) {
-                const feature = this.createCallFeature(call);
+            if (call.isCallHasCoordinates()) {
+                const feature = call.getObjectForMap();
                 this.callMarkers.push(feature);
                 this.callMarkers.length === 1 ? this.objectManager.add(feature) : this.createMapBounds();
             }
@@ -50,9 +50,9 @@ Ext.define('Isidamaps.services.callHistory.MapService', {
         let i = 1;
         Ext.getCmp('GridHistory').setTitle(`История маршрута ${rec[0].get('brigadeNum')} бригады`);
         rec.forEach(brigade => {
-            if (brigade.get('latitude') && brigade.get('longitude')) {
+            if (brigade.isBrigadeHasCoordinates()) {
                 brigade.data.deviceId = i++;  //т.к. метки с одинаковыми id не могут быть помещены в objectManager
-                const feature = this.createBrigadeFeature(brigade);
+                const feature = brigade.getObjectForMap();
                 this.brigadesMarkers.push(feature);
                 this.objectManager.add(feature);
             }

@@ -73,7 +73,7 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
                         return
                     }
                 });
-                if (this.hospitalMarkers.length == 0) {
+                if (this.hospitalMarkers.length === 0) {
                     this.createRoute(this.callMarkers[0], marker);
                     return
                 }
@@ -120,39 +120,18 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
 
     getHospitalFromStore: function (records) {
         records.forEach(hospital => {
-            if (hospital.get('latitude') && hospital.get('longitude')) {
-                this.hospitalMarkers.push(this.createMedOrg(hospital));
+            if (hospital.isMedOrgHasCoordinates()) {
+                this.hospitalMarkers.push(hospital.getObjectForMap());
             }
         });
         this.checkArrayIsEmpty(this.callMarkers);
     },
 
-    createMedOrg: function (medorg) {
-        return {
-            type: 'Feature',
-            id: medorg.get('organizationId'),
-            customOptions: {
-                objectType: medorg.get('objectType'),
-                organizationName: medorg.get('organizationName')
-            },
-            geometry: {
-                type: 'Point',
-                coordinates: [medorg.get('latitude'), medorg.get('longitude')]
-            },
-            options: {
-                iconImageHref: `resources/icon/${medorg.get('iconName')}`
-            },
-            properties: {
-                hintContent: medorg.get('organizationName')
-            }
-        }
-    },
-
     getBrigadesFromStore: function (records) {
-        Ext.Array.clean(this.brigadesMarkers);
+        this.brigadesMarkers = [];
         records.forEach(brigade => {
-            if (brigade.get('latitude') && brigade.get('longitude')) {
-                this.brigadesMarkers.push(this.createBrigadeFeature(brigade));
+            if (brigade.isBrigadeHasCoordinates()) {
+                this.brigadesMarkers.push(brigade.getObjectForMap());
             }
         });
         this.checkHaveStationary(...this.brigadesMarkers);
@@ -223,7 +202,6 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
         const result = ymaps.geoQuery(geoQueryObject).searchIntersect(this.circle);
         if (result.getLength() === 1 && this.brigadeInsideCircle === false) {
             this.brigadeInsideCircle = true;
-            console.dir(result.getLength());
         }
         if (ymaps.geoQuery(geoQueryObject).searchInside(this.map).getLength() === 0) {
             this.map.setCenter([geoQueryObject.getBounds()[0][0], geoQueryObject.getBounds()[0][1]]);
@@ -231,12 +209,11 @@ Ext.define('Isidamaps.services.monitoringBrigadeOnCall.MapService', {
     },
 
     getBrigadeFromWS: function (brigade) {
-        if (brigade.get('latitude') && brigade.get('longitude') && brigade.get('status')) {
+        if (brigade.isBrigadeHasCoordinates() && !!brigade.get('status')) {
             if (brigade.get('deviceId') === this.brigadeClickId) {
                 this.updateSpeedInForm(brigade.get('speed'));
             }
-            let marker = this.createBrigadeFeature(brigade);
-            this.addMarkerInObjectManager(marker);
+            this.addMarkerInObjectManager(brigade.getObjectForMap());
             Ext.getStore('Isidamaps.store.BrigadeFromWSStore').clearData();
         }
     },
