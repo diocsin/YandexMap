@@ -4,7 +4,7 @@ Ext.define('Isidamaps.model.Call', {
     fields: ['longitude', 'latitude', 'statusAsov', 'station', 'status', {name: 'callCardId', type: 'int'},
         'callCardNum', 'createTime', 'lastUpdateTime', 'objectType', 'iconName'
     ],
-    
+
     getObjectForMap: function () {
         return {
             type: 'Feature',
@@ -27,6 +27,7 @@ Ext.define('Isidamaps.model.Call', {
     },
 
     isCallHasCoordinates: function () {
-        return (!!this.get('latitude') && !!this.get('longitude'));
+        return (!!this.get('latitude') && !!this.get('longitude') &&
+            this.get('latitude') !== 0.0 && this.get('longitude') !== 0.0);
     }
 });

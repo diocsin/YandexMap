@@ -3,6 +3,7 @@ Ext.define('Isidamaps.controller.AppController', {
     alias: 'controller.AppController',
     urlGeodata: null,
     urlWebSocket: null,
+    callBackSearchAddress: null,
     stationArray: [],
     callId: null,
     brigadeId: null,
@@ -36,6 +37,7 @@ Ext.define('Isidamaps.controller.AppController', {
                 const settings = records[0];
                 this.urlGeodata = settings.get('urlGeodata');
                 this.urlWebSocket = settings.get('urlWebSocket');
+                this.callBackSearchAddress = settings.get('callBackSearchAddress');
                 getGeoInform();
             }
         });

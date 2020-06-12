@@ -13,6 +13,7 @@ Ext.define('Isidamaps.view.addressInfoView.AddressInfoWindow', {
     }],
     buttons: ['->', {
         text: 'Выбрать',
+        id: 'buttonChooseAddress',
         handler: function () {
             Ext.fireEvent('sendCoordinateToASOV');
         }

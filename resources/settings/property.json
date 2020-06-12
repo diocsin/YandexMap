@@ -1,5 +1,6 @@
 {
-  "urlGeodata":"http://vm-win-gmc.isida.by:8100/geodata/v1.0",
-  "urlWebSocket":"http://vm-win-gmc.isida.by:8100",
-  "urlYandex": "https://api-maps.yandex.ru/2.1/?apikey=e3136019-9627-4206-9608-53ee2ea6e891&lang=ru-RU"
+  "urlGeodata": "http://vm-win-gmc.isida.by:8100/geodata/v1.0",
+  "urlWebSocket": "http://vm-win-gmc.isida.by:8100",
+  "urlYandex": "https://api-maps.yandex.ru/2.1/?apikey=e3136019-9627-4206-9608-53ee2ea6e891&lang=ru-RU",
+  "callBackSearchAddress": false
 }

@@ -17,6 +17,7 @@ Ext.define('Isidamaps.services.searchAddressForCall.SearchAddressForCallControll
     },
 
     createClass: function () {
+        Isidamaps.app.getController('AppController').initial(Ext.emptyFn);
         this.SearchAddressForCall = Ext.create('Isidamaps.services.searchAddressForCall.MapService', {
         });
         this.SearchAddressForCall.searchControl();

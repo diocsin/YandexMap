@@ -10,7 +10,6 @@ Ext.define('Isidamaps.services.heatMapForCall.MapService', {
         });
     },
 
-
     getPointsFromStore: function (obj) {
         // Ext.log({outdent: 1}, `${records.length} loadRecords`);
         this.heatmap.options.set('gradient', {
